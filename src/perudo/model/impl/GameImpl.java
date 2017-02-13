@@ -16,11 +16,8 @@ import perudo.model.GameSettings;
 import perudo.model.PlayerStatus;
 import perudo.model.User;
 import perudo.utility.ErrorType;
+import perudo.utility.ErrorTypeException;
 import perudo.utility.IdDispenser;
-import perudo.utility.Response;
-import perudo.utility.Result;
-import perudo.utility.impl.ResponseImpl;
-import perudo.utility.impl.ResultImpl;
 
 public class GameImpl implements Game {
 
@@ -126,36 +123,35 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public Result play(Bid bid, User user) {
+    public void play(Bid bid, User user) throws ErrorTypeException {
         if (!this.usersStatus.containsKey(user)) {
-            return ResultImpl.error(ErrorType.USER_DOES_NOT_EXISTS);
+            throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
         if (this.getUserStatus(user).getRemainingDice() <= 0) {
-            return ResultImpl.error(ErrorType.GAME_YOU_ALREADY_LOSE);
+            throw new ErrorTypeException(ErrorType.GAME_YOU_ALREADY_LOSE);
         }
         if (!getTurn().equals(user)) {
-            return ResultImpl.error(ErrorType.GAME_NOT_YOUR_TURN);
+            throw new ErrorTypeException(ErrorType.GAME_NOT_YOUR_TURN);
         }
         if (!this.getCurrentBid().isNextBidValid(bid, this.turnIsPalifico())) {
-            return ResultImpl.error(ErrorType.GAME_INVALID_BID);
+            throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
         }
 
         this.currentBid = bid;
         this.bidUser = user;
         this.goNextTurn();
-        return ResultImpl.ok();
     }
 
     @Override
-    public Response<Boolean> doubt(User user) {
+    public Boolean doubt(User user) throws ErrorTypeException {
         if (!this.usersStatus.containsKey(user)) {
-            return ResponseImpl.empty(ErrorType.USER_DOES_NOT_EXISTS);
+            throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
         if (this.getUserStatus(user).getRemainingDice() <= 0) {
-            return ResponseImpl.empty(ErrorType.GAME_YOU_ALREADY_LOSE);
+            throw new ErrorTypeException(ErrorType.GAME_YOU_ALREADY_LOSE);
         }
         if (!getTurn().equals(user)) {
-            return ResponseImpl.empty(ErrorType.GAME_NOT_YOUR_TURN);
+            throw new ErrorTypeException(ErrorType.GAME_NOT_YOUR_TURN);
         }
 
         if (this.getBidDiceCount() < this.getCurrentBid().getQuantity()) {
@@ -168,7 +164,7 @@ public class GameImpl implements Game {
                 this.goNextTurn();
             }
             this.resetGame();
-            return ResponseImpl.of(true);
+            return true;
         } else {
             // doubt is wrong, user loss 1 dice
             this.removeDice(user, 1);
@@ -176,20 +172,20 @@ public class GameImpl implements Game {
                 this.goNextTurn();
             }
             this.resetGame();
-            return ResponseImpl.of(false);
+            return false;
         }
     }
 
     @Override
-    public Response<Boolean> urge(User user) {
+    public Boolean urge(User user) throws ErrorTypeException {
         if (!canUrge(user)) {
-            return ResponseImpl.empty(ErrorType.GAME_CANT_CALL_URGE_NOW);
+            throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_URGE_NOW);
         }
         if (!this.usersStatus.containsKey(user)) {
-            return ResponseImpl.empty(ErrorType.USER_DOES_NOT_EXISTS);
+            throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
         if (this.getUserStatus(user).getRemainingDice() <= 0) {
-            return ResponseImpl.empty(ErrorType.GAME_YOU_ALREADY_LOSE);
+            throw new ErrorTypeException(ErrorType.GAME_YOU_ALREADY_LOSE);
         }
 
         if (this.getBidDiceCount() == this.getCurrentBid().getQuantity()) {
@@ -200,7 +196,7 @@ public class GameImpl implements Game {
                 this.goNextTurn();
             }
             this.resetGame();
-            return ResponseImpl.of(true);
+            return true;
         } else {
             // urge is wrong, user loss 1 dice
             this.removeDice(user, 1);
@@ -208,38 +204,36 @@ public class GameImpl implements Game {
                 this.goNextTurn();
             }
             this.resetGame();
-            return ResponseImpl.of(false);
+            return false;
         }
 
     }
 
     @Override
-    public Result callPalifico(User user) {
+    public void callPalifico(User user) throws ErrorTypeException {
         // bid already started
         if (this.bidUser != null) {
-            return ResultImpl.error(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
+            throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
         }
         if (!this.usersStatus.containsKey(user)) {
-            return ResultImpl.error(ErrorType.USER_DOES_NOT_EXISTS);
+            throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
         // already called
         if (this.getUserStatus(user).hasCalledPalifico()) {
-            return ResultImpl.error(ErrorType.GAME_PALIFICO_ALREADY_USED);
+            throw new ErrorTypeException(ErrorType.GAME_PALIFICO_ALREADY_USED);
         }
         // must have 1 dice
         if (this.getUserStatus(user).getRemainingDice() != 1) {
-            return ResultImpl.error(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
+            throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
         }
 
         if (this.getUserStatus(user).getRemainingDice() == 0) {
-            return ResultImpl.error(ErrorType.GAME_YOU_ALREADY_LOSE);
+            throw new ErrorTypeException(ErrorType.GAME_YOU_ALREADY_LOSE);
         }
 
         this.usersStatus.put(user, this.getUserStatus(user).setHasCalledPalifico(true));
         this.resetTurnStartTime();
         this.currentTurn = user;
-
-        return ResultImpl.ok();
     }
 
     @Override

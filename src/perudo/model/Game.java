@@ -2,9 +2,7 @@ package perudo.model;
 
 import java.time.Duration;
 import java.util.List;
-
-import perudo.utility.Response;
-import perudo.utility.Result;
+import perudo.utility.ErrorTypeException;
 
 public interface Game {
 
@@ -14,13 +12,13 @@ public interface Game {
 
     PlayerStatus getUserStatus(User user);
 
-    Result play(Bid bid, User user);
+    void play(Bid bid, User user) throws ErrorTypeException;
 
-    Response<Boolean> doubt(User user);
+    Boolean doubt(User user) throws ErrorTypeException;
 
-    Response<Boolean> urge(User user);
+    Boolean urge(User user) throws ErrorTypeException;
 
-    Result callPalifico(User user);
+    void callPalifico(User user) throws ErrorTypeException;
 
     boolean turnIsPalifico();
 

@@ -1,8 +1,7 @@
 package perudo.model;
 
 import java.util.Set;
-
-import perudo.utility.Result;
+import perudo.utility.ErrorTypeException;
 
 public interface Model {
 
@@ -19,14 +18,14 @@ public interface Model {
      * 
      * @return the result value
      */
-    Result addUser(User user);
+    void addUser(User user) throws ErrorTypeException;
 
     /**
      * Removes an existing user from the set.
      * 
      * @return the result value
      */
-    Result removeUser(User user);
+    void removeUser(User user) throws ErrorTypeException;
 
     // Game methods
     /**
@@ -40,13 +39,13 @@ public interface Model {
      * 
      * @return the result value
      */
-    Result addGame(Game game);
+    void addGame(Game game) throws ErrorTypeException;
     /**
      * Removes an existing game from the set.
      * 
      * @return the result value
      */
-    Result removeGame(Game game);
+    void removeGame(Game game) throws ErrorTypeException;
 
     // Lobby methods
     /**
@@ -61,12 +60,12 @@ public interface Model {
      * 
      * @return the result value
      */
-    Result addLobby(Lobby lobby);
+    void addLobby(Lobby lobby) throws ErrorTypeException;
 
     /**
      * Removes an existing lobby from the set.
      * 
      * @return the result value
      */
-    Result removeLobby(Lobby lobby);
+    void removeLobby(Lobby lobby) throws ErrorTypeException;
 }

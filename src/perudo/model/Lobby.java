@@ -1,27 +1,25 @@
 package perudo.model;
 
 import java.util.Set;
-
-import perudo.utility.Response;
-import perudo.utility.Result;
+import perudo.utility.ErrorTypeException;
 
 public interface Lobby {
-	int getId();
-	
-	Set<User> getUsers();
+    int getId();
 
-	Result addUser(User user);
+    Set<User> getUsers();
 
-	Result removeUser(User user);
+    void addUser(User user) throws ErrorTypeException;
 
-	Response<Game> startGame(User starter);
+    void removeUser(User user) throws ErrorTypeException;
 
-	GameSettings getInfo();
+    Game startGame(User starter) throws ErrorTypeException;
 
-	User getOwner();
-	
-	//support methods
-	default int getFreeSpace(){
-		return getInfo().getMaxPlayer() - getUsers().size();
-	}
+    GameSettings getInfo();
+
+    User getOwner();
+
+    // support methods
+    default int getFreeSpace() {
+        return getInfo().getMaxPlayer() - getUsers().size();
+    }
 }
