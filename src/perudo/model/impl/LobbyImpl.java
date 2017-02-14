@@ -19,7 +19,7 @@ public class LobbyImpl implements Lobby {
     private final GameSettings settings;
     private User owner;
 
-    public LobbyImpl(final GameSettings settings, final User owner) throws ErrorTypeException{
+    public LobbyImpl(final GameSettings settings, final User owner) throws ErrorTypeException {
         if (settings == null || owner == null) {
             throw new IllegalArgumentException();
         }
@@ -43,7 +43,7 @@ public class LobbyImpl implements Lobby {
     }
 
     @Override
-    public void addUser(final User user) throws ErrorTypeException{
+    public void addUser(final User user) throws ErrorTypeException {
         if (this.getFreeSpace() <= 0) {
             throw new ErrorTypeException(ErrorType.LOBBY_IS_FULL);
         }
@@ -56,7 +56,7 @@ public class LobbyImpl implements Lobby {
     }
 
     @Override
-    public void removeUser(final User user) throws ErrorTypeException{
+    public void removeUser(final User user) throws ErrorTypeException {
         if (!this.userSet.remove(user)) {
             throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
@@ -66,7 +66,7 @@ public class LobbyImpl implements Lobby {
     }
 
     @Override
-    public Game startGame(final User starter) throws ErrorTypeException{
+    public Game startGame(final User starter) throws ErrorTypeException {
         if (this.getUsers().size() < 2) {
             throw new ErrorTypeException(ErrorType.LOBBY_CANT_START_GAME);
         }
@@ -84,6 +84,34 @@ public class LobbyImpl implements Lobby {
     @Override
     public User getOwner() {
         return this.owner;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        result = prime * result + ((settings == null) ? 0 : settings.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LobbyImpl other = (LobbyImpl) obj;
+        if (id != other.id)
+            return false;
+        if (settings == null) {
+            if (other.settings != null)
+                return false;
+        } else if (!settings.equals(other.settings))
+            return false;
+        return true;
     }
 
 }

@@ -4,21 +4,66 @@ import java.util.Set;
 import perudo.utility.ErrorTypeException;
 
 public interface Lobby {
+    /**
+     * Gets the unique id of the lobby.
+     * 
+     * @return id value
+     */
     int getId();
 
+    /**
+     * Gets the set of users in the lobby.
+     * 
+     * @return the set of users
+     */
     Set<User> getUsers();
 
+    /**
+     * Adds the user to the lobby.
+     * 
+     * @param user
+     *            the user to add
+     */
     void addUser(User user) throws ErrorTypeException;
 
+    /**
+     * Removes the user to the lobby.
+     * 
+     * @param user
+     *            the user to remove
+     */
     void removeUser(User user) throws ErrorTypeException;
 
+    /**
+     * Starts the lobby.
+     * 
+     * @param user
+     *            the user who start the lobby (must be the owner or an
+     *            ErrorTypeException will be thrown)
+     * 
+     * @return return the started game
+     */
     Game startGame(User starter) throws ErrorTypeException;
 
+    /**
+     * Gets the settings for this lobby.
+     * 
+     * @return the settings
+     */
     GameSettings getInfo();
 
+    /**
+     * Gets the owner of this lobby.
+     * 
+     * @return the user owner
+     */
     User getOwner();
 
-    // support methods
+    /**
+     * Gets the remaining seats for this lobby.
+     * 
+     * @return the free space
+     */
     default int getFreeSpace() {
         return getInfo().getMaxPlayer() - getUsers().size();
     }

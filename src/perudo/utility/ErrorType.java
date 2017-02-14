@@ -22,6 +22,7 @@ public enum ErrorType {
     GAME_YOU_ALREADY_LOSE(4005, " "),
     GAME_NOT_EXISTS(4006, " "),
     GAME_ALREADY_EXISTS(4007, " "),
+    GAME_CANT_DOUBT_NOW(4008, " "),
     
     NONE(0, "No error.");
     

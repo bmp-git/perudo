@@ -7,6 +7,8 @@ import java.util.Random;
 
 import perudo.model.GameSettings;
 import perudo.model.PlayerStatus;
+import perudo.utility.ErrorType;
+import perudo.utility.ErrorTypeException;
 
 public class PlayerStatusImpl implements PlayerStatus {
 
@@ -60,6 +62,9 @@ public class PlayerStatusImpl implements PlayerStatus {
     }
 
     public PlayerStatus setRemainingDice(final int remainingDice) {
+        if (remainingDice < 0) {
+            throw new IllegalArgumentException();
+        }
         return new PlayerStatusImpl(remainingDice, this.getMaxDiceValue(), this.hasCalledPalifico());
     }
 
@@ -67,8 +72,48 @@ public class PlayerStatusImpl implements PlayerStatus {
         return this.hasCalledPalifico;
     }
 
-    public PlayerStatus setHasCalledPalifico(final boolean hasCalledPalifico) {
-        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), hasCalledPalifico);
+    public PlayerStatus callPalifico() throws ErrorTypeException {
+        if (this.hasCalledPalifico) {
+            throw new ErrorTypeException(ErrorType.GAME_PALIFICO_ALREADY_USED);
+        }
+        if (this.getRemainingDice() != 1) {
+            throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
+        }
+        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), true);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((diceValues == null) ? 0 : diceValues.hashCode());
+        result = prime * result + (hasCalledPalifico ? 1231 : 1237);
+        result = prime * result + maxDiceValue;
+        result = prime * result + remainingDice;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PlayerStatusImpl other = (PlayerStatusImpl) obj;
+        if (diceValues == null) {
+            if (other.diceValues != null)
+                return false;
+        } else if (!diceValues.equals(other.diceValues))
+            return false;
+        if (hasCalledPalifico != other.hasCalledPalifico)
+            return false;
+        if (maxDiceValue != other.maxDiceValue)
+            return false;
+        if (remainingDice != other.remainingDice)
+            return false;
+        return true;
     }
 
 }
