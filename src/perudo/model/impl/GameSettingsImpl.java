@@ -73,4 +73,39 @@ public class GameSettingsImpl implements GameSettings {
     public Duration getMaxTurnTime() {
         return this.maxTurnTime;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + initialDiceNumber;
+        result = prime * result + maxDiceValue;
+        result = prime * result + maxPlayer;
+        result = prime * result + ((maxTurnTime == null) ? 0 : maxTurnTime.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GameSettingsImpl other = (GameSettingsImpl) obj;
+        if (initialDiceNumber != other.initialDiceNumber)
+            return false;
+        if (maxDiceValue != other.maxDiceValue)
+            return false;
+        if (maxPlayer != other.maxPlayer)
+            return false;
+        if (maxTurnTime == null) {
+            if (other.maxTurnTime != null)
+                return false;
+        } else if (!maxTurnTime.equals(other.maxTurnTime))
+            return false;
+        return true;
+    }
+
 }

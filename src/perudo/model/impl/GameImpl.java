@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -16,11 +17,8 @@ import perudo.model.GameSettings;
 import perudo.model.PlayerStatus;
 import perudo.model.User;
 import perudo.utility.ErrorType;
+import perudo.utility.ErrorTypeException;
 import perudo.utility.IdDispenser;
-import perudo.utility.Response;
-import perudo.utility.Result;
-import perudo.utility.impl.ResponseImpl;
-import perudo.utility.impl.ResultImpl;
 
 public class GameImpl implements Game {
 
@@ -31,8 +29,7 @@ public class GameImpl implements Game {
 
     private User currentTurn;
     private Instant turnStartTime;
-    private Bid currentBid;
-    private User bidUser;
+    private Optional<Bid> currentBid;
     private boolean palifico;
 
     public GameImpl(final GameSettings settings, final Set<User> users) {
@@ -51,18 +48,20 @@ public class GameImpl implements Game {
     }
 
     private void resetGame() {
+        if (this.isOver()) {
+            return;
+        }
+
         this.palifico = false;
-        this.bidUser = null;
-        this.currentBid = new BidImpl(0, 0);
+        this.currentBid = Optional.empty();
         // reroll all dice
         this.userList.forEach(u -> this.usersStatus.put(u, this.usersStatus.get(u).rollDice()));
         this.goNextTurn();
     }
 
     private void goNextTurn() {
-        // check if at least 2 players are in game (at least 1 dice)
-        if (this.usersStatus.entrySet().stream().filter(p -> p.getValue().getRemainingDice() > 0).count() <= 1) {
-            throw new IllegalStateException("There is no next turn, only 1 or nobody have at least 1 dice");
+        if (this.isOver()) {
+            return;
         }
 
         // go next, if the next player have loss, go next, ...
@@ -78,36 +77,58 @@ public class GameImpl implements Game {
         this.turnStartTime = Instant.now();
     }
 
-    private boolean canUrge(User user) {
-        // no one had yet, the one who bid can't urge, the one who is turn can't
-        // urge
-        return !(this.bidUser == null || this.bidUser.equals(user) || this.getTurn().equals(user));
+    private void removeDice(final User user, final int quantity) {
+        this.addDice(user, -quantity);
     }
 
-    private void removeDice(final User user, final int quantity) {
+    private void addDice(final User user, final int quantity) {
+        if (this.usersStatus.get(user).getRemainingDice() + quantity > this.getSettings().getInitialDiceNumber()) {
+            return;
+        }
+        if (this.usersStatus.get(user).getRemainingDice() + quantity < 0) {
+            return;
+        }
         this.usersStatus.put(user,
-                this.usersStatus.get(user).setRemainingDice(this.usersStatus.get(user).getRemainingDice() - quantity));
+                this.usersStatus.get(user).setRemainingDice(this.usersStatus.get(user).getRemainingDice() + quantity));
+    }
+
+    private void checkUserExistence(User user) throws ErrorTypeException {
+        if (!this.userList.contains(user)) {
+            throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
+        }
+    }
+
+    private void checkUserNotLose(User user) throws ErrorTypeException {
+        if (this.getUserStatus(user).getRemainingDice() <= 0) {
+            throw new ErrorTypeException(ErrorType.GAME_YOU_ALREADY_LOSE);
+        }
+    }
+
+    private void checkUserTurn(User user) throws ErrorTypeException {
+        if (!getTurn().equals(user)) {
+            throw new ErrorTypeException(ErrorType.GAME_NOT_YOUR_TURN);
+        }
+    }
+
+    private void checkUserCanUrge(User user) throws ErrorTypeException {
+        // no one had bid yet, the one who bid can't urge, the one who is turn
+        // can't urge
+        if ((!this.getCurrentBid().isPresent()) || this.getBidUser().equals(user) || this.getTurn().equals(user)) {
+            throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_URGE_NOW);
+        }
     }
 
     private int getBidDiceCount() {
-        int count = 0;
-        for (User u : this.userList) {
-            if (u.equals(this.bidUser) && this.getCurrentBid().getDiceValue() != 1) {
-                // count jolly
-                count += this.usersStatus.get(u).getDiceCount().get(1);
-            }
-            // count dice value
-            count += this.usersStatus.get(u).getDiceCount().get(this.getCurrentBid().getDiceValue());
+        if (!this.getCurrentBid().isPresent()) {
+            throw new IllegalStateException();
         }
-        return count;
+        int bidUserJollyCount = this.userList.stream().filter(u -> this.getBidUser().equals(u))
+                .mapToInt(u -> this.usersStatus.get(u).getDiceCount().get(1)).sum();
+        int usersDiceCount = this.userList.stream()
+                .mapToInt(u -> this.usersStatus.get(u).getDiceCount().get(this.getCurrentBid().get().getDiceValue()))
+                .sum();
 
-        // return
-        // (this.getCurrentBid().getDiceValue()!=1?this.userList.stream().mapToInt(u
-        // ->
-        // this.usersStatus.get(u).getDiceCount().get(this.getCurrentBid().getDiceValue())).sum():0)
-        // + this.userList.stream().filter(u ->
-        // u.equals(this.bidUser)).mapToInt(u ->
-        // this.usersStatus.get(u).getDiceCount().get(1)).sum();
+        return this.getCurrentBid().get().getDiceValue() == 1 ? usersDiceCount : usersDiceCount + bidUserJollyCount;
     }
 
     @Override
@@ -125,121 +146,90 @@ public class GameImpl implements Game {
         return this.currentTurn;
     }
 
-    @Override
-    public Result play(Bid bid, User user) {
-        if (!this.usersStatus.containsKey(user)) {
-            return ResultImpl.error(ErrorType.USER_DOES_NOT_EXISTS);
-        }
-        if (this.getUserStatus(user).getRemainingDice() <= 0) {
-            return ResultImpl.error(ErrorType.GAME_YOU_ALREADY_LOSE);
-        }
-        if (!getTurn().equals(user)) {
-            return ResultImpl.error(ErrorType.GAME_NOT_YOUR_TURN);
-        }
-        if (!this.getCurrentBid().isNextBidValid(bid, this.turnIsPalifico())) {
-            return ResultImpl.error(ErrorType.GAME_INVALID_BID);
+    private User getBidUser() {
+        int idx = this.userList.indexOf(this.getTurn()) - 1;
+        idx = idx < 0 ? this.userList.size() - 1 : idx;
+
+        while (this.getUserStatus(this.userList.get(idx)).getRemainingDice() == 0) {
+            idx = idx - 1 < 0 ? this.userList.size() - 1 : idx - 1;
         }
 
-        this.currentBid = bid;
-        this.bidUser = user;
-        this.goNextTurn();
-        return ResultImpl.ok();
+        return this.userList.get(idx);
     }
 
     @Override
-    public Response<Boolean> doubt(User user) {
-        if (!this.usersStatus.containsKey(user)) {
-            return ResponseImpl.empty(ErrorType.USER_DOES_NOT_EXISTS);
-        }
-        if (this.getUserStatus(user).getRemainingDice() <= 0) {
-            return ResponseImpl.empty(ErrorType.GAME_YOU_ALREADY_LOSE);
-        }
-        if (!getTurn().equals(user)) {
-            return ResponseImpl.empty(ErrorType.GAME_NOT_YOUR_TURN);
+    public void play(Bid bid, User user) throws ErrorTypeException {
+        this.checkUserExistence(user);
+        this.checkUserNotLose(user);
+        this.checkUserTurn(user);
+
+        // check if bid is valid
+        if (this.getCurrentBid().isPresent()
+                && !this.getCurrentBid().get().isNextBidValid(bid, this.turnIsPalifico())) {
+            throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
         }
 
-        if (this.getBidDiceCount() < this.getCurrentBid().getQuantity()) {
+        this.currentBid = Optional.of(bid);
+        this.goNextTurn();
+    }
+
+    @Override
+    public Boolean doubt(User user) throws ErrorTypeException {
+        this.checkUserExistence(user);
+        this.checkUserNotLose(user);
+        this.checkUserTurn(user);
+        if (!this.getCurrentBid().isPresent()) {
+            throw new ErrorTypeException(ErrorType.GAME_CANT_DOUBT_NOW);
+        }
+
+        if (this.getBidDiceCount() < this.getCurrentBid().get().getQuantity()) {
             // doubt is correct, bid user loss 1 dice
-            this.removeDice(this.bidUser, 1);
-            if (!this.isOver()) {
-                this.goNextTurn();
-            }
-            if (!this.isOver()) {
-                this.goNextTurn();
-            }
+            this.removeDice(this.getBidUser(), 1);
             this.resetGame();
-            return ResponseImpl.of(true);
+            return true;
         } else {
             // doubt is wrong, user loss 1 dice
             this.removeDice(user, 1);
-            if (!this.isOver()) {
-                this.goNextTurn();
-            }
             this.resetGame();
-            return ResponseImpl.of(false);
+            return false;
         }
     }
 
     @Override
-    public Response<Boolean> urge(User user) {
-        if (!canUrge(user)) {
-            return ResponseImpl.empty(ErrorType.GAME_CANT_CALL_URGE_NOW);
-        }
-        if (!this.usersStatus.containsKey(user)) {
-            return ResponseImpl.empty(ErrorType.USER_DOES_NOT_EXISTS);
-        }
-        if (this.getUserStatus(user).getRemainingDice() <= 0) {
-            return ResponseImpl.empty(ErrorType.GAME_YOU_ALREADY_LOSE);
-        }
+    public Boolean urge(User user) throws ErrorTypeException {
+        this.checkUserExistence(user);
+        this.checkUserNotLose(user);
+        this.checkUserCanUrge(user);
 
-        if (this.getBidDiceCount() == this.getCurrentBid().getQuantity()) {
-            // urge is correct, all users - user loss 1 dice
+        if (this.getBidDiceCount() == this.getCurrentBid().get().getQuantity()) {
+            // urge is correct, all users (user excluded) loss 1 dice
             this.userList.stream().filter(u -> this.usersStatus.get(u).getRemainingDice() > 0)
                     .filter(u -> !u.equals(user)).forEach(u -> this.removeDice(u, 1));
-            if (!this.isOver()) {
-                this.goNextTurn();
-            }
+            // user get 1 dice
+            this.addDice(user, 1);
             this.resetGame();
-            return ResponseImpl.of(true);
+            return true;
         } else {
             // urge is wrong, user loss 1 dice
             this.removeDice(user, 1);
-            if (!this.isOver()) {
-                this.goNextTurn();
-            }
             this.resetGame();
-            return ResponseImpl.of(false);
+            return false;
         }
 
     }
 
     @Override
-    public Result callPalifico(User user) {
+    public void callPalifico(User user) throws ErrorTypeException {
+        this.checkUserExistence(user);
+
         // bid already started
-        if (this.bidUser != null) {
-            return ResultImpl.error(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
-        }
-        if (!this.usersStatus.containsKey(user)) {
-            return ResultImpl.error(ErrorType.USER_DOES_NOT_EXISTS);
-        }
-        // already called
-        if (this.getUserStatus(user).hasCalledPalifico()) {
-            return ResultImpl.error(ErrorType.GAME_PALIFICO_ALREADY_USED);
-        }
-        // must have 1 dice
-        if (this.getUserStatus(user).getRemainingDice() != 1) {
-            return ResultImpl.error(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
+        if (this.getCurrentBid().isPresent()) {
+            throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
         }
 
-        if (this.getUserStatus(user).getRemainingDice() == 0) {
-            return ResultImpl.error(ErrorType.GAME_YOU_ALREADY_LOSE);
-        }
-
-        this.usersStatus.put(user, this.getUserStatus(user).setHasCalledPalifico(true));
+        this.usersStatus.put(user, this.getUserStatus(user).callPalifico());
         this.resetTurnStartTime();
         this.currentTurn = user;
-
-        return ResultImpl.ok();
     }
 
     @Override
@@ -248,7 +238,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public Bid getCurrentBid() {
+    public Optional<Bid> getCurrentBid() {
         return this.currentBid;
     }
 
@@ -265,6 +255,34 @@ public class GameImpl implements Game {
     @Override
     public boolean turnIsPalifico() {
         return this.palifico;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        result = prime * result + ((settings == null) ? 0 : settings.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GameImpl other = (GameImpl) obj;
+        if (id != other.id)
+            return false;
+        if (settings == null) {
+            if (other.settings != null)
+                return false;
+        } else if (!settings.equals(other.settings))
+            return false;
+        return true;
     }
 
 }

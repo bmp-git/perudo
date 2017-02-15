@@ -113,10 +113,10 @@ public interface View {
      * Tells the view that the palifico turn has been called or an error
      * occured.
      * 
-     * @param user
-     *            user calling
+     * @param response
+     *            result of operation
      */
-    void callPalificoRespond(User user);
+    void callPalificoRespond(Result response);
 
     /**
      * Tells the view that the game has been exited.

@@ -5,12 +5,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import perudo.utility.ErrorType;
+import perudo.utility.ErrorTypeException;
 import perudo.model.Game;
 import perudo.model.Lobby;
 import perudo.model.Model;
 import perudo.model.User;
-import perudo.utility.Result;
-import perudo.utility.impl.ResultImpl;
 
 public class ModelImpl implements Model {
 
@@ -30,19 +29,17 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public Result addUser(final User user) {
+    public void addUser(final User user) throws ErrorTypeException {
         if (!this.users.add(user)) {
-            return ResultImpl.error(ErrorType.USER_ALREADY_EXISTS);
+            throw new ErrorTypeException(ErrorType.USER_ALREADY_EXISTS);
         }
-        return ResultImpl.ok();
     }
 
     @Override
-    public Result removeUser(final User user) {
+    public void removeUser(final User user) throws ErrorTypeException {
         if (!this.users.remove(user)) {
-            return ResultImpl.error(ErrorType.USER_DOES_NOT_EXISTS);
+            throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
-        return ResultImpl.ok();
     }
 
     @Override
@@ -51,19 +48,17 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public Result addGame(final Game game) {
+    public void addGame(final Game game) throws ErrorTypeException {
         if (!this.games.add(game)) {
-            return ResultImpl.error(ErrorType.GAME_ALREADY_EXISTS);
+            throw new ErrorTypeException(ErrorType.GAME_ALREADY_EXISTS);
         }
-        return ResultImpl.ok();
     }
 
     @Override
-    public Result removeGame(final Game game) {
+    public void removeGame(final Game game) throws ErrorTypeException {
         if (!this.games.remove(game)) {
-            return ResultImpl.error(ErrorType.GAME_NOT_EXISTS);
+            throw new ErrorTypeException(ErrorType.GAME_NOT_EXISTS);
         }
-        return ResultImpl.ok();
     }
 
     @Override
@@ -72,19 +67,17 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public Result addLobby(final Lobby lobby) {
+    public void addLobby(final Lobby lobby) throws ErrorTypeException {
         if (!this.lobbies.add(lobby)) {
-            return ResultImpl.error(ErrorType.LOBBY_ALREADY_EXISTS);
+            throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_EXISTS);
         }
-        return ResultImpl.ok();
     }
 
     @Override
-    public Result removeLobby(final Lobby lobby) {
+    public void removeLobby(final Lobby lobby) throws ErrorTypeException {
         if (!this.lobbies.remove(lobby)) {
-            return ResultImpl.error(ErrorType.LOBBY_NOT_EXISTS);
+            throw new ErrorTypeException(ErrorType.LOBBY_NOT_EXISTS);
         }
-        return ResultImpl.ok();
     }
 
 }

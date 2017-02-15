@@ -9,11 +9,8 @@ import perudo.model.GameSettings;
 import perudo.model.Lobby;
 import perudo.model.User;
 import perudo.utility.ErrorType;
+import perudo.utility.ErrorTypeException;
 import perudo.utility.IdDispenser;
-import perudo.utility.Response;
-import perudo.utility.Result;
-import perudo.utility.impl.ResponseImpl;
-import perudo.utility.impl.ResultImpl;
 
 public class LobbyImpl implements Lobby {
 
@@ -22,7 +19,7 @@ public class LobbyImpl implements Lobby {
     private final GameSettings settings;
     private User owner;
 
-    public LobbyImpl(final GameSettings settings, final User owner) {
+    public LobbyImpl(final GameSettings settings, final User owner) throws ErrorTypeException {
         if (settings == null || owner == null) {
             throw new IllegalArgumentException();
         }
@@ -46,39 +43,37 @@ public class LobbyImpl implements Lobby {
     }
 
     @Override
-    public Result addUser(final User user) {
+    public void addUser(final User user) throws ErrorTypeException {
         if (this.getFreeSpace() <= 0) {
-            return ResultImpl.error(ErrorType.LOBBY_IS_FULL);
+            throw new ErrorTypeException(ErrorType.LOBBY_IS_FULL);
         }
         if (!this.userSet.add(user)) {
-            return ResultImpl.error(ErrorType.USER_ALREADY_EXISTS);
+            throw new ErrorTypeException(ErrorType.USER_ALREADY_EXISTS);
         }
         if (this.getOwner() == null) {
             this.owner = user;
         }
-        return ResultImpl.ok();
     }
 
     @Override
-    public Result removeUser(final User user) {
+    public void removeUser(final User user) throws ErrorTypeException {
         if (!this.userSet.remove(user)) {
-            return ResultImpl.error(ErrorType.USER_DOES_NOT_EXISTS);
+            throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
         if (this.getOwner().equals(user)) {
             this.owner = this.userSet.size() == 0 ? null : this.userSet.stream().findAny().get();
         }
-        return ResultImpl.ok();
     }
 
     @Override
-    public Response<Game> startGame(final User starter) {
+    public Game startGame(final User starter) throws ErrorTypeException {
         if (this.getUsers().size() < 2) {
-            return ResponseImpl.empty(ErrorType.LOBBY_CANT_START_GAME);
+            throw new ErrorTypeException(ErrorType.LOBBY_CANT_START_GAME);
         }
         if (!this.getOwner().equals(starter)) {
-            return ResponseImpl.empty(ErrorType.USER_DOES_NOT_OWN_LOBBY);
+            throw new ErrorTypeException(ErrorType.USER_DOES_NOT_OWN_LOBBY);
         }
-        return ResponseImpl.of(new GameImpl(this.getInfo(), this.getUsers()));
+        return new GameImpl(this.getInfo(), this.getUsers());
     }
 
     @Override
@@ -89,6 +84,34 @@ public class LobbyImpl implements Lobby {
     @Override
     public User getOwner() {
         return this.owner;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        result = prime * result + ((settings == null) ? 0 : settings.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LobbyImpl other = (LobbyImpl) obj;
+        if (id != other.id)
+            return false;
+        if (settings == null) {
+            if (other.settings != null)
+                return false;
+        } else if (!settings.equals(other.settings))
+            return false;
+        return true;
     }
 
 }

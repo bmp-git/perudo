@@ -1,27 +1,70 @@
 package perudo.model;
 
 import java.util.Set;
-
-import perudo.utility.Response;
-import perudo.utility.Result;
+import perudo.utility.ErrorTypeException;
 
 public interface Lobby {
-	int getId();
-	
-	Set<User> getUsers();
+    /**
+     * Gets the unique id of the lobby.
+     * 
+     * @return id value
+     */
+    int getId();
 
-	Result addUser(User user);
+    /**
+     * Gets the set of users in the lobby.
+     * 
+     * @return the set of users
+     */
+    Set<User> getUsers();
 
-	Result removeUser(User user);
+    /**
+     * Adds the user to the lobby.
+     * 
+     * @param user
+     *            the user to add
+     */
+    void addUser(User user) throws ErrorTypeException;
 
-	Response<Game> startGame(User starter);
+    /**
+     * Removes the user to the lobby.
+     * 
+     * @param user
+     *            the user to remove
+     */
+    void removeUser(User user) throws ErrorTypeException;
 
-	GameSettings getInfo();
+    /**
+     * Starts the lobby.
+     * 
+     * @param user
+     *            the user who start the lobby (must be the owner or an
+     *            ErrorTypeException will be thrown)
+     * 
+     * @return return the started game
+     */
+    Game startGame(User starter) throws ErrorTypeException;
 
-	User getOwner();
-	
-	//support methods
-	default int getFreeSpace(){
-		return getInfo().getMaxPlayer() - getUsers().size();
-	}
+    /**
+     * Gets the settings for this lobby.
+     * 
+     * @return the settings
+     */
+    GameSettings getInfo();
+
+    /**
+     * Gets the owner of this lobby.
+     * 
+     * @return the user owner
+     */
+    User getOwner();
+
+    /**
+     * Gets the remaining seats for this lobby.
+     * 
+     * @return the free space
+     */
+    default int getFreeSpace() {
+        return getInfo().getMaxPlayer() - getUsers().size();
+    }
 }
