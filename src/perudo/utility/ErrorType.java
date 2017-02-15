@@ -4,16 +4,19 @@ public enum ErrorType {
 	NAME_ALREADY_TAKEN(1000, "The name is already taken."),
 	
 	LOBBY_NOT_EXISTS(2000, "The lobby does not exit."),
+	LOBBY_ALREADY_EXISTS(2004, " "),
+	
 	LOBBY_ALREADY_JOINED(2001, "You are already in a lobby."),
 	LOBBY_IS_FULL(2003, "The lobby is full."),
-	LOBBY_ALREADY_EXISTS(2004, " "),
 	LOBBY_CANT_START_GAME(2006, " "),
+	LOBBY_USER_NOT_OWNER(2007, " "),
+	LOBBY_USER_NOT_PRESENT(2008, " "),
+	LOBBY_ALREADY_STARTED(2009, " "),
 
 	USER_IS_IN_GAME(3000, "The user in in game."),
 	USER_ALREADY_EXISTS(3001, "The user already exists."),
     USER_DOES_NOT_EXISTS(3002, "The user does not exists."),
-    USER_DOES_NOT_OWN_LOBBY(3003, " "),
-    
+       
     GAME_NOT_YOUR_TURN(4000, " "),
     GAME_INVALID_BID(4001, " "),
     GAME_PALIFICO_ALREADY_USED(4002, " "),

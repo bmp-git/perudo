@@ -22,7 +22,7 @@ public class GameSettingsImpl implements GameSettings {
 
     public GameSettingsImpl(final int maxPlayer, final int maxDiceValue, final int initialDiceNumber,
             final Duration maxTurnTime) {
-        if (initialDiceNumber < MIN_INITIAL_DICE_NUMBER) {
+        if (maxPlayer < MIN_MAX_PLAYER) {
             throw new IllegalArgumentException("initialDiceNumber should be at least " + MIN_INITIAL_DICE_NUMBER);
         }
         if (maxDiceValue < MIN_MAX_DICE_VALUE) {

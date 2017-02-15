@@ -22,7 +22,9 @@ public interface Bid {
      *            indicates the bid to check
      * @param turnIsPalifico
      *            indicates if the current turn is palifico
+     * @param gameSettings
+     *            indicates the settings of the game
      * @return true if the bid is valid, false otherwise
      */
-    boolean isNextBidValid(Bid nextBid, boolean turnIsPalifico);
+    boolean isNextBidValid(Bid nextBid, boolean turnIsPalifico, GameSettings gameSettings);
 }

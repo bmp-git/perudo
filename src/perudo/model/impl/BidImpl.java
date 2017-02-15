@@ -1,6 +1,7 @@
 package perudo.model.impl;
 
 import perudo.model.Bid;
+import perudo.model.GameSettings;
 
 public class BidImpl implements Bid {
 
@@ -17,7 +18,10 @@ public class BidImpl implements Bid {
         this.quantity = quantity;
     }
 
-    public boolean isNextBidValid(final Bid nextBid, final boolean turnIsPalifico) {
+    public boolean isNextBidValid(final Bid nextBid, final boolean turnIsPalifico,final GameSettings gameSettings) {
+        if(nextBid.getDiceValue() > gameSettings.getMaxDiceValue()){
+            return false;
+        }
         if (turnIsPalifico) {
             if (nextBid.getDiceValue() != this.getDiceValue()) {
                 return false;

@@ -165,7 +165,7 @@ public class GameImpl implements Game {
 
         // check if bid is valid
         if (this.getCurrentBid().isPresent()
-                && !this.getCurrentBid().get().isNextBidValid(bid, this.turnIsPalifico())) {
+                && !this.getCurrentBid().get().isNextBidValid(bid, this.turnIsPalifico(), this.getSettings())) {
             throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
         }
 

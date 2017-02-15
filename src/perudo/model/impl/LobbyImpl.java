@@ -18,12 +18,13 @@ public class LobbyImpl implements Lobby {
     private final Set<User> userSet;
     private final GameSettings settings;
     private User owner;
+    private boolean started;
 
     public LobbyImpl(final GameSettings settings, final User owner) throws ErrorTypeException {
         if (settings == null || owner == null) {
             throw new IllegalArgumentException();
         }
-
+        this.started = false;
         this.id = IdDispenser.getLobbyIdDispenser().getNextId();
         this.userSet = new HashSet<>();
         this.owner = owner;
@@ -44,11 +45,14 @@ public class LobbyImpl implements Lobby {
 
     @Override
     public void addUser(final User user) throws ErrorTypeException {
+        if(started){
+            throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_STARTED);
+        }
         if (this.getFreeSpace() <= 0) {
             throw new ErrorTypeException(ErrorType.LOBBY_IS_FULL);
         }
         if (!this.userSet.add(user)) {
-            throw new ErrorTypeException(ErrorType.USER_ALREADY_EXISTS);
+            throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_JOINED);
         }
         if (this.getOwner() == null) {
             this.owner = user;
@@ -57,8 +61,11 @@ public class LobbyImpl implements Lobby {
 
     @Override
     public void removeUser(final User user) throws ErrorTypeException {
+        if(started){
+            throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_STARTED);
+        }
         if (!this.userSet.remove(user)) {
-            throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
+            throw new ErrorTypeException(ErrorType.LOBBY_USER_NOT_PRESENT);
         }
         if (this.getOwner().equals(user)) {
             this.owner = this.userSet.size() == 0 ? null : this.userSet.stream().findAny().get();
@@ -67,13 +74,19 @@ public class LobbyImpl implements Lobby {
 
     @Override
     public Game startGame(final User starter) throws ErrorTypeException {
+        if(started){
+            throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_STARTED);
+        }
         if (this.getUsers().size() < 2) {
             throw new ErrorTypeException(ErrorType.LOBBY_CANT_START_GAME);
         }
         if (!this.getOwner().equals(starter)) {
-            throw new ErrorTypeException(ErrorType.USER_DOES_NOT_OWN_LOBBY);
+            throw new ErrorTypeException(ErrorType.LOBBY_USER_NOT_OWNER);
         }
-        return new GameImpl(this.getInfo(), this.getUsers());
+        
+        Game game = new GameImpl(this.getInfo(), this.getUsers());
+        this.started = true;
+        return game;
     }
 
     @Override

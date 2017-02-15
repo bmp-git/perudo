@@ -26,8 +26,8 @@ public class PlayerStatusImpl implements PlayerStatus {
         if (remainingDice < 0) {
             throw new IllegalArgumentException("remainingDice should be positive");
         }
-        if (maxDiceValue < 0) {
-            throw new IllegalArgumentException("maxDiceValue should be positive");
+        if (maxDiceValue <= 0) {
+            throw new IllegalArgumentException("dice faces should be at least 1");
         }
         this.remainingDice = remainingDice;
         this.hasCalledPalifico = hasCalledPalifico;
@@ -62,9 +62,6 @@ public class PlayerStatusImpl implements PlayerStatus {
     }
 
     public PlayerStatus setRemainingDice(final int remainingDice) {
-        if (remainingDice < 0) {
-            throw new IllegalArgumentException();
-        }
         return new PlayerStatusImpl(remainingDice, this.getMaxDiceValue(), this.hasCalledPalifico());
     }
 
