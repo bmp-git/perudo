@@ -16,7 +16,6 @@ import perudo.model.GameSettings;
 import perudo.model.Lobby;
 import perudo.model.Model;
 import perudo.model.User;
-import perudo.model.impl.GameImpl;
 import perudo.model.impl.LobbyImpl;
 import perudo.model.impl.ModelImpl;
 import perudo.model.impl.UserImpl;
@@ -61,20 +60,20 @@ public class StandardControllerImpl implements Controller {
     public void changeUserName(final User user, final String name) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
-            final User newUser = new UserImpl(name);
             final View view = this.views.get(user);
+            User newUser = user.changeName(name);
             try {
-                this.model.addUser(newUser);
+                this.model.removeUser(user);
             } catch (ErrorTypeException e) {
                 view.changeNameRespond(ResponseImpl.empty(e.getErrorType()));
                 return;
             }
 
             try {
-                this.model.removeUser(user);
+                this.model.addUser(newUser);
             } catch (ErrorTypeException e) {
                 try {
-                    this.model.removeUser(newUser);
+                    this.model.addUser(user);
                 } catch (ErrorTypeException e1) {
                     e1.printStackTrace();
                     System.exit(1);
@@ -166,10 +165,7 @@ public class StandardControllerImpl implements Controller {
             Game game = null;
             try {
                 lobby = getLobbyFromModel(user);
-                if (!Objects.equals(lobby.getOwner(), user)) {
-                    throw new ErrorTypeException(ErrorType.USER_DOES_NOT_OWN_LOBBY);
-                }
-                game = new GameImpl(lobby.getInfo(), lobby.getUsers());
+                game = lobby.startGame(user);
                 this.model.removeLobby(lobby);
 
             } catch (ErrorTypeException e) {
@@ -179,6 +175,7 @@ public class StandardControllerImpl implements Controller {
 
             try {
                 this.model.addGame(game);
+                view.startLobbyRespond(ResultImpl.ok());
             } catch (ErrorTypeException e) {
                 try {
                     this.model.addLobby(lobby);
@@ -188,7 +185,7 @@ public class StandardControllerImpl implements Controller {
                 }
                 view.startLobbyRespond(ResponseImpl.empty(e.getErrorType()));
             }
-
+            
         });
 
     }
