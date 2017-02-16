@@ -14,11 +14,12 @@ public enum ErrorType {
 	LOBBY_ALREADY_STARTED(2009, " "),
 
 	USER_IS_IN_GAME(3000, "The user is in game."),
-	USER_ALREADY_EXISTS(3001, "The user already exists."),
-    USER_DOES_NOT_EXISTS(3002, "The user does not exists."),
-    USER_DOES_NOT_OWN_LOBBY(3003, " "),
-    USER_IS_NOT_IN_A_LOBBY(3004, "The user is not in a lobby."),
-    USER_IS_NOT_IN_A_GAME(3005, "The user is not in a game."),
+	USER_IS_IN_LOBBY(3001, "The user is in a lobby."),
+	USER_ALREADY_EXISTS(3002, "The user already exists."),
+    USER_DOES_NOT_EXISTS(3003, "The user does not exists."),
+    USER_DOES_NOT_OWN_LOBBY(3004, " "),
+    USER_IS_NOT_IN_A_LOBBY(3005, "The user is not in a lobby."),
+    USER_IS_NOT_IN_A_GAME(3006, "The user is not in a game."),
     
     GAME_NOT_YOUR_TURN(4000, " "),
     GAME_INVALID_BID(4001, " "),
