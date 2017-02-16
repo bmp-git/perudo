@@ -167,6 +167,8 @@ public class GameImpl implements Game {
         if (this.getCurrentBid().isPresent()
                 && !this.getCurrentBid().get().isNextBidValid(bid, this.turnIsPalifico(), this.getSettings())) {
             throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
+        } else if(!this.getCurrentBid().isPresent() && bid.getDiceValue() > this.getSettings().getMaxDiceValue()){
+            throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
         }
 
         this.currentBid = Optional.of(bid);
@@ -244,7 +246,7 @@ public class GameImpl implements Game {
 
     @Override
     public Duration getTurnRemainingTime() {
-        return Duration.between(this.turnStartTime, Instant.now());
+        return this.getSettings().getMaxTurnTime().minus(Duration.between(this.turnStartTime, Instant.now()));
     }
 
     @Override

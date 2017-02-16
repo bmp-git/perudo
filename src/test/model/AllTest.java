@@ -24,4 +24,15 @@ public class AllTest {
     public void BidTest() {
         new BidTest().main();
     }
+    
+    @org.junit.Test
+    public void ModelTest() {
+        new ModelTest().main();
+    }
+    
+    
+    @org.junit.Test
+    public void GameTest() {
+        new GameTest().main();
+    }
 }

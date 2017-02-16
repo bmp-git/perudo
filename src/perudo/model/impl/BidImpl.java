@@ -2,17 +2,16 @@ package perudo.model.impl;
 
 import perudo.model.Bid;
 import perudo.model.GameSettings;
+import perudo.utility.ErrorType;
+import perudo.utility.ErrorTypeException;
 
 public class BidImpl implements Bid {
 
     private final int diceValue, quantity;
 
-    public BidImpl(final int quantity, final int diceValue) {
-        if (quantity < 0) {
-            throw new IllegalArgumentException("quantity should be at least 0");
-        }
-        if (diceValue < 1) {
-            throw new IllegalArgumentException("diceValue should be at least 1");
+    public BidImpl(final int quantity, final int diceValue) throws ErrorTypeException{
+        if (quantity < 0 || diceValue < 1) {
+            throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
         }
         this.diceValue = diceValue;
         this.quantity = quantity;
