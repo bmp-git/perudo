@@ -109,6 +109,11 @@ public class GameImpl implements Game {
             throw new ErrorTypeException(ErrorType.GAME_NOT_YOUR_TURN);
         }
     }
+    private void checkIsOver() throws ErrorTypeException {
+        if (this.isOver()) {
+            throw new ErrorTypeException(ErrorType.GAME_IS_OVER);
+        }
+    }
 
     private void checkUserCanUrge(User user) throws ErrorTypeException {
         // no one had bid yet, the one who bid can't urge, the one who is turn
@@ -159,6 +164,7 @@ public class GameImpl implements Game {
 
     @Override
     public void play(Bid bid, User user) throws ErrorTypeException {
+        this.checkIsOver();
         this.checkUserExistence(user);
         this.checkUserNotLose(user);
         this.checkUserTurn(user);
@@ -177,6 +183,7 @@ public class GameImpl implements Game {
 
     @Override
     public Boolean doubt(User user) throws ErrorTypeException {
+        this.checkIsOver();
         this.checkUserExistence(user);
         this.checkUserNotLose(user);
         this.checkUserTurn(user);
@@ -199,6 +206,7 @@ public class GameImpl implements Game {
 
     @Override
     public Boolean urge(User user) throws ErrorTypeException {
+        this.checkIsOver();
         this.checkUserExistence(user);
         this.checkUserNotLose(user);
         this.checkUserCanUrge(user);
@@ -222,6 +230,7 @@ public class GameImpl implements Game {
 
     @Override
     public void callPalifico(User user) throws ErrorTypeException {
+        this.checkIsOver();
         this.checkUserExistence(user);
 
         // bid already started
@@ -285,6 +294,18 @@ public class GameImpl implements Game {
         } else if (!settings.equals(other.settings))
             return false;
         return true;
+    }
+
+    @Override
+    public void removeUser(User user) throws ErrorTypeException {
+        this.checkUserExistence(user);
+        PlayerStatus status = this.getUserStatus(user);
+        this.userList.remove(user);
+        this.usersStatus.remove(user);
+        
+        if(status.getRemainingDice() != 0){
+           this.resetGame();
+        } 
     }
 
 }

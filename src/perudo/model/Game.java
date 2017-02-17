@@ -114,4 +114,13 @@ public interface Game {
     default boolean isOver() {
         return getUsers().stream().filter(u -> getUserStatus(u).getRemainingDice() > 0).count() <= 1;
     }
+    
+    /**
+     * Remove the selected user
+     * 
+     * @param user
+     *            the user to remove
+     * 
+     */
+    void removeUser(User user) throws ErrorTypeException;
 }

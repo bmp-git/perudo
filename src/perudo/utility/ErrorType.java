@@ -30,6 +30,7 @@ public enum ErrorType {
     GAME_NOT_EXISTS(4006, " "),
     GAME_ALREADY_EXISTS(4007, " "),
     GAME_CANT_DOUBT_NOW(4008, " "),
+    GAME_IS_OVER(4009, " "),
     
     NONE(0, "No error.");
     
