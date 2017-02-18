@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -13,10 +14,15 @@ import javax.swing.JSplitPane;
 import javax.swing.ScrollPaneConstants;
 
 public class StandardGUIFactory implements GUIFactory {
-
+    
     @Override
     public JPanel createPanel() {
         return new JPanel();
+    }
+    
+    @Override
+    public JPanel createMenuPanel() {
+        return new MenuPanel();
     }
 
     @Override
@@ -46,4 +52,10 @@ public class StandardGUIFactory implements GUIFactory {
         panel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         return panel;
     }
+
+    @Override
+    public JFrame createFrame(String title) {
+        return new JFrame(title);
+    }
+
 }
