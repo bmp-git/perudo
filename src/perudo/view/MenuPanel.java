@@ -1,107 +1,136 @@
 package perudo.view;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
-public class Lobbypage extends JFrame {
+import perudo.model.Lobby;
+import perudo.model.User;
+import perudo.view.impl.panels.LobbyInfoPanel;
+import perudo.view.impl.panels.LobbyPanel;
+
+public class MenuPanel extends JPanel {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    private static final String TITLE = "Perudo - Lobby";
-    private static final String EXIT_NAME = "Quitting..";
-    private static final String EXIT_TEXT = "Do you really want to quit?";
-    private static final String ICON_RESPATH = "/images/perudo-logo.png";
 
     private final GUIFactory factory;
     private JSplitPane splitPane;
-    private JPanel lobbylist;
+    private JPanel lobbypanel;
     private JPanel lobbyinfo;
 
-    public Lobbypage() {
+    private User user;
+    
+    
+    public MenuPanel() {
         this.factory = new StandardGUIFactory();
-        
-        this.setTitle(TITLE);
         this.setLayout(new BorderLayout());
-        this.setIconImage(GUIUtility.getIcon(ICON_RESPATH).getImage());
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        this.setLocationByPlatform(true);
-
-        this.addWindowListener(new WindowAdapter(){
-            public void windowClosing (WindowEvent e) {
-                int n = JOptionPane.showConfirmDialog(Lobbypage.this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
-                if (n == JOptionPane.YES_OPTION)
-                    System.exit(0);
-            }
-        });
         
         createLobbyListPanel();
         createLobbyInfoPanel();
         createSplitPanel();
 
         this.add(splitPane, BorderLayout.CENTER);
+        
+        setUser(null);
     }
 
+    private void setUser(User user){
+        this.user = user;
+    }
+    
     private void createLobbyListPanel() {
-        lobbylist = factory.createPanel();
-        lobbylist.setLayout(new GridBagLayout());
-        lobbylist.setBorder(new TitledBorder("Lobbies list"));
-        final GridBagConstraints cnst = new GridBagConstraints();
-        cnst.anchor = GridBagConstraints.FIRST_LINE_START;
-        cnst.weighty = 1.0;
-        cnst.gridy = 0;
-        cnst.insets = new Insets(5, 5, 5, 5);
-        lobbylist.add(factory.createButton("prova"), cnst);
-        cnst.gridy++;
-        lobbylist.add(factory.createButton("prova"), cnst);
-        cnst.gridy++;
-        lobbylist.add(factory.createButton("prova"), cnst);
-        cnst.gridy++;
-        lobbylist.add(factory.createButton("prova"), cnst);
-        cnst.gridy++;
-        lobbylist.add(factory.createButton("prova"), cnst);
-        cnst.gridy++;
-        lobbylist.add(factory.createButton("prova"), cnst);
-        cnst.gridy++;
-        lobbylist.add(factory.createButton("prova"), cnst);
-
+        lobbypanel = factory.createPanel();
+        GridLayout gl = new GridLayout(1, 1);
+        lobbypanel.setLayout(gl);
+        lobbypanel.setBorder(new TitledBorder("Lobbies list"));
+       
     }
 
     private void createLobbyInfoPanel() {
-        lobbyinfo = new JPanel();
-        lobbyinfo.setLayout(new FlowLayout());
+        lobbyinfo = factory.createPanel();
+        GridLayout gl = new GridLayout(1, 1);
+        lobbyinfo.setLayout(gl);
         lobbyinfo.setBorder(new TitledBorder("Lobby Info"));
-        lobbyinfo.add(new JButton("PROVA"));
-        lobbyinfo.add(new JButton("PROVA"));
     }
 
     private void createSplitPanel() {
         splitPane = (JSplitPane) factory.createVerticalSplitPane();
         final JScrollPane scroll = (JScrollPane) factory.createVerticalScrollPanel();
-        scroll.getViewport().add(lobbylist);
-        scroll.setPreferredSize(new Dimension(200, 500));
+        scroll.getViewport().add(lobbypanel);
 
         splitPane.setLeftComponent(scroll);
         splitPane.setRightComponent(lobbyinfo);
     }
+    
+    public void addLobby(Lobby lobby) {
+        LobbyPanel p = new LobbyPanel(lobby);
+        class ML implements MouseListener{
 
-    public void showFrame() {
-        GUIUtility.fitFrame(this,2);
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                lobbyinfo.removeAll();
+                lobbyinfo.add(new LobbyInfoPanel(((LobbyPanel)e.getSource()).getLobby()));   
+                lobbyinfo.repaint();
+                lobbyinfo.revalidate();  
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {                
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {              
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                ((LobbyPanel)e.getSource()).setBorder(BorderFactory.createLineBorder(Color.black));
+                setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                ((LobbyPanel)e.getSource()).setBorder(BorderFactory.createLineBorder(Color.WHITE));
+                setCursor(Cursor.getDefaultCursor());
+            }
+            
+        }
+        p.addMouseListener(new ML());
+        ((GridLayout)lobbypanel.getLayout()).setRows(this.lobbypanel.getComponentCount() + 1);
+        this.lobbypanel.add(p);
+    }
+    public void removeLobby(Lobby lobby) {
+        
+        for(int i = 0;i<this.lobbypanel.getComponentCount();i++){
+            if(((LobbyPanel)this.lobbypanel.getComponent(i)).getLobby().equals(lobby)){
+                this.lobbypanel.remove(this.lobbypanel.getComponent(i));
+                break;
+            }
+        }
+        
+    }
+
+    public void updateLobby(Lobby lobby) {
+        for(int i = 0;i<this.lobbypanel.getComponentCount();i++){
+            if(((LobbyPanel)this.lobbypanel.getComponent(i)).getLobby().equals(lobby)){
+                ((LobbyPanel)this.lobbypanel.getComponent(i)).setLobby(lobby);
+            }
+        }
+        
+        if(lobbyinfo.getComponentCount() > 0){
+            ((LobbyInfoPanel)lobbyinfo.getComponent(0)).setLobby(lobby);
+        }
     }
 }
