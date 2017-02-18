@@ -19,9 +19,15 @@ public class GameSettingsImpl implements GameSettings {
 
     private final int maxPlayer, initialDiceNumber, maxDiceValue;
     private final Duration maxTurnTime;
+    private final String name;
 
     public GameSettingsImpl(final int playerNumbers, final int diceFaces, final int initialDiceNumbers,
             final Duration turnTime) {
+        this(playerNumbers, diceFaces, initialDiceNumbers, turnTime, "");
+    }
+
+    public GameSettingsImpl(final int playerNumbers, final int diceFaces, final int initialDiceNumbers,
+            final Duration turnTime, final String name) {
         if (playerNumbers < MIN_PLAYER_NUMBERS) {
             throw new IllegalArgumentException("initialDiceNumber should be at least " + MIN_INITIAL_DICE_NUMBERS);
         }
@@ -52,6 +58,7 @@ public class GameSettingsImpl implements GameSettings {
         this.maxDiceValue = diceFaces;
         this.initialDiceNumber = initialDiceNumbers;
         this.maxTurnTime = turnTime;
+        this.name = name == null ? "" : name;
     }
 
     @Override
@@ -75,6 +82,11 @@ public class GameSettingsImpl implements GameSettings {
     }
 
     @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -82,6 +94,7 @@ public class GameSettingsImpl implements GameSettings {
         result = prime * result + maxDiceValue;
         result = prime * result + maxPlayer;
         result = prime * result + ((maxTurnTime == null) ? 0 : maxTurnTime.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 
@@ -105,11 +118,16 @@ public class GameSettingsImpl implements GameSettings {
                 return false;
         } else if (!maxTurnTime.equals(other.maxTurnTime))
             return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
         return true;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Game settings[MAX PLAYER(");
         sb.append(this.getMaxPlayer());
@@ -119,7 +137,9 @@ public class GameSettingsImpl implements GameSettings {
         sb.append(this.getInitialDiceNumber());
         sb.append("), TURN TIME(");
         sb.append(this.getMaxTurnTime().getSeconds());
-        sb.append("s)]");
+        sb.append("s), NAME(");
+        sb.append(this.getName());
+        sb.append(")]");
         return sb.toString();
     }
 

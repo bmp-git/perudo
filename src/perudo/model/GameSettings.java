@@ -31,4 +31,11 @@ public interface GameSettings {
      * @return amount of time
      */
     Duration getMaxTurnTime();
+    
+    /**
+     * Gets the name.
+     * 
+     * @return the name string
+     */
+    String getName();
 }
