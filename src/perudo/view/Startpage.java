@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,6 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 public class Startpage extends JFrame {
+
+    public enum StartingFrameResult {
+        MULTIPLAYER, SINGLEPLAYER, EXIT;
+    }
 
     /**
      * 
@@ -35,9 +40,11 @@ public class Startpage extends JFrame {
     private JButton singleplayer;
     private JButton exit;
     private JLabel logo;
+    private Optional<StartingFrameResult> result;
 
     public Startpage() {
         this.factory = new StandardGUIFactory();
+        this.result = Optional.empty();
 
         this.setTitle(TITLE);
         this.setLayout(new BorderLayout());
@@ -50,14 +57,17 @@ public class Startpage extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 int n = JOptionPane.showConfirmDialog(Startpage.this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
-                if (n == JOptionPane.YES_OPTION)
-                    System.exit(0);
+                if (n == JOptionPane.YES_OPTION) {
+                    Startpage.this.result = Optional.of(StartingFrameResult.EXIT);
+                    Startpage.this.setVisible(false);
+                    Startpage.this.dispose();
+                }
             }
         });
-        
+
         createMainPanel();
         createTopPanel();
-        
+
         this.getContentPane().add(top, BorderLayout.NORTH);
         this.getContentPane().add(main, BorderLayout.CENTER);
 
@@ -68,12 +78,25 @@ public class Startpage extends JFrame {
         main.setLayout(new GridBagLayout());
 
         multiplayer = (JButton) factory.createButton("Multiplayer");
+        multiplayer.addActionListener(e -> {
+            this.result = Optional.of(StartingFrameResult.MULTIPLAYER);
+            this.setVisible(false);
+            this.dispose();
+        });
         singleplayer = (JButton) factory.createButton("Singleplayer");
+        singleplayer.addActionListener(e -> {
+            this.result = Optional.of(StartingFrameResult.SINGLEPLAYER);
+            this.setVisible(false);
+            this.dispose();
+        });
         exit = (JButton) factory.createButton("Exit");
         exit.addActionListener(a -> {
             int n = JOptionPane.showConfirmDialog(this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
-            if (n == JOptionPane.YES_OPTION)
-                System.exit(0);
+            if (n == JOptionPane.YES_OPTION) {
+                this.result = Optional.of(StartingFrameResult.EXIT);
+                this.setVisible(false);
+                this.dispose();
+            }
         });
 
         final GridBagConstraints cnst = new GridBagConstraints();
@@ -95,6 +118,10 @@ public class Startpage extends JFrame {
             System.out.println(e);
         }
         top.add(logo);
+    }
+
+    public Optional<StartingFrameResult> getResult() {
+        return this.result;
     }
 
     public void showFrame() {
