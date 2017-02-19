@@ -22,7 +22,6 @@ import perudo.model.impl.UserImpl;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 import perudo.utility.impl.ResponseImpl;
-import perudo.utility.impl.ResultImpl;
 import perudo.view.View;
 
 public class StandardControllerImpl implements Controller {
@@ -50,6 +49,8 @@ public class StandardControllerImpl implements Controller {
                 this.model.addUser(newUser);
                 this.views.put(newUser, view);
                 view.initializeNewUserRespond(ResponseImpl.of(newUser));
+                views.entrySet().stream().filter(e -> !Objects.equals(e, newUser))
+                        .forEach(e -> e.getValue().initializeNewUserNotify(newUser));
             } catch (ErrorTypeException e) {
                 view.initializeNewUserRespond(ResponseImpl.empty(e.getErrorType()));
             }
@@ -65,7 +66,7 @@ public class StandardControllerImpl implements Controller {
             try {
                 this.model.removeUser(user);
             } catch (ErrorTypeException e) {
-                view.changeNameRespond(ResponseImpl.empty(e.getErrorType()));
+                view.showError(e.getErrorType());
                 return;
             }
 
@@ -78,13 +79,13 @@ public class StandardControllerImpl implements Controller {
                     e1.printStackTrace();
                     System.exit(1);
                 }
-                view.changeNameRespond(ResponseImpl.empty(e.getErrorType()));
+                view.showError(e.getErrorType());
                 return;
             }
 
             this.views.remove(user);
             this.views.put(newUser, view);
-            view.changeNameRespond(ResponseImpl.of(newUser));
+            this.views.forEach((u, v) -> v.changeNameNotify(newUser));
         });
     }
 
@@ -102,13 +103,13 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(user);
         Objects.requireNonNull(info);
         this.executor.execute(() -> {
-            final View view = this.views.get(user);
             try {
                 final Lobby lobby = new LobbyImpl(info, user);
                 this.model.addLobby(lobby);
-                view.createLobbyRespond(ResponseImpl.of(lobby));
+                this.views.forEach((u, v) -> v.createLobbyNotify(lobby));
             } catch (ErrorTypeException e) {
-                view.createLobbyRespond(ResponseImpl.empty(e.getErrorType()));
+                final View view = this.views.get(user);
+                view.showError(e.getErrorType());
             }
         });
     }
@@ -128,13 +129,13 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(user);
         Objects.requireNonNull(lobby);
         this.executor.execute(() -> {
-            final View view = this.views.get(user);
             try {
-                final Lobby lobbyModel = getLobbyFromModel(lobby);
+                final Lobby lobbyModel = this.getLobbyFromModel(lobby);
                 lobbyModel.addUser(user);
-                view.joinLobbyRespond(ResponseImpl.of(lobbyModel));
+                this.views.forEach((u, v) -> v.joinLobbyNotify(lobbyModel, user));
             } catch (ErrorTypeException e) {
-                view.joinLobbyRespond(ResponseImpl.empty(e.getErrorType()));
+                final View view = this.views.get(user);
+                view.showError(e.getErrorType());
             }
         });
 
@@ -144,13 +145,13 @@ public class StandardControllerImpl implements Controller {
     public void exitLobby(final User user) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
-            final View view = this.views.get(user);
             try {
-                final Lobby lobby = getLobbyFromModel(user);
+                final Lobby lobby = this.getLobbyFromModel(user);
                 lobby.removeUser(user);
-                view.exitLobbyRespond(ResponseImpl.of(lobby));
+                this.views.forEach((u, v) -> v.exitLobbyNotify(lobby, user));
             } catch (ErrorTypeException e) {
-                view.exitLobbyRespond(ResponseImpl.empty(e.getErrorType()));
+                final View view = this.views.get(user);
+                view.showError(e.getErrorType());
             }
         });
 
@@ -161,21 +162,23 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
             final View view = this.views.get(user);
-            Lobby lobby = null;
-            Game game = null;
+            Lobby lobbyTMP = null;
+            Game gameTMP = null;
             try {
-                lobby = getLobbyFromModel(user);
-                game = lobby.startGame(user);
-                this.model.removeLobby(lobby);
+                lobbyTMP = this.getLobbyFromModel(user);
+                gameTMP = lobbyTMP.startGame(user);
+                this.model.removeLobby(lobbyTMP);
 
             } catch (ErrorTypeException e) {
-                view.startLobbyRespond(ResponseImpl.empty(e.getErrorType()));
+                view.showError(e.getErrorType());
                 return;
             }
 
+            final Lobby lobby = lobbyTMP;
+            final Game game = gameTMP;
             try {
                 this.model.addGame(game);
-                view.startLobbyRespond(ResultImpl.ok());
+                this.views.forEach((u, v) -> v.startLobbyNotify(lobby, game));
             } catch (ErrorTypeException e) {
                 try {
                     this.model.addLobby(lobby);
@@ -183,7 +186,7 @@ public class StandardControllerImpl implements Controller {
                     e1.printStackTrace();
                     System.exit(2);
                 }
-                view.startLobbyRespond(ResponseImpl.empty(e.getErrorType()));
+                view.showError(e.getErrorType());
             }
 
         });
@@ -204,17 +207,13 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(user);
         Objects.requireNonNull(bid);
         this.executor.execute(() -> {
-            final View view = this.views.get(user);
             try {
-                final Game game = getGameFromModel(user);
+                final Game game = this.getGameFromModel(user);
                 game.play(bid, user);
-                view.playRespond(ResultImpl.ok());
-                if (game.isOver()) {
-                    this.views.entrySet().stream().filter(e -> game.getUsers().contains(e.getKey()))
-                            .forEach(e -> e.getValue().gameEnded(game));
-                }
+                this.getViewsfromGame(game).forEach((u, v) -> v.playNotify(game, user));
             } catch (ErrorTypeException e) {
-                view.playRespond(ResultImpl.error(e.getErrorType()));
+                final View view = this.views.get(user);
+                view.showError(e.getErrorType());
             }
         });
 
@@ -224,16 +223,17 @@ public class StandardControllerImpl implements Controller {
     public void doubt(final User user) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
-            final View view = this.views.get(user);
             try {
-                final Game game = getGameFromModel(user);
+                final Game game = this.getGameFromModel(user);
                 final boolean result = game.doubt(user);
-                // need to tell the view if the doubt was correct or not
-                // ????
-
-                view.doubtRespond(ResultImpl.ok());
+                this.getViewsfromGame(game).forEach((u, v) -> v.doubtNotify(game, user, result));
+                if (game.isOver()) {
+                    this.views.entrySet().stream().filter(e -> game.getUsers().contains(e.getKey()))
+                            .forEach(e -> e.getValue().gameEndedNotify(game));
+                }
             } catch (ErrorTypeException e) {
-                view.doubtRespond(ResultImpl.error(e.getErrorType()));
+                final View view = this.views.get(user);
+                view.showError(e.getErrorType());
             }
 
         });
@@ -246,14 +246,15 @@ public class StandardControllerImpl implements Controller {
         this.executor.execute(() -> {
             final View view = this.views.get(user);
             try {
-                final Game game = getGameFromModel(user);
+                final Game game = this.getGameFromModel(user);
                 final boolean result = game.urge(user);
-                // need to tell the view if the urge was correct or not
-                // ????
-
-                view.urgeRespond(ResultImpl.ok());
+                this.getViewsfromGame(game).forEach((u, v) -> v.urgeNotify(game, user, result));
+                if (game.isOver()) {
+                    this.views.entrySet().stream().filter(e -> game.getUsers().contains(e.getKey()))
+                            .forEach(e -> e.getValue().gameEndedNotify(game));
+                }
             } catch (ErrorTypeException e) {
-                view.urgeRespond(ResultImpl.error(e.getErrorType()));
+                view.showError(e.getErrorType());
             }
         });
 
@@ -265,11 +266,11 @@ public class StandardControllerImpl implements Controller {
         this.executor.execute(() -> {
             final View view = this.views.get(user);
             try {
-                final Game game = getGameFromModel(user);
+                final Game game = this.getGameFromModel(user);
                 game.callPalifico(user);
-                view.callPalificoRespond(ResultImpl.ok());
+                this.getViewsfromGame(game).forEach((u, v) -> v.callPalificoNotify(game, user));
             } catch (ErrorTypeException e) {
-                view.callPalificoRespond(ResultImpl.error(e.getErrorType()));
+                view.showError(e.getErrorType());
             }
         });
     }
@@ -280,11 +281,11 @@ public class StandardControllerImpl implements Controller {
         this.executor.execute(() -> {
             final View view = this.views.get(user);
             try {
-                final Game game = getGameFromModel(user);
-                //game.removeUser(user);
-                view.exitGameRespond(ResultImpl.ok());
+                final Game game = this.getGameFromModel(user);
+                game.removeUser(user);
+                this.getViewsfromGame(game).forEach((u,v) -> v.exitGameNotify(game, user));
             } catch (ErrorTypeException e) {
-                view.exitGameRespond(ResultImpl.error(e.getErrorType()));
+                view.showError(e.getErrorType());
             }
         });
     }
@@ -294,19 +295,19 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
             try {
-                if(!this.model.getUsers().contains(user)) {
+                if (!this.model.getUsers().contains(user)) {
                     throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
-                } else if(this.userIsInLobby(user)) {
-                    throw new ErrorTypeException(ErrorType.USER_IS_IN_LOBBY);
+                } else if (this.userIsInLobby(user)) {
+                    this.exitLobby(user);
                 } else if (this.userIsInGame(user)) {
-                    throw new ErrorTypeException(ErrorType.USER_IS_IN_GAME);
+                    this.exitGame(user);
                 } else {
                     this.model.removeUser(user);
                     this.views.remove(user);
                 }
             } catch (ErrorTypeException e) {
                 e.printStackTrace();
-            }        
+            }
         });
 
     }
@@ -344,13 +345,18 @@ public class StandardControllerImpl implements Controller {
         checkSize(result, ErrorType.USER_IS_NOT_IN_A_GAME);
         return result.get(0);
     }
-    
+
     private boolean userIsInGame(final User user) {
         return this.model.getGames().stream().flatMap(g -> g.getUsers().stream()).anyMatch(user::equals);
     }
-    
+
     private boolean userIsInLobby(final User user) {
         return this.model.getLobbies().stream().flatMap(l -> l.getUsers().stream()).anyMatch(user::equals);
-    } 
+    }
+
+    private Map<User, View> getViewsfromGame(final Game game) {
+        return this.views.entrySet().stream().filter(e -> game.getUsers().contains(e.getKey()))
+                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+    }
 
 }
