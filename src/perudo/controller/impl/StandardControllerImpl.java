@@ -61,15 +61,24 @@ public class StandardControllerImpl implements Controller {
     public void changeUserName(final User user, final String name) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
+            
             final View view = this.views.get(user);
-            User newUser = user.changeName(name);
+            
             try {
+                if (this.userIsInLobby(user)) {
+                    throw new ErrorTypeException(ErrorType.USER_IS_IN_LOBBY);
+                } else if (this.userIsInGame(user)) {
+                    throw new ErrorTypeException(ErrorType.USER_IS_IN_GAME);
+                }
                 this.model.removeUser(user);
             } catch (ErrorTypeException e) {
                 view.showError(e.getErrorType());
                 return;
             }
-
+            
+            
+            final User newUser = user.changeName(name);
+            
             try {
                 this.model.addUser(newUser);
             } catch (ErrorTypeException e) {
@@ -77,7 +86,7 @@ public class StandardControllerImpl implements Controller {
                     this.model.addUser(user);
                 } catch (ErrorTypeException e1) {
                     e1.printStackTrace();
-                    System.exit(1);
+                    this.views.remove(user);
                 }
                 view.showError(e.getErrorType());
                 return;
@@ -104,6 +113,11 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(info);
         this.executor.execute(() -> {
             try {
+                if (this.userIsInLobby(user)) {
+                    throw new ErrorTypeException(ErrorType.USER_IS_IN_LOBBY);
+                } else if (this.userIsInGame(user)) {
+                    throw new ErrorTypeException(ErrorType.USER_IS_IN_GAME);
+                }
                 final Lobby lobby = new LobbyImpl(info, user);
                 this.model.addLobby(lobby);
                 this.views.forEach((u, v) -> v.createLobbyNotify(lobby));
@@ -130,6 +144,11 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(lobby);
         this.executor.execute(() -> {
             try {
+                if (this.userIsInLobby(user)) {
+                    throw new ErrorTypeException(ErrorType.USER_IS_IN_LOBBY);
+                } else if (this.userIsInGame(user)) {
+                    throw new ErrorTypeException(ErrorType.USER_IS_IN_GAME);
+                }
                 final Lobby lobbyModel = this.getLobbyFromModel(lobby);
                 lobbyModel.addUser(user);
                 this.views.forEach((u, v) -> v.joinLobbyNotify(lobbyModel, user));
@@ -149,6 +168,9 @@ public class StandardControllerImpl implements Controller {
                 final Lobby lobby = this.getLobbyFromModel(user);
                 lobby.removeUser(user);
                 this.views.forEach((u, v) -> v.exitLobbyNotify(lobby, user));
+                if (lobby.getUsers().isEmpty()) {
+                    this.model.removeLobby(lobby);
+                }
             } catch (ErrorTypeException e) {
                 final View view = this.views.get(user);
                 view.showError(e.getErrorType());
@@ -162,33 +184,14 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
             final View view = this.views.get(user);
-            Lobby lobbyTMP = null;
-            Game gameTMP = null;
             try {
-                lobbyTMP = this.getLobbyFromModel(user);
-                gameTMP = lobbyTMP.startGame(user);
-                this.model.removeLobby(lobbyTMP);
-
-            } catch (ErrorTypeException e) {
-                view.showError(e.getErrorType());
-                return;
-            }
-
-            final Lobby lobby = lobbyTMP;
-            final Game game = gameTMP;
-            try {
+                final Lobby lobby = this.getLobbyFromModel(user);
+                final Game game = lobby.startGame(user);
                 this.model.addGame(game);
                 this.views.forEach((u, v) -> v.startLobbyNotify(lobby, game));
             } catch (ErrorTypeException e) {
-                try {
-                    this.model.addLobby(lobby);
-                } catch (ErrorTypeException e1) {
-                    e1.printStackTrace();
-                    System.exit(2);
-                }
                 view.showError(e.getErrorType());
             }
-
         });
 
     }
@@ -210,7 +213,8 @@ public class StandardControllerImpl implements Controller {
             try {
                 final Game game = this.getGameFromModel(user);
                 game.play(bid, user);
-                this.getViewsfromGame(game).forEach((u, v) -> v.playNotify(game, user));
+                final Map<User, View> gameViews = this.getViewsfromGame(game);
+                gameViews.forEach((u, v) -> v.playNotify(game, user));
             } catch (ErrorTypeException e) {
                 final View view = this.views.get(user);
                 view.showError(e.getErrorType());
@@ -226,10 +230,10 @@ public class StandardControllerImpl implements Controller {
             try {
                 final Game game = this.getGameFromModel(user);
                 final boolean result = game.doubt(user);
-                this.getViewsfromGame(game).forEach((u, v) -> v.doubtNotify(game, user, result));
+                final Map<User, View> gameViews = this.getViewsfromGame(game);
+                gameViews.forEach((u, v) -> v.doubtNotify(game, user, result));
                 if (game.isOver()) {
-                    this.views.entrySet().stream().filter(e -> game.getUsers().contains(e.getKey()))
-                            .forEach(e -> e.getValue().gameEndedNotify(game));
+                    gameViews.forEach((u, v) -> v.gameEndedNotify(game));
                 }
             } catch (ErrorTypeException e) {
                 final View view = this.views.get(user);
@@ -248,10 +252,10 @@ public class StandardControllerImpl implements Controller {
             try {
                 final Game game = this.getGameFromModel(user);
                 final boolean result = game.urge(user);
-                this.getViewsfromGame(game).forEach((u, v) -> v.urgeNotify(game, user, result));
+                final Map<User, View> gameViews = this.getViewsfromGame(game);
+                gameViews.forEach((u, v) -> v.urgeNotify(game, user, result));
                 if (game.isOver()) {
-                    this.views.entrySet().stream().filter(e -> game.getUsers().contains(e.getKey()))
-                            .forEach(e -> e.getValue().gameEndedNotify(game));
+                    gameViews.forEach((u, v) -> v.gameEndedNotify(game));
                 }
             } catch (ErrorTypeException e) {
                 view.showError(e.getErrorType());
@@ -268,7 +272,8 @@ public class StandardControllerImpl implements Controller {
             try {
                 final Game game = this.getGameFromModel(user);
                 game.callPalifico(user);
-                this.getViewsfromGame(game).forEach((u, v) -> v.callPalificoNotify(game, user));
+                final Map<User, View> gameViews = this.getViewsfromGame(game);
+                gameViews.forEach((u, v) -> v.callPalificoNotify(game, user));
             } catch (ErrorTypeException e) {
                 view.showError(e.getErrorType());
             }
@@ -283,7 +288,7 @@ public class StandardControllerImpl implements Controller {
             try {
                 final Game game = this.getGameFromModel(user);
                 game.removeUser(user);
-                this.getViewsfromGame(game).forEach((u,v) -> v.exitGameNotify(game, user));
+                this.getViewsfromGame(game).forEach((u, v) -> v.exitGameNotify(game, user));
             } catch (ErrorTypeException e) {
                 view.showError(e.getErrorType());
             }
