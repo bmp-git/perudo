@@ -1,4 +1,4 @@
-package perudo.view;
+package perudo.view.impl;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,6 +15,8 @@ import javax.swing.border.TitledBorder;
 
 import perudo.model.Lobby;
 import perudo.model.User;
+import perudo.view.GUIFactory;
+import perudo.view.impl.panels.CreateLobbyPanel;
 import perudo.view.impl.panels.LobbyInfoPanel;
 import perudo.view.impl.panels.LobbyPanel;
 
@@ -29,7 +31,8 @@ public class MenuPanel extends JPanel {
     private JSplitPane splitPane;
     private JPanel lobbypanel;
     private JPanel lobbyinfo;
-
+    private JPanel bottompanel;
+    private CreateLobbyPanel createlobbypanel;
     private User user;
     
     
@@ -37,8 +40,10 @@ public class MenuPanel extends JPanel {
         this.factory = new StandardGUIFactory();
         this.setLayout(new BorderLayout());
         
+        this.createlobbypanel = (CreateLobbyPanel) this.factory.createCreateLobbyPanel();
         createLobbyListPanel();
         createLobbyInfoPanel();
+        createBottomPanel();
         createSplitPanel();
 
         this.add(splitPane, BorderLayout.CENTER);
@@ -46,8 +51,11 @@ public class MenuPanel extends JPanel {
         setUser(null);
     }
 
-    private void setUser(User user){
+    public void setUser(User user){
         this.user = user;
+    }
+    
+    private void createBottomPanel() {
     }
     
     private void createLobbyListPanel() {
@@ -69,7 +77,7 @@ public class MenuPanel extends JPanel {
         splitPane = (JSplitPane) factory.createVerticalSplitPane();
         final JScrollPane scroll = (JScrollPane) factory.createVerticalScrollPanel();
         scroll.getViewport().add(lobbypanel);
-
+        scroll.setPreferredSize(getPreferredSize());
         splitPane.setLeftComponent(scroll);
         splitPane.setRightComponent(lobbyinfo);
     }
@@ -81,13 +89,17 @@ public class MenuPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 lobbyinfo.removeAll();
-                lobbyinfo.add(new LobbyInfoPanel(((LobbyPanel)e.getSource()).getLobby()));   
+                lobbyinfo.add(new LobbyInfoPanel(((LobbyPanel)e.getSource()).getLobby(),MenuPanel.this.user));   
                 lobbyinfo.repaint();
                 lobbyinfo.revalidate();  
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {                
+            public void mousePressed(MouseEvent e) {     
+                lobbyinfo.removeAll();
+                lobbyinfo.add(new LobbyInfoPanel(((LobbyPanel)e.getSource()).getLobby(),MenuPanel.this.user));   
+                lobbyinfo.repaint();
+                lobbyinfo.revalidate();
             }
 
             @Override
@@ -96,7 +108,7 @@ public class MenuPanel extends JPanel {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                ((LobbyPanel)e.getSource()).setBorder(BorderFactory.createLineBorder(Color.black));
+                ((LobbyPanel)e.getSource()).setBorder(BorderFactory.createLineBorder(Color.GRAY));
                 setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
 

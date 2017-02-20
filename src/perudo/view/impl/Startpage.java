@@ -1,4 +1,4 @@
-package perudo.view;
+package perudo.view.impl;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+
+import perudo.view.GUIFactory;
 
 public class Startpage extends JFrame {
 
