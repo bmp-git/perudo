@@ -118,7 +118,7 @@ public class GameImpl implements Game {
     private void checkUserCanUrge(User user) throws ErrorTypeException {
         // no one had bid yet, the one who bid can't urge, the one who is turn
         // can't urge
-        if ((!this.getCurrentBid().isPresent()) || this.getBidUser().equals(user) || this.getTurn().equals(user)) {
+        if ((!this.getCurrentBid().isPresent()) || this.getBidUser().get().equals(user) || this.getTurn().equals(user)) {
             throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_URGE_NOW);
         }
     }
@@ -128,13 +128,13 @@ public class GameImpl implements Game {
         if (!this.getCurrentBid().isPresent()) {
             throw new IllegalStateException();
         }
-        int bidUserJollyCount = this.userList.stream().filter(u -> this.getBidUser().equals(u))
+        int bidUserJollyCount = this.userList.stream().filter(u -> this.getBidUser().get().equals(u))
                 .mapToInt(u -> this.usersStatus.get(u).getDiceCount().get(1)).sum();
         int usersDiceCount = this.userList.stream()
                 .mapToInt(u -> this.usersStatus.get(u).getDiceCount().get(this.getCurrentBid().get().getDiceValue()))
                 .sum();
 
-        return this.getCurrentBid().get().getDiceValue() == 1 ? usersDiceCount : usersDiceCount + bidUserJollyCount;
+        return (this.getCurrentBid().get().getDiceValue() == 1 ? usersDiceCount : (usersDiceCount + bidUserJollyCount));
     }
 
     @Override
@@ -162,7 +162,7 @@ public class GameImpl implements Game {
         idx = idx < 0 ? this.userList.size() - 1 : idx;
 
         while (this.getUserStatus(this.userList.get(idx)).getRemainingDice() == 0) {
-            idx = idx - 1 < 0 ? this.userList.size() - 1 : idx - 1;
+            idx = ((idx - 1) < 0) ? (this.userList.size() - 1) : (idx - 1);
         }
 
         return Optional.of(this.userList.get(idx));
