@@ -100,6 +100,21 @@ public interface Game {
     Optional<Bid> getCurrentBid();
 
     /**
+     * Gets the user who bids.
+     * 
+     * @return the user who bid, if the first play of the turn has not yet been
+     *         made the optional will be empty
+     */
+    Optional<User> getBidUser();
+    
+    /**
+     * Gets the numbers of dice that apply to the current bid
+     * 
+     * @return the quantity of valid dice that count for this bid
+     */
+    int getRealBidDiceCount();
+    
+    /**
      * Gets the remaining time to play.
      * 
      * @return the remaining time
@@ -114,7 +129,7 @@ public interface Game {
     default boolean isOver() {
         return getUsers().stream().filter(u -> getUserStatus(u).getRemainingDice() > 0).count() <= 1;
     }
-    
+
     /**
      * Remove the selected user
      * 
