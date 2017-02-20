@@ -17,7 +17,7 @@ public interface GUIFactory {
     JPanel createMenuPanel();
     
     JPanel createCreateLobbyPanel();
-    
+        
     JComponent createButton(String text);
     
     JComponent createLabel(String text);
@@ -27,6 +27,12 @@ public interface GUIFactory {
     JComponent createPicLabel(String respath) throws IOException;
     
     JComponent createTextField();
+    
+    JComponent createTopMenu();
+    
+    JComponent createMenu();
+    
+    JComponent createMenuItem();
     
     JComboBox<Object> createComboBox(Object[] values);
     

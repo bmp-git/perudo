@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
+import perudo.model.GameSettings;
 import perudo.model.impl.GameSettingsImpl;
 import perudo.view.GUIFactory;
 import perudo.view.impl.StandardGUIFactory;
@@ -31,10 +32,10 @@ public class CreateLobbyPanel extends JPanel {
                         .rangeClosed(GameSettingsImpl.MIN_PLAYER_NUMBERS, GameSettingsImpl.MAX_PLAYER_NUMBERS)
                         .mapToObj(e -> String.valueOf(e)).toArray();
         private final static Object[] N_DICE = IntStream
-                        .rangeClosed(GameSettingsImpl.MIN_DICE_FACES, GameSettingsImpl.MAX_DICE_FACES)
+                        .rangeClosed(GameSettingsImpl.MIN_INITIAL_DICE_NUMBERS, GameSettingsImpl.MAX_INITIAL_DICE_NUMBERS)
                         .mapToObj(e -> String.valueOf(e)).toArray();
         private final static Object[] DICES_VALUE = IntStream
-                        .rangeClosed(GameSettingsImpl.MIN_INITIAL_DICE_NUMBERS, GameSettingsImpl.MAX_INITIAL_DICE_NUMBERS)
+                        .rangeClosed(GameSettingsImpl.MIN_DICE_FACES, GameSettingsImpl.MAX_DICE_FACES)
                         .mapToObj(e -> String.valueOf(e)).toArray();
         
         private final GUIFactory factory;
@@ -89,5 +90,9 @@ public class CreateLobbyPanel extends JPanel {
         
         public Duration getTurnTime() {
                 return Duration.ofSeconds(this.sldTime.getValue());
+        }
+        
+        public GameSettings getGameSettings() {
+            return new GameSettingsImpl(this.getMaxPlayers(),this.getMaxDicesValue(),this.getMaxDices(),this.getTurnTime());
         }
 }

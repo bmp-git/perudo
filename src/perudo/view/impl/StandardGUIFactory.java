@@ -10,6 +10,8 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -18,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
 import perudo.view.GUIFactory;
+import perudo.view.impl.components.TopMenu;
 import perudo.view.impl.panels.CreateLobbyPanel;
 
 public class StandardGUIFactory implements GUIFactory {
@@ -36,7 +39,24 @@ public class StandardGUIFactory implements GUIFactory {
     public JPanel createCreateLobbyPanel() {
         return new CreateLobbyPanel();
     }
+    
 
+    @Override
+    public JComponent createTopMenu() {
+        return new TopMenu();
+    }
+    
+
+    @Override
+    public JComponent createMenu() {
+        return new JMenu();
+    }
+
+    @Override
+    public JComponent createMenuItem() {
+        return new JMenuItem();
+    }
+    
     @Override
     public JComponent createButton(String text) {
         return new JButton(text);
@@ -93,5 +113,4 @@ public class StandardGUIFactory implements GUIFactory {
     public JFrame createFrame(String title) {
         return new JFrame(title);
     }
-
 }

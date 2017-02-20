@@ -2,7 +2,6 @@ package perudo.view.impl;
 
 import java.time.Duration;
 import java.util.Set;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -29,6 +28,8 @@ public class ViewImpl implements View {
     private final GUIFactory factory;
     private User user;
     private JFrame mainFrame;
+    
+
 
     /* Application panels */
     private MenuPanel menuPanel;
@@ -52,7 +53,7 @@ public class ViewImpl implements View {
     private void showPanel(JPanel panel) {
         this.mainFrame.getContentPane().removeAll();
         this.mainFrame.getContentPane().add(panel);
-        this.mainFrame.getContentPane().repaint();
+        this.mainFrame.getContentPane().revalidate();
     }
 
     @Override
@@ -65,39 +66,6 @@ public class ViewImpl implements View {
         this.menuPanel.setUser(this.user);
 
         try {
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
             this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
             this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
             this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
@@ -133,6 +101,7 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                  menuPanel.addLobby(lobby);
+                 showPanel(menuPanel);
               }
           });
         
@@ -165,6 +134,13 @@ public class ViewImpl implements View {
     public void startLobbyNotify(Lobby lobby, Game game) {
         this.menuPanel.removeLobby(lobby);
 
+    }
+    
+
+    @Override
+    public void removeGameNotify(Game game) {
+        // TODO Auto-generated method stub
+        
     }
 
     @Override
@@ -211,8 +187,7 @@ public class ViewImpl implements View {
 
     @Override
     public void showError(ErrorType errorType) {
-        // TODO Auto-generated method stub
-
+        System.out.println(errorType);
     }
 
 }
