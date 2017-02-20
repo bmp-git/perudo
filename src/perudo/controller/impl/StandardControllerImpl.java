@@ -308,9 +308,12 @@ public class StandardControllerImpl implements Controller, Closeable {
             try {
                 final Game game = this.getGameFromModel(user);
                 game.removeUser(user);
-                this.getViewsfromGame(game).forEach((u, v) -> v.exitGameNotify(game, user));
+                final Map<User, View> gameViews = this.getViewsfromGame(game);
+                gameViews.forEach((u, v) -> v.exitGameNotify(game, user));
                 this.views.get(user).exitGameNotify(game, user);
-                if (game.getUsers().isEmpty()) {
+                if (game.getUsers().size() == 1) {
+                    gameViews.forEach((u, v) -> v.gameEndedNotify(game));
+                } else if (game.getUsers().isEmpty()) {
                     this.model.removeGame(game);
                     this.views.forEach((u, v) -> v.removeGameNotify(game));
                 }
@@ -356,7 +359,7 @@ public class StandardControllerImpl implements Controller, Closeable {
         turnTimer.execute(() -> {
             while (!game.isOver()) {
                 if (game.getTurnRemainingTime().isNegative()) {
-                    
+
                     try {
                         final Bid bid = game.getCurrentBid().isPresent() ? game.getCurrentBid().get().nextBid()
                                 : new BidImpl(1, 1);
@@ -370,7 +373,7 @@ public class StandardControllerImpl implements Controller, Closeable {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    
+
                 }
             }
         });
