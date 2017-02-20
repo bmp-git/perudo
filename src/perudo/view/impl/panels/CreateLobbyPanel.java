@@ -93,6 +93,6 @@ public class CreateLobbyPanel extends JPanel {
         }
         
         public GameSettings getGameSettings() {
-            return new GameSettingsImpl(this.getMaxPlayers(),this.getMaxDicesValue(),this.getMaxDices(),this.getTurnTime());
+            return new GameSettingsImpl(this.getMaxPlayers(),this.getMaxDicesValue(),this.getMaxDices(),this.getTurnTime(),this.getName());
         }
 }
