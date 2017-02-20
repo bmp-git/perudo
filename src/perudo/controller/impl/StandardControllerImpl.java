@@ -7,9 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+
+import javax.swing.plaf.SliderUI;
 
 import perudo.controller.Controller;
 import perudo.model.Bid;
@@ -18,6 +21,7 @@ import perudo.model.GameSettings;
 import perudo.model.Lobby;
 import perudo.model.Model;
 import perudo.model.User;
+import perudo.model.impl.BidImpl;
 import perudo.model.impl.LobbyImpl;
 import perudo.model.impl.ModelImpl;
 import perudo.model.impl.UserImpl;
@@ -26,15 +30,17 @@ import perudo.utility.ErrorTypeException;
 import perudo.utility.impl.ResponseImpl;
 import perudo.view.View;
 
-public class StandardControllerImpl implements Controller, Closeable{
+public class StandardControllerImpl implements Controller, Closeable {
     private final Model model;
     private final Map<User, View> views;
     private final ExecutorService executor;
+    private final ExecutorService turnTimer;
 
     public StandardControllerImpl() {
         this.model = new ModelImpl();
-        this.views = new HashMap<>();
+        this.views = new ConcurrentHashMap<>();
         this.executor = Executors.newSingleThreadExecutor();
+        this.turnTimer = Executors.newCachedThreadPool();
     }
 
     @Override
@@ -173,9 +179,7 @@ public class StandardControllerImpl implements Controller, Closeable{
                 final View view = this.views.get(user);
                 view.showError(e.getErrorType());
             }
-            
-            
-            
+
         });
 
     }
@@ -191,6 +195,7 @@ public class StandardControllerImpl implements Controller, Closeable{
                 lobbyTMP = this.getLobbyFromModel(user);
                 gameTMP = lobbyTMP.startGame(user);
                 this.model.removeLobby(lobbyTMP);
+                this.views.forEach((u, v) -> v.removeLobbyNotify(lobbyTMP));
             } catch (ErrorTypeException e) {
                 view.showError(e.getErrorType());
                 return;
@@ -200,13 +205,14 @@ public class StandardControllerImpl implements Controller, Closeable{
             final Game game = gameTMP;
             try {
                 this.model.addGame(game);
+                this.startTurnTimeChecker(game);
                 this.views.forEach((u, v) -> v.startLobbyNotify(lobby, game));
             } catch (ErrorTypeException e) {
                 try {
                     this.model.addLobby(lobby);
+                    this.views.forEach((u, v) -> v.createLobbyNotify(lobby));
                 } catch (ErrorTypeException e1) {
                     e1.printStackTrace();
-                    this.views.forEach((u, v) -> v.removeLobbyNotify(lobby));
                 }
                 view.showError(e.getErrorType());
             }
@@ -307,6 +313,10 @@ public class StandardControllerImpl implements Controller, Closeable{
                 game.removeUser(user);
                 this.getViewsfromGame(game).forEach((u, v) -> v.exitGameNotify(game, user));
                 this.views.get(user).exitGameNotify(game, user);
+                if (game.getUsers().isEmpty()) {
+                    this.model.removeGame(game);
+                    this.views.forEach((u, v) -> v.removeGameNotify(game));
+                }
             } catch (ErrorTypeException e) {
                 final View view = this.views.get(user);
                 view.showError(e.getErrorType());
@@ -337,10 +347,31 @@ public class StandardControllerImpl implements Controller, Closeable{
         });
 
     }
-    
+
     @Override
     public void close() throws IOException {
         this.executor.shutdown();
+    }
+
+    private void startTurnTimeChecker(final Game game) {
+        Objects.requireNonNull(game);
+        turnTimer.execute(() -> {
+            while (!game.isOver()) {
+                if (game.getTurnRemainingTime().isNegative()) {
+                    final Bid bid = game.getCurrentBid().isPresent() ? game.getCurrentBid().get().nextBid()
+                            : new BidImpl(1, 1);
+                    final User user = game.getTurn();
+                    try {
+                        game.play(bid, user);
+                        final Map<User, View> gameViews = this.getViewsfromGame(game);
+                        gameViews.forEach((u, v) -> v.playNotify(game, user));
+                    } catch (ErrorTypeException e) {
+                    }
+                }
+                Thread.yield();
+                Thread.sleep(1000);
+            }
+        });
     }
 
     private void checkSize(final Collection<?> collection, final ErrorType error) throws ErrorTypeException {
