@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 
 import perudo.model.Lobby;
 import perudo.view.GUIFactory;
-import perudo.view.StandardGUIFactory;
+import perudo.view.impl.StandardGUIFactory;
 
 public class LobbyPanel extends JPanel {
 

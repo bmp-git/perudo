@@ -1,4 +1,4 @@
-package perudo.view;
+package perudo.view.impl;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;

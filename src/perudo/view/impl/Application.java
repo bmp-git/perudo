@@ -1,7 +1,6 @@
-package perudo.view;
+package perudo.view.impl;
 
-import perudo.view.Startpage.StartingFrameResult;
-import perudo.view.impl.ViewImpl;
+import perudo.view.impl.Startpage.StartingFrameResult;
 
 public class Application {
 

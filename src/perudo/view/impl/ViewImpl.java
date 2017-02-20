@@ -14,14 +14,11 @@ import perudo.model.Lobby;
 import perudo.model.User;
 import perudo.model.impl.GameSettingsImpl;
 import perudo.model.impl.LobbyImpl;
+import perudo.model.impl.UserImpl;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 import perudo.utility.Response;
-import perudo.view.ControllerSingleton;
 import perudo.view.GUIFactory;
-import perudo.view.GUIUtility;
-import perudo.view.MenuPanel;
-import perudo.view.StandardGUIFactory;
 import perudo.view.View;
 
 public class ViewImpl implements View {
@@ -46,7 +43,6 @@ public class ViewImpl implements View {
         this.mainFrame.setLocationByPlatform(true);
         this.showFrame();
         this.showPanel(menuPanel);
-
     }
 
     private void showFrame() {
@@ -66,12 +62,46 @@ public class ViewImpl implements View {
         }
         this.user = user.getValue();
         /* setto i pannelli */
-
+        this.menuPanel.setUser(this.user);
 
         try {
             this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
             this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
             this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
+            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby4"), new UserImpl("Simone")));
         } catch (ErrorTypeException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -80,12 +110,16 @@ public class ViewImpl implements View {
 
     @Override
     public void initializeNewUserNotify(User user) {
+        // TODO Auto-generated method stub
+    }
+    @Override
+    public void userExitNotify(User user) {
+        // TODO Auto-generated method stub
     }
 
     @Override
     public void changeNameNotify(User user) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -103,6 +137,11 @@ public class ViewImpl implements View {
           });
         
     }
+    @Override
+    public void removeLobbyNotify(Lobby lobby) {
+        // TODO Auto-generated method stub
+    }
+
 
     @Override
     public void getLobbiesRespond(Response<Set<Lobby>> lobbies) {
