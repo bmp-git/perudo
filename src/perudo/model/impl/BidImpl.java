@@ -94,4 +94,13 @@ public class BidImpl implements Bid {
         return true;
     }
 
+    @Override
+    public Bid nextBid() {
+        try {
+            return new BidImpl(this.quantity + 1, this.diceValue);
+        } catch (ErrorTypeException e) {
+            throw new IllegalStateException();
+        }
+    }
+
 }

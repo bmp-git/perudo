@@ -27,4 +27,11 @@ public interface Bid {
      * @return true if the bid is valid, false otherwise
      */
     boolean isNextBidValid(Bid nextBid, boolean turnIsPalifico, GameSettings gameSettings);
+    
+    /**
+     * Gets a new bid with a minimum increase of this bid.
+     * 
+     * @return the new bid increased
+     */
+    Bid nextBid();
 }
