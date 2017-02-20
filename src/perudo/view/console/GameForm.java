@@ -332,6 +332,9 @@ public class GameForm extends BaseForm {
             return;
         }
 
+        if(user.equals(this.user)){
+            return;
+        }
         this.game = game;
         String str = user.getName() + " exits the game";
         this.addToHisoty(str, str);
