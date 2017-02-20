@@ -307,11 +307,12 @@ public class StandardControllerImpl implements Controller, Closeable {
         this.executor.execute(() -> {
             try {
                 final Game game = this.getGameFromModel(user);
+                final boolean gameAlreadyOver = game.isOver();
                 game.removeUser(user);
                 final Map<User, View> gameViews = this.getViewsfromGame(game);
                 gameViews.forEach((u, v) -> v.exitGameNotify(game, user));
                 this.views.get(user).exitGameNotify(game, user);
-                if (game.getUsers().size() == 1) {
+                if (game.getUsers().size() == 1 && !gameAlreadyOver) {
                     gameViews.forEach((u, v) -> v.gameEndedNotify(game));
                 } else if (game.getUsers().isEmpty()) {
                     this.model.removeGame(game);
