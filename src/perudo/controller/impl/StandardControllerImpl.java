@@ -3,7 +3,6 @@ package perudo.controller.impl;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -11,8 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-
-import javax.swing.plaf.SliderUI;
 
 import perudo.controller.Controller;
 import perudo.model.Bid;
@@ -195,7 +192,6 @@ public class StandardControllerImpl implements Controller, Closeable {
                 lobbyTMP = this.getLobbyFromModel(user);
                 gameTMP = lobbyTMP.startGame(user);
                 this.model.removeLobby(lobbyTMP);
-                this.views.forEach((u, v) -> v.removeLobbyNotify(lobbyTMP));
             } catch (ErrorTypeException e) {
                 view.showError(e.getErrorType());
                 return;
@@ -204,6 +200,7 @@ public class StandardControllerImpl implements Controller, Closeable {
             final Lobby lobby = lobbyTMP;
             final Game game = gameTMP;
             try {
+                this.views.forEach((u, v) -> v.removeLobbyNotify(lobby));
                 this.model.addGame(game);
                 this.startTurnTimeChecker(game);
                 this.views.forEach((u, v) -> v.startLobbyNotify(lobby, game));
@@ -311,9 +308,12 @@ public class StandardControllerImpl implements Controller, Closeable {
             try {
                 final Game game = this.getGameFromModel(user);
                 game.removeUser(user);
-                this.getViewsfromGame(game).forEach((u, v) -> v.exitGameNotify(game, user));
+                final Map<User, View> gameViews = this.getViewsfromGame(game);
+                gameViews.forEach((u, v) -> v.exitGameNotify(game, user));
                 this.views.get(user).exitGameNotify(game, user);
-                if (game.getUsers().isEmpty()) {
+                if (game.getUsers().size() == 1) {
+                    gameViews.forEach((u, v) -> v.gameEndedNotify(game));
+                } else if (game.getUsers().isEmpty()) {
                     this.model.removeGame(game);
                     this.views.forEach((u, v) -> v.removeGameNotify(game));
                 }
@@ -350,7 +350,8 @@ public class StandardControllerImpl implements Controller, Closeable {
 
     @Override
     public void close() throws IOException {
-        this.executor.shutdown();
+        this.executor.shutdownNow();
+        this.turnTimer.shutdownNow();
     }
 
     private void startTurnTimeChecker(final Game game) {
@@ -358,18 +359,22 @@ public class StandardControllerImpl implements Controller, Closeable {
         turnTimer.execute(() -> {
             while (!game.isOver()) {
                 if (game.getTurnRemainingTime().isNegative()) {
-                    final Bid bid = game.getCurrentBid().isPresent() ? game.getCurrentBid().get().nextBid()
-                            : new BidImpl(1, 1);
-                    final User user = game.getTurn();
+
                     try {
+                        final Bid bid = game.getCurrentBid().isPresent() ? game.getCurrentBid().get().nextBid()
+                                : new BidImpl(1, 1);
+                        final User user = game.getTurn();
                         game.play(bid, user);
                         final Map<User, View> gameViews = this.getViewsfromGame(game);
                         gameViews.forEach((u, v) -> v.playNotify(game, user));
                     } catch (ErrorTypeException e) {
                     }
                 }
-                Thread.yield();
-                Thread.sleep(1000);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+
+                }
             }
         });
     }
