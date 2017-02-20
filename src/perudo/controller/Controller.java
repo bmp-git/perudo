@@ -7,12 +7,6 @@ import perudo.model.User;
 import perudo.view.View;
 
 public interface Controller {
-
-    /**
-     * Initializes the controller.
-     */
-    void initialize();// nel costruttore?
-
     /**
      * Initializes a new user.
      * 
