@@ -102,6 +102,14 @@ public interface View {
     void startLobbyNotify(Lobby lobby, Game game);
 
     /**
+     * Tells all views that a game has been removed.
+     * 
+     * @param game
+     *            the game removed
+     */
+    void removeGameNotify(Game game);
+
+    /**
      * Gives to view the list of games.
      * 
      * @param games
