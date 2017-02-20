@@ -166,7 +166,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void removeGameNotify(Lobby lobby) {
+    public void removeLobbyNotify(Lobby lobby) {
         this.runOnGui(() -> {
             this.menuForm.removeLobby(lobby);
         });
@@ -298,10 +298,10 @@ public class ViewImpl implements View {
     }
 
     @Override
-    void removeGameNotify(Game game){
+    public void removeGameNotify(Game game) {
         this.runOnGui(() -> {
             this.menuForm.removeGame(game);
-        }
+        });
     }
 
     @Override
@@ -319,4 +319,6 @@ public class ViewImpl implements View {
             this.notify();
         }
     }
+
+   
 }
