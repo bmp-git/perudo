@@ -1,5 +1,7 @@
 package perudo.controller.impl;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +26,7 @@ import perudo.utility.ErrorTypeException;
 import perudo.utility.impl.ResponseImpl;
 import perudo.view.View;
 
-public class StandardControllerImpl implements Controller {
+public class StandardControllerImpl implements Controller, Closeable{
     private final Model model;
     private final Map<User, View> views;
     private final ExecutorService executor;
@@ -33,11 +35,6 @@ public class StandardControllerImpl implements Controller {
         this.model = new ModelImpl();
         this.views = new HashMap<>();
         this.executor = Executors.newSingleThreadExecutor();
-    }
-
-    @Override
-    public void initialize() {
-        // TODO Auto-generated method stub
     }
 
     @Override
@@ -61,9 +58,9 @@ public class StandardControllerImpl implements Controller {
     public void changeUserName(final User user, final String name) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
-            
+
             final View view = this.views.get(user);
-            
+
             try {
                 if (this.userIsInLobby(user)) {
                     throw new ErrorTypeException(ErrorType.USER_IS_IN_LOBBY);
@@ -75,10 +72,9 @@ public class StandardControllerImpl implements Controller {
                 view.showError(e.getErrorType());
                 return;
             }
-            
-            
+
             final User newUser = user.changeName(name);
-            
+
             try {
                 this.model.addUser(newUser);
             } catch (ErrorTypeException e) {
@@ -121,6 +117,7 @@ public class StandardControllerImpl implements Controller {
                 final Lobby lobby = new LobbyImpl(info, user);
                 this.model.addLobby(lobby);
                 this.views.forEach((u, v) -> v.createLobbyNotify(lobby));
+                this.views.forEach((u, v) -> v.joinLobbyNotify(lobby, user));
             } catch (ErrorTypeException e) {
                 final View view = this.views.get(user);
                 view.showError(e.getErrorType());
@@ -170,11 +167,15 @@ public class StandardControllerImpl implements Controller {
                 this.views.forEach((u, v) -> v.exitLobbyNotify(lobby, user));
                 if (lobby.getUsers().isEmpty()) {
                     this.model.removeLobby(lobby);
+                    this.views.forEach((u, v) -> v.removeLobbyNotify(lobby));
                 }
             } catch (ErrorTypeException e) {
                 final View view = this.views.get(user);
                 view.showError(e.getErrorType());
             }
+            
+            
+            
         });
 
     }
@@ -184,12 +185,29 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
             final View view = this.views.get(user);
+            Lobby lobbyTMP = null;
+            Game gameTMP = null;
             try {
-                final Lobby lobby = this.getLobbyFromModel(user);
-                final Game game = lobby.startGame(user);
+                lobbyTMP = this.getLobbyFromModel(user);
+                gameTMP = lobbyTMP.startGame(user);
+                this.model.removeLobby(lobbyTMP);
+            } catch (ErrorTypeException e) {
+                view.showError(e.getErrorType());
+                return;
+            }
+
+            final Lobby lobby = lobbyTMP;
+            final Game game = gameTMP;
+            try {
                 this.model.addGame(game);
                 this.views.forEach((u, v) -> v.startLobbyNotify(lobby, game));
             } catch (ErrorTypeException e) {
+                try {
+                    this.model.addLobby(lobby);
+                } catch (ErrorTypeException e1) {
+                    e1.printStackTrace();
+                    this.views.forEach((u, v) -> v.removeLobbyNotify(lobby));
+                }
                 view.showError(e.getErrorType());
             }
         });
@@ -248,7 +266,6 @@ public class StandardControllerImpl implements Controller {
     public void urge(final User user) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
-            final View view = this.views.get(user);
             try {
                 final Game game = this.getGameFromModel(user);
                 final boolean result = game.urge(user);
@@ -258,6 +275,7 @@ public class StandardControllerImpl implements Controller {
                     gameViews.forEach((u, v) -> v.gameEndedNotify(game));
                 }
             } catch (ErrorTypeException e) {
+                final View view = this.views.get(user);
                 view.showError(e.getErrorType());
             }
         });
@@ -268,13 +286,13 @@ public class StandardControllerImpl implements Controller {
     public void callPalifico(final User user) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
-            final View view = this.views.get(user);
             try {
                 final Game game = this.getGameFromModel(user);
                 game.callPalifico(user);
                 final Map<User, View> gameViews = this.getViewsfromGame(game);
                 gameViews.forEach((u, v) -> v.callPalificoNotify(game, user));
             } catch (ErrorTypeException e) {
+                final View view = this.views.get(user);
                 view.showError(e.getErrorType());
             }
         });
@@ -284,12 +302,13 @@ public class StandardControllerImpl implements Controller {
     public void exitGame(final User user) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
-            final View view = this.views.get(user);
             try {
                 final Game game = this.getGameFromModel(user);
                 game.removeUser(user);
                 this.getViewsfromGame(game).forEach((u, v) -> v.exitGameNotify(game, user));
+                this.views.get(user).exitGameNotify(game, user);
             } catch (ErrorTypeException e) {
+                final View view = this.views.get(user);
                 view.showError(e.getErrorType());
             }
         });
@@ -303,18 +322,25 @@ public class StandardControllerImpl implements Controller {
                 if (!this.model.getUsers().contains(user)) {
                     throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
                 } else if (this.userIsInLobby(user)) {
-                    this.exitLobby(user);
+                    throw new ErrorTypeException(ErrorType.USER_IS_IN_LOBBY);
                 } else if (this.userIsInGame(user)) {
-                    this.exitGame(user);
+                    throw new ErrorTypeException(ErrorType.USER_IS_IN_GAME);
                 } else {
                     this.model.removeUser(user);
+                    this.views.forEach((u, v) -> v.userExitNotify(user));
                     this.views.remove(user);
                 }
             } catch (ErrorTypeException e) {
-                e.printStackTrace();
+                final View view = this.views.get(user);
+                view.showError(e.getErrorType());
             }
         });
 
+    }
+    
+    @Override
+    public void close() throws IOException {
+        this.executor.shutdown();
     }
 
     private void checkSize(final Collection<?> collection, final ErrorType error) throws ErrorTypeException {
