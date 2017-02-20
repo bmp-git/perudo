@@ -1,4 +1,4 @@
-package perudo.view;
+package perudo.view.impl;
 
 import perudo.controller.Controller;
 import perudo.controller.impl.StandardControllerImpl;
