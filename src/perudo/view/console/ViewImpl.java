@@ -122,6 +122,9 @@ public class ViewImpl implements View {
     @Override
     public void userExitNotify(User user) {
         this.runOnGui(() -> {
+            if (user.equals(this.user)) {
+                this.menuForm.close();
+            }
             this.menuForm.removeUser(user);
         });
     }
@@ -154,13 +157,6 @@ public class ViewImpl implements View {
     public void createLobbyNotify(Lobby lobby) {
         this.runOnGui(() -> {
             this.menuForm.addLobby(lobby);
-
-            // TODO should be not necessary, Controller should call
-            // joinLobbyNotify
-            if (lobby.getUsers().contains(this.user)) {
-                this.lobbyInForm.setLobby(lobby);
-                this.textGUI.setActiveWindow(this.lobbyInForm.getWindow());
-            }
         });
 
     }
@@ -277,8 +273,8 @@ public class ViewImpl implements View {
     public void exitGameNotify(Game game, User user) {
         this.runOnGui(() -> {
             if (user.equals(this.user)) {
+                Utils.showMessageBox("Left game", "You left the game", this.textGUI);
                 this.textGUI.setActiveWindow(this.menuForm.getWindow());
-                Utils.showMessageBox("Game exited", "You exited the game", this.textGUI);
             }
             this.gameForm.exitGameNotify(game, user);
         });
@@ -289,10 +285,8 @@ public class ViewImpl implements View {
     public void gameEndedNotify(Game game) {
         this.runOnGui(() -> {
             if (game.equals(this.gameForm.getGame())) {
-                this.textGUI.setActiveWindow(this.menuForm.getWindow());
-                Utils.showMessageBox("Game ended", "You exited the game", this.textGUI);
+                Utils.showMessageBox("Game ended", "The game is ended\nExit game please", this.textGUI);
             }
-
         });
 
     }
@@ -320,5 +314,4 @@ public class ViewImpl implements View {
         }
     }
 
-   
 }
