@@ -30,6 +30,7 @@ public class GameImpl implements Game {
     private User currentTurn;
     private Instant turnStartTime;
     private Optional<Bid> currentBid;
+    private Optional<User> bidUser;
     private boolean palifico;
 
     public GameImpl(final GameSettings settings, final Set<User> users) {
@@ -54,6 +55,7 @@ public class GameImpl implements Game {
 
         this.palifico = false;
         this.currentBid = Optional.empty();
+        this.bidUser = Optional.empty();
         // reroll all dice
         this.userList.forEach(u -> this.usersStatus.put(u, this.usersStatus.get(u).rollDice()));
         this.goNextTurn();
@@ -154,18 +156,7 @@ public class GameImpl implements Game {
     
     @Override
     public Optional<User> getBidUser() {
-        if(!this.currentBid.isPresent()){
-            return Optional.empty();
-        }
-        
-        int idx = this.userList.indexOf(this.getTurn()) - 1;
-        idx = idx < 0 ? this.userList.size() - 1 : idx;
-
-        while (this.getUserStatus(this.userList.get(idx)).getRemainingDice() == 0) {
-            idx = ((idx - 1) < 0) ? (this.userList.size() - 1) : (idx - 1);
-        }
-
-        return Optional.of(this.userList.get(idx));
+        return this.bidUser;
     }
 
     @Override
@@ -184,6 +175,7 @@ public class GameImpl implements Game {
         }
 
         this.currentBid = Optional.of(bid);
+        this.bidUser = Optional.of(user);
         this.goNextTurn();
     }
 

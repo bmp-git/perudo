@@ -200,7 +200,7 @@ public class GameForm extends BaseForm {
             this.lblBid.setForegroundColor(TextColor.ANSI.RED);
         }
 
-        if (this.game.getTurn().equals(this.user)) {
+        if (this.game.getTurn().equals(this.user) && !this.game.isOver()) {
             Utils.showMessageBox("Your turn", "Is your turn", this.textGUI);
         }
 
@@ -357,9 +357,12 @@ public class GameForm extends BaseForm {
         return this.window;
     }
 
-    public void dispose() {
+    @Override
+    public void close(){
+        super.close();
         this.executor.shutdown();
     }
+
 
     public Game getGame() {
         return this.game;
