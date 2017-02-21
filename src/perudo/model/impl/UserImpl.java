@@ -23,12 +23,11 @@ public class UserImpl implements User {
     public static User getNewAnonymousUser(String prefix) {
         User user = null;
         try {
-            user = new UserImpl("");
+            user = new UserImpl();
             return user.changeName(prefix + user.getId());
         } catch (ErrorTypeException e) {
             // try without the prefix
             try {
-
                 return user.changeName(Integer.toString(user.getId()));
             } catch (ErrorTypeException e1) {
 
@@ -44,6 +43,11 @@ public class UserImpl implements User {
 
     public UserImpl(String name) throws ErrorTypeException {
         this(IdDispenser.getUserIdDispenser().getNextId(), name);
+    }
+
+    private UserImpl() {
+        this.id = IdDispenser.getUserIdDispenser().getNextId();
+        this.name = "";
     }
 
     private UserImpl(int id, String name) throws ErrorTypeException {
