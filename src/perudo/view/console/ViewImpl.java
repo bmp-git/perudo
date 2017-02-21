@@ -130,14 +130,13 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void changeNameNotify(User user) {
+    public void changeNameNotify(User oldUser, User newUser) {
         this.runOnGui(() -> {
-            if (user.equals(this.user)) {
-                this.setUser(user);
+            if (oldUser.equals(this.user)) {
+                this.setUser(newUser);
             }
-            this.menuForm.removeUser(user);
-            this.menuForm.addUser(user);
-
+            this.menuForm.removeUser(oldUser);
+            this.menuForm.addUser(newUser);
         });
     }
 
