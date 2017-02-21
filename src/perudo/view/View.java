@@ -34,10 +34,12 @@ public interface View {
     /**
      * Tells all views that the name of a user has changed.
      * 
-     * @param user
-     *            the user whose name has been changed
+     * @param oldUser
+     *            the old user whose name has been changed
+     * @param newUser
+     *            the new user whose name has been changed
      */
-    void changeNameNotify(User user);
+    void changeNameNotify(User oldUser, User newUser);
 
     /**
      * Gives to view the set of users.
