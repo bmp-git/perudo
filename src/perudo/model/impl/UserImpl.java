@@ -11,25 +11,32 @@ public class UserImpl implements User {
     public static final int MIN_USER_NAME_LENGTH = 2;
     public static final String PERMITTED_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
+    /**
+     * Gets a new user with a default prefix name. If the prefix generate
+     * problems it will be omitted.
+     * 
+     * @param prefix
+     *            the prefix
+     * 
+     * @return an initialized new user
+     */
     public static User getNewAnonymousUser(String prefix) {
-
         User user = null;
         try {
             user = new UserImpl("");
             return user.changeName(prefix + user.getId());
         } catch (ErrorTypeException e) {
-            if (e.getErrorType().equals(ErrorType.USER_NAME_TOO_LONG)) {
-                try {
-                    //try a shorter name
-                    return user.changeName(Integer.toString(user.getId()));
-                } catch (ErrorTypeException e1) {
+            // try without the prefix
+            try {
 
-                }
+                return user.changeName(Integer.toString(user.getId()));
+            } catch (ErrorTypeException e1) {
+
             }
-            //can't generate an anonymous user correctly
+
+            // can't generate an anonymous user correctly
             throw new IllegalStateException();
         }
-
     }
 
     private final int id;
