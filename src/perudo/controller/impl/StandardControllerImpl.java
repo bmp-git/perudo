@@ -93,7 +93,7 @@ public class StandardControllerImpl implements Controller, Closeable {
 
             this.views.remove(user);
             this.views.put(newUser, view);
-            this.views.forEach((u, v) -> v.changeNameNotify(newUser));
+            this.views.forEach((u, v) -> v.changeNameNotify(user, newUser));
         });
     }
 
