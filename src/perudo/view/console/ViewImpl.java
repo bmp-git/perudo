@@ -272,17 +272,11 @@ public class ViewImpl implements View {
     @Override
     public void exitGameNotify(Game game, User user) {
         this.runOnGui(() -> {
-            
-            
             if (user.equals(this.user)) {
                 Utils.showMessageBox("Left game", "You left the game", this.textGUI);
                 this.textGUI.setActiveWindow(this.menuForm.getWindow());
             }
-            System.out.println("exitGameNotify start "+this.user.getName());
-            
             this.gameForm.exitGameNotify(game, user);
-            
-            System.out.println("exitGameNotify end "+this.user.getName());
         });
 
     }
@@ -290,14 +284,12 @@ public class ViewImpl implements View {
     @Override
     public void gameEndedNotify(Game game) {
         this.runOnGui(() -> {
-            System.out.println("gameEndedNotify start "+this.user.getName());
             if (game.equals(this.gameForm.getGame())) {
                 String win = (game.getUserStatus(this.user) != null
                         && game.getUserStatus(this.user).getRemainingDice() > 0) ? "win" : "lose";
                 Utils.showMessageBox("Game ended", "The game is ended\nYou " + win + "\nExit game please",
                         this.textGUI);
             }
-            System.out.println("gameEndedNotify end "+this.user.getName());
         });
 
     }
@@ -305,9 +297,7 @@ public class ViewImpl implements View {
     @Override
     public void removeGameNotify(Game game) {
         this.runOnGui(() -> {
-            System.out.println("removeGameNotify start"+this.user.getName());
             this.menuForm.removeGame(game);
-            System.out.println("removeGameNotify end"+this.user.getName());
         });
     }
 
@@ -322,7 +312,7 @@ public class ViewImpl implements View {
 
     public void closeNotify() {
         this.menuForm.close();
-        
+
         synchronized (this) {
             this.notify();
         }

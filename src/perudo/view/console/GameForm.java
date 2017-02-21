@@ -187,8 +187,8 @@ public class GameForm extends BaseForm {
     private void refreshNewTurn() {
 
         this.refreshDiceCount();
-        //final String str = "Is the turn of " + this.game.getTurn().getName();
-        //this.addToHisoty(str, str);
+        // final String str = "Is the turn of " + this.game.getTurn().getName();
+        // this.addToHisoty(str, str);
 
         this.refreshUsersList();
 
@@ -200,7 +200,23 @@ public class GameForm extends BaseForm {
             this.lblBid.setForegroundColor(TextColor.ANSI.RED);
         }
 
+        // auto set a decent value in the textboxs
         if (this.game.getTurn().equals(this.user) && !this.game.isOver()) {
+            if (this.game.turnIsPalifico() && this.game.getCurrentBid().isPresent()) {
+
+                this.txbDiceQuantity.setText(Integer.toString(this.game.getCurrentBid().get().getQuantity() + 1));
+
+            } else if (this.game.getCurrentBid().isPresent()) {
+                int value = this.game.getCurrentBid().get().getDiceValue();
+                try {
+                    value = Integer.parseInt(this.txbDiceValue.getText());
+                } catch (Exception ex) {
+                }
+                this.txbDiceQuantity
+                        .setText(Integer.toString((this.game.getCurrentBid().get().nextBid(value).getQuantity())));
+
+            }
+
             Utils.showMessageBox("Your turn", "Is your turn", this.textGUI);
         }
 
@@ -276,7 +292,8 @@ public class GameForm extends BaseForm {
             return;
         }
         diceCount.clear();
-        diceCount.add("Dice count");
+        diceCount.add("## DICE COUNT ##");
+        
         for (int i = 0; i < this.game.getUsers().size(); i++) {
             if (this.game.getUserStatus(this.game.getUsers().get(i)).getRemainingDice() > 0) {
                 diceCount.add(" " + this.game.getUsers().get(i).getName() + ": "
@@ -284,9 +301,12 @@ public class GameForm extends BaseForm {
             }
         }
 
-        diceCount.add(
-                " Dice of " + this.game.getCurrentBid().get().getDiceValue() + ": " + this.game.getRealBidDiceCount()
-                        + " vs " + this.game.getCurrentBid().get().getQuantity() + " of the bid");
+        diceCount.add("Total: " + this.game.getRealBidDiceCount());
+        diceCount.add("Bid  : " + this.game.getCurrentBid().get().getQuantity() + " dice of "
+                + this.game.getCurrentBid().get().getDiceValue());
+        diceCount.add("Bid from " + this.game.getBidUser().get().getName());
+        
+        diceCount.add("## DICE COUNT ##");
     }
 
     public void doubtNotify(Game game, User user, boolean win) {
@@ -332,7 +352,7 @@ public class GameForm extends BaseForm {
             return;
         }
 
-        if(user.equals(this.user)){
+        if (user.equals(this.user)) {
             return;
         }
         this.game = game;
@@ -358,11 +378,10 @@ public class GameForm extends BaseForm {
     }
 
     @Override
-    public void close(){
+    public void close() {
         super.close();
         this.executor.shutdown();
     }
-
 
     public Game getGame() {
         return this.game;
