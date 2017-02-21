@@ -9,7 +9,7 @@ public class BidImpl implements Bid {
 
     private final int diceValue, quantity;
 
-    public BidImpl(final int quantity, final int diceValue) throws ErrorTypeException{
+    public BidImpl(final int quantity, final int diceValue) throws ErrorTypeException {
         if (quantity < 0 || diceValue < 1) {
             throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
         }
@@ -17,8 +17,8 @@ public class BidImpl implements Bid {
         this.quantity = quantity;
     }
 
-    public boolean isNextBidValid(final Bid nextBid, final boolean turnIsPalifico,final GameSettings gameSettings) {
-        if(nextBid.getDiceValue() > gameSettings.getMaxDiceValue()){
+    public boolean isNextBidValid(final Bid nextBid, final boolean turnIsPalifico, final GameSettings gameSettings) {
+        if (nextBid.getDiceValue() > gameSettings.getMaxDiceValue()) {
             return false;
         }
         if (turnIsPalifico) {
@@ -95,9 +95,23 @@ public class BidImpl implements Bid {
     }
 
     @Override
-    public Bid nextBid() {
+    public Bid nextBid(int diceValue) {
+        int quantity = 0;
+        if (diceValue == 1 && this.diceValue == 1) {
+            quantity = this.quantity + 1;
+        } else if (diceValue != 1 && this.diceValue == 1) {
+            quantity = this.quantity * 2 + 1;
+        } else if (diceValue == 1 && this.diceValue != 1) {
+            quantity = (this.quantity + 1) / 2;
+        } else if (diceValue > this.diceValue) {
+            quantity = this.quantity;
+        } else if (diceValue <= this.diceValue) {
+            quantity = this.quantity + 1;
+        } 
+
         try {
-            return new BidImpl(this.quantity + 1, this.diceValue);
+
+            return new BidImpl(quantity, diceValue);
         } catch (ErrorTypeException e) {
             throw new IllegalStateException();
         }

@@ -18,9 +18,9 @@ public class ModelImpl implements Model {
     private final Set<Lobby> lobbies;
 
     public ModelImpl() {
-        this.users = new HashSet<>();
-        this.games = new HashSet<>();
-        this.lobbies = new HashSet<>();
+        this.users = Collections.synchronizedSet(new HashSet<>());
+        this.games = Collections.synchronizedSet(new HashSet<>());
+        this.lobbies = Collections.synchronizedSet(new HashSet<>());
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public void addUser(final User user) throws ErrorTypeException {
+    public synchronized void addUser(final User user) throws ErrorTypeException {
         if (!this.users.add(user)) {
             throw new ErrorTypeException(ErrorType.USER_ALREADY_EXISTS);
         }

@@ -84,7 +84,7 @@ public class ViewImpl implements View {
 
     public void waitEnd() {
         textGUI.waitForWindowToClose(menuForm.getWindow());
-        gameForm.dispose();
+        this.gameForm.close();
     }
 
     private void runOnGui(Runnable run) {
@@ -285,7 +285,10 @@ public class ViewImpl implements View {
     public void gameEndedNotify(Game game) {
         this.runOnGui(() -> {
             if (game.equals(this.gameForm.getGame())) {
-                Utils.showMessageBox("Game ended", "The game is ended\nExit game please", this.textGUI);
+                String win = (game.getUserStatus(this.user) != null
+                        && game.getUserStatus(this.user).getRemainingDice() > 0) ? "win" : "lose";
+                Utils.showMessageBox("Game ended", "The game is ended\nYou " + win + "\nExit game please",
+                        this.textGUI);
             }
         });
 
@@ -309,6 +312,7 @@ public class ViewImpl implements View {
 
     public void closeNotify() {
         this.menuForm.close();
+
         synchronized (this) {
             this.notify();
         }
