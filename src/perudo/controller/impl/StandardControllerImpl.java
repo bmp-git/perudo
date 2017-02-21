@@ -44,8 +44,8 @@ public class StandardControllerImpl implements Controller, Closeable {
     public void initializeNewUser(final View view) {
         Objects.requireNonNull(view);
         this.executor.execute(() -> {
-            final User newUser = new UserImpl("Anonymous");
             try {
+                final User newUser = UserImpl.getNewAnonymousUser("Anonymous");
                 this.model.addUser(newUser);
                 this.views.put(newUser, view);
                 view.initializeNewUserRespond(ResponseImpl.of(newUser));
@@ -61,9 +61,7 @@ public class StandardControllerImpl implements Controller, Closeable {
     public void changeUserName(final User user, final String name) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
-
             final View view = this.views.get(user);
-
             try {
                 if (this.userIsInLobby(user)) {
                     throw new ErrorTypeException(ErrorType.USER_IS_IN_LOBBY);
@@ -76,24 +74,23 @@ public class StandardControllerImpl implements Controller, Closeable {
                 return;
             }
 
-            final User newUser = user.changeName(name);
-
             try {
+                final User newUser = user.changeName(name);
                 this.model.addUser(newUser);
+                this.views.remove(user);
+                this.views.put(newUser, view);
+                this.views.forEach((u, v) -> v.changeNameNotify(user, newUser));
             } catch (ErrorTypeException e) {
                 try {
                     this.model.addUser(user);
                 } catch (ErrorTypeException e1) {
                     e1.printStackTrace();
+                    this.views.forEach((u, v) -> v.userExitNotify(user));
                     this.views.remove(user);
+                    view.showError(e1.getErrorType());
                 }
                 view.showError(e.getErrorType());
-                return;
             }
-
-            this.views.remove(user);
-            this.views.put(newUser, view);
-            this.views.forEach((u, v) -> v.changeNameNotify(user, newUser));
         });
     }
 
@@ -210,6 +207,7 @@ public class StandardControllerImpl implements Controller, Closeable {
                     this.views.forEach((u, v) -> v.createLobbyNotify(lobby));
                 } catch (ErrorTypeException e1) {
                     e1.printStackTrace();
+                    view.showError(e1.getErrorType());
                 }
                 view.showError(e.getErrorType());
             }
