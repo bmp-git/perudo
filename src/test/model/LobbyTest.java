@@ -16,7 +16,11 @@ import perudo.utility.ErrorTypeException;
 public class LobbyTest {
     @org.junit.Test
     public void main() {
-        User owner = new UserImpl("host");
+        User owner = null;
+        try {
+            owner = new UserImpl("host");
+        } catch (ErrorTypeException e) {
+        }
         Lobby l, l1;
         try {
             l = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1)), owner);
@@ -54,10 +58,15 @@ public class LobbyTest {
             assertEquals(ex.getErrorType(), ErrorType.LOBBY_CANT_START_GAME);
         }
 
-        User u1 = new UserImpl("u1");
-        User u2 = new UserImpl("u2");
-        User u3 = new UserImpl("u3");
-        User u4 = new UserImpl("u4");
+        User u1 = null, u2 = null, u3 = null, u4 = null;
+        try {
+            u1 = new UserImpl("u1");
+            u2 = new UserImpl("u2");
+            u3 = new UserImpl("u3");
+            u4 = new UserImpl("u4");
+        } catch (ErrorTypeException e2) {
+
+        }
 
         try {
             l.removeUser(u1);
