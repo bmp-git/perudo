@@ -23,6 +23,7 @@ import perudo.view.impl.components.TopMenu;
 import perudo.view.impl.panels.LobbyInfoPanel;
 import perudo.view.impl.panels.LobbyPanel;
 import perudo.view.impl.panels.MenuBottomPanel;
+import perudo.view.impl.panels.UserPanel;
 
 public class MenuPanel extends JPanel {
 
@@ -33,8 +34,10 @@ public class MenuPanel extends JPanel {
 
     private final GUIFactory factory;
     private JSplitPane splitPane;
+    
     private JPanel lobbypanel;
     private JPanel lobbyinfo;
+    private JPanel pnlUsers;
     
     private TopMenu pnlTopMenu;
     private MenuBottomPanel pnlBottomMenu;
@@ -48,6 +51,7 @@ public class MenuPanel extends JPanel {
         this.pnlTopMenu = (TopMenu) this.factory.createTopMenu();
         this.pnlBottomMenu = (MenuBottomPanel) this.factory.createMenuBottomPanel();
         
+        createUserListPanel();
         createLobbyListPanel();
         createLobbyInfoPanel();
         createSplitPanel();
@@ -55,6 +59,7 @@ public class MenuPanel extends JPanel {
         
         this.add(pnlTopMenu, BorderLayout.NORTH);
         this.add(splitPane, BorderLayout.CENTER);
+        this.add(pnlUsers, BorderLayout.EAST);
         this.add(pnlBottomMenu, BorderLayout.SOUTH);
     }
 
@@ -62,9 +67,20 @@ public class MenuPanel extends JPanel {
         this.user = Optional.of(user);
         this.pnlTopMenu.setUser(user);
         this.pnlBottomMenu.setUser(user);
+        ControllerSingleton.getController().getUsers(this.user.get());
+        this.updateUsers(user);
     }
     
-
+    private void createUserListPanel() {
+        this.pnlUsers = factory.createPanel();
+        GridLayout gl = new GridLayout(1, 1);
+        pnlUsers.setLayout(gl);
+        pnlUsers.setBorder(new TitledBorder("Users list"));
+        if(this.user.isPresent()) {
+            ControllerSingleton.getController().getUsers(this.user.get());
+        }
+    }
+    
     private void createLobbyListPanel() {
         lobbypanel = factory.createPanel();
         GridLayout gl = new GridLayout(1, 1);
@@ -89,8 +105,14 @@ public class MenuPanel extends JPanel {
         splitPane.setRightComponent(lobbyinfo);
     }
 
+    private void addUser(User user) {
+        UserPanel p = (UserPanel) this.factory.createUserPanel(user);
+        ((GridLayout) pnlUsers.getLayout()).setRows(this.pnlUsers.getComponentCount() + 1);
+        this.pnlUsers.add(p);
+    }
+    
     public void addLobby(Lobby lobby) {
-        LobbyPanel p = new LobbyPanel(lobby);
+        LobbyPanel p = (LobbyPanel) this.factory.createLobbyPanel(lobby);
         class ML implements MouseListener {
 
             @Override
@@ -152,6 +174,19 @@ public class MenuPanel extends JPanel {
 
         if (lobbyinfo.getComponentCount() > 0) {
             ((LobbyInfoPanel) lobbyinfo.getComponent(0)).setLobby(lobby);
+        }
+    }
+    
+    public void updateUsers(User user) {
+        boolean inserted = false;
+        for (int i = 0; i < this.pnlUsers.getComponentCount(); i++) {
+            if (((UserPanel) this.pnlUsers.getComponent(i)).getUser().equals(user) && !inserted) {
+                inserted = true;
+                ((UserPanel) this.pnlUsers.getComponent(i)).setUser(user);
+            }
+        }
+        if (!inserted) {
+            this.addUser(user);
         }
     }
 

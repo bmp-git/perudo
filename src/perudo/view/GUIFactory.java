@@ -8,6 +8,9 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import perudo.model.Lobby;
+import perudo.model.User;
+
 public interface GUIFactory {
         
     JFrame createFrame(String title);
@@ -15,6 +18,10 @@ public interface GUIFactory {
     JPanel createPanel();
     
     JPanel createMenuPanel();
+    
+    JPanel createLobbyPanel(Lobby lobby);
+    
+    JPanel createUserPanel(User user);
     
     JPanel createCreateLobbyPanel();
     

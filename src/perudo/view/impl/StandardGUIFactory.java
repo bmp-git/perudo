@@ -19,11 +19,15 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import perudo.model.Lobby;
+import perudo.model.User;
 import perudo.view.GUIFactory;
 import perudo.view.impl.components.TopMenu;
 import perudo.view.impl.panels.ChangeNamePanel;
 import perudo.view.impl.panels.CreateLobbyPanel;
+import perudo.view.impl.panels.LobbyPanel;
 import perudo.view.impl.panels.MenuBottomPanel;
+import perudo.view.impl.panels.UserPanel;
 
 public class StandardGUIFactory implements GUIFactory {
     
@@ -35,6 +39,17 @@ public class StandardGUIFactory implements GUIFactory {
     @Override
     public JPanel createMenuPanel() {
         return new MenuPanel();
+    }
+    
+    @Override
+    public JPanel createLobbyPanel(Lobby lobby) {
+        return new LobbyPanel(lobby);
+    }
+    
+
+    @Override
+    public JPanel createUserPanel(User user) {
+        return new UserPanel(user);
     }
     
     @Override
@@ -125,5 +140,4 @@ public class StandardGUIFactory implements GUIFactory {
     public JFrame createFrame(String title) {
         return new JFrame(title);
     }
-
 }
