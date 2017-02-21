@@ -111,6 +111,7 @@ public class GameImpl implements Game {
             throw new ErrorTypeException(ErrorType.GAME_NOT_YOUR_TURN);
         }
     }
+
     private void checkIsOver() throws ErrorTypeException {
         if (this.isOver()) {
             throw new ErrorTypeException(ErrorType.GAME_IS_OVER);
@@ -120,13 +121,14 @@ public class GameImpl implements Game {
     private void checkUserCanUrge(User user) throws ErrorTypeException {
         // no one had bid yet, the one who bid can't urge, the one who is turn
         // can't urge
-        if ((!this.getCurrentBid().isPresent()) || this.getBidUser().get().equals(user) || this.getTurn().equals(user)) {
+        if ((!this.getCurrentBid().isPresent()) || this.getBidUser().get().equals(user)
+                || this.getTurn().equals(user)) {
             throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_URGE_NOW);
         }
     }
 
     @Override
-    public int getRealBidDiceCount() {
+    public synchronized int getRealBidDiceCount() {
         if (!this.getCurrentBid().isPresent()) {
             throw new IllegalStateException();
         }
@@ -150,17 +152,17 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public User getTurn() {
+    public synchronized User getTurn() {
         return this.currentTurn;
     }
-    
+
     @Override
-    public Optional<User> getBidUser() {
+    public synchronized Optional<User> getBidUser() {
         return this.bidUser;
     }
 
     @Override
-    public void play(Bid bid, User user) throws ErrorTypeException {
+    public synchronized void play(Bid bid, User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
         this.checkUserNotLose(user);
@@ -170,7 +172,7 @@ public class GameImpl implements Game {
         if (this.getCurrentBid().isPresent()
                 && !this.getCurrentBid().get().isNextBidValid(bid, this.turnIsPalifico(), this.getSettings())) {
             throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
-        } else if(!this.getCurrentBid().isPresent() && bid.getDiceValue() > this.getSettings().getMaxDiceValue()){
+        } else if (!this.getCurrentBid().isPresent() && bid.getDiceValue() > this.getSettings().getMaxDiceValue()) {
             throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
         }
 
@@ -180,7 +182,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public Boolean doubt(User user) throws ErrorTypeException {
+    public synchronized Boolean doubt(User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
         this.checkUserNotLose(user);
@@ -203,7 +205,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public Boolean urge(User user) throws ErrorTypeException {
+    public synchronized Boolean urge(User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
         this.checkUserNotLose(user);
@@ -227,7 +229,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public void callPalifico(User user) throws ErrorTypeException {
+    public synchronized void callPalifico(User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
 
@@ -239,6 +241,7 @@ public class GameImpl implements Game {
         this.usersStatus.put(user, this.getUserStatus(user).callPalifico());
         this.resetTurnStartTime();
         this.currentTurn = user;
+        this.palifico = true;
     }
 
     @Override
@@ -247,22 +250,22 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public Optional<Bid> getCurrentBid() {
+    public synchronized Optional<Bid> getCurrentBid() {
         return this.currentBid;
     }
 
     @Override
-    public Duration getTurnRemainingTime() {
+    public synchronized Duration getTurnRemainingTime() {
         return this.getSettings().getMaxTurnTime().minus(Duration.between(this.turnStartTime, Instant.now()));
     }
 
     @Override
-    public PlayerStatus getUserStatus(User user) {
+    public synchronized PlayerStatus getUserStatus(User user) {
         return this.usersStatus.get(user);
     }
 
     @Override
-    public boolean turnIsPalifico() {
+    public synchronized boolean turnIsPalifico() {
         return this.palifico;
     }
 
@@ -295,15 +298,15 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public void removeUser(User user) throws ErrorTypeException {
+    public synchronized void removeUser(User user) throws ErrorTypeException {
         this.checkUserExistence(user);
         PlayerStatus status = this.getUserStatus(user);
         this.userList.remove(user);
         this.usersStatus.remove(user);
-        
-        if(status.getRemainingDice() != 0){
-           this.resetGame();
-        } 
+
+        if (status.getRemainingDice() != 0) {
+            this.resetGame();
+        }
     }
 
 }

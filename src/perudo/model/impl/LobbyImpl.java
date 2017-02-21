@@ -44,7 +44,7 @@ public class LobbyImpl implements Lobby {
     }
 
     @Override
-    public void addUser(final User user) throws ErrorTypeException {
+    public synchronized void addUser(final User user) throws ErrorTypeException {
         if(started){
             throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_STARTED);
         }
@@ -60,7 +60,7 @@ public class LobbyImpl implements Lobby {
     }
 
     @Override
-    public void removeUser(final User user) throws ErrorTypeException {
+    public synchronized void removeUser(final User user) throws ErrorTypeException {
         if(started){
             throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_STARTED);
         }
@@ -73,7 +73,7 @@ public class LobbyImpl implements Lobby {
     }
 
     @Override
-    public Game startGame(final User starter) throws ErrorTypeException {
+    public synchronized Game startGame(final User starter) throws ErrorTypeException {
         if(started){
             throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_STARTED);
         }

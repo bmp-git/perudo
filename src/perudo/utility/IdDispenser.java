@@ -1,6 +1,6 @@
 package perudo.utility;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class IdDispenser {
@@ -11,12 +11,18 @@ public class IdDispenser {
 
     private IdDispenser() {
         this.nextId = 1;
-        this.unusedId = new ArrayList<Integer>();
+        this.unusedId = new LinkedList<>();
     }
 
-    public int getNextId() {
+    public synchronized int getNextId() {
         return (unusedId.size() > MAX_UNUSED_ID || (nextId == Integer.MAX_VALUE && unusedId.size() > 0))
                 ? unusedId.remove(0) : nextId++;
+    }
+
+    public synchronized void freeId(int id) {
+        if (!unusedId.contains(id)) {
+            unusedId.add(id);
+        }
     }
 
     private static final IdDispenser lobbies = new IdDispenser();
@@ -30,7 +36,7 @@ public class IdDispenser {
     public static IdDispenser getGameIdDispenser() {
         return games;
     }
-    
+
     private static final IdDispenser users = new IdDispenser();
 
     public static IdDispenser getUserIdDispenser() {
