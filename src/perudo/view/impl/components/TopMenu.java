@@ -13,6 +13,7 @@ import perudo.view.GUIFactory;
 import perudo.view.impl.ControllerSingleton;
 import perudo.view.impl.GUIUtility;
 import perudo.view.impl.StandardGUIFactory;
+import perudo.view.impl.panels.ChangeNamePanel;
 import perudo.view.impl.panels.CreateLobbyPanel;
 
 public class TopMenu extends JMenuBar {
@@ -33,6 +34,8 @@ public class TopMenu extends JMenuBar {
 
     private final GUIFactory factory;
     private final CreateLobbyPanel pnlcreatelobby;
+    private final ChangeNamePanel pnlchangename;
+
     private Optional<User> user;
     
     public TopMenu() {
@@ -40,13 +43,17 @@ public class TopMenu extends JMenuBar {
         this.factory = new StandardGUIFactory();
         this.user = Optional.empty();
         this.pnlcreatelobby = (CreateLobbyPanel) this.factory.createCreateLobbyPanel();
+        this.pnlchangename = (ChangeNamePanel) this.factory.createChangeNamePanel();
         JMenu userMenu = new JMenu(MENU_USER);
         userMenu.setMnemonic(KeyEvent.VK_U);
         JMenuItem miChangeName = new JMenuItem(MENU_USER_CHANGENAME);
         miChangeName.setMnemonic(KeyEvent.VK_C);
         miChangeName.setToolTipText(MENU_USER_CHANGENAME_TOOLTIP);
         miChangeName.addActionListener(e -> {
-            //TODO implementation
+            int n = JOptionPane.showConfirmDialog(TopMenu.this, this.pnlchangename, CREATE_LOBBY_PANEL_TITLE, JOptionPane.OK_CANCEL_OPTION);
+            if(n == JOptionPane.YES_OPTION && this.user.isPresent() && this.pnlchangename.getName().trim().length() > 0) {
+                ControllerSingleton.getController().changeUserName(this.user.get(), this.pnlchangename.getName());
+            }
         });
         userMenu.add(miChangeName);
         
@@ -56,8 +63,8 @@ public class TopMenu extends JMenuBar {
         miCreateLobby.setMnemonic(KeyEvent.VK_C);
         miCreateLobby.setToolTipText(MENU_LOBBY_CREATELOBBY_TOOLTIP);
         miCreateLobby.addActionListener(e -> {
-            int n = JOptionPane.showConfirmDialog(null, this.pnlcreatelobby, CREATE_LOBBY_PANEL_TITLE, JOptionPane.OK_CANCEL_OPTION,0,GUIUtility.getIcon(ICON_RESPATH));
-            if(n == JOptionPane.YES_OPTION && this.user.isPresent()) {
+            int n = JOptionPane.showConfirmDialog(TopMenu.this, this.pnlcreatelobby, CREATE_LOBBY_PANEL_TITLE, JOptionPane.OK_CANCEL_OPTION,0,GUIUtility.getIcon(ICON_RESPATH));
+            if(n == JOptionPane.YES_OPTION && this.user.isPresent() && this.pnlcreatelobby.getName().trim().length() > 0) {
                     ControllerSingleton.getController().createLobby(this.user.get(), this.pnlcreatelobby.getGameSettings());
             }
         });

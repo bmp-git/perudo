@@ -21,7 +21,9 @@ import javax.swing.ScrollPaneConstants;
 
 import perudo.view.GUIFactory;
 import perudo.view.impl.components.TopMenu;
+import perudo.view.impl.panels.ChangeNamePanel;
 import perudo.view.impl.panels.CreateLobbyPanel;
+import perudo.view.impl.panels.MenuBottomPanel;
 
 public class StandardGUIFactory implements GUIFactory {
     
@@ -40,6 +42,16 @@ public class StandardGUIFactory implements GUIFactory {
         return new CreateLobbyPanel();
     }
     
+    @Override
+    public JPanel createMenuBottomPanel() {
+        return new MenuBottomPanel();
+    }
+    
+
+    @Override
+    public JPanel createChangeNamePanel() {
+       return new ChangeNamePanel();
+    }
 
     @Override
     public JComponent createTopMenu() {
@@ -113,4 +125,5 @@ public class StandardGUIFactory implements GUIFactory {
     public JFrame createFrame(String title) {
         return new JFrame(title);
     }
+
 }

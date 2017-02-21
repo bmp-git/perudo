@@ -9,7 +9,7 @@ import java.awt.event.MouseListener;
 import java.util.Optional;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -17,10 +17,12 @@ import javax.swing.border.TitledBorder;
 
 import perudo.model.Lobby;
 import perudo.model.User;
+import perudo.utility.ErrorType;
 import perudo.view.GUIFactory;
 import perudo.view.impl.components.TopMenu;
 import perudo.view.impl.panels.LobbyInfoPanel;
 import perudo.view.impl.panels.LobbyPanel;
+import perudo.view.impl.panels.MenuBottomPanel;
 
 public class MenuPanel extends JPanel {
 
@@ -33,10 +35,9 @@ public class MenuPanel extends JPanel {
     private JSplitPane splitPane;
     private JPanel lobbypanel;
     private JPanel lobbyinfo;
-    private JPanel bottompanel;
-    private JLabel lblname;
-    private JLabel lblonline;
+    
     private TopMenu pnlTopMenu;
+    private MenuBottomPanel pnlBottomMenu;
     private Optional<User> user;
 
     public MenuPanel() {
@@ -45,39 +46,24 @@ public class MenuPanel extends JPanel {
         this.setLayout(new BorderLayout());
         this.user = Optional.empty();
         this.pnlTopMenu = (TopMenu) this.factory.createTopMenu();
+        this.pnlBottomMenu = (MenuBottomPanel) this.factory.createMenuBottomPanel();
         
         createLobbyListPanel();
         createLobbyInfoPanel();
-        createBottomPanel();
         createSplitPanel();
 
         
         this.add(pnlTopMenu, BorderLayout.NORTH);
         this.add(splitPane, BorderLayout.CENTER);
-
+        this.add(pnlBottomMenu, BorderLayout.SOUTH);
     }
 
     public void setUser(User user) {
         this.user = Optional.of(user);
         this.pnlTopMenu.setUser(user);
-        this.lblname.setText("Logged as "+this.user.get().getName());
-        this.lblonline.setText("Online.");
+        this.pnlBottomMenu.setUser(user);
     }
     
-    private void createBottomPanel() {
-        this.bottompanel = this.factory.createPanel();
-        if (user.isPresent()) {
-            this.lblname = (JLabel) this.factory.createLabel("Logged as " + user.get().getName());
-            this.lblonline = (JLabel) this.factory.createLabel("Online.");
-        } else {
-            this.lblname = (JLabel) this.factory.createLabel("Not logged yet..");
-            this.lblonline = (JLabel) this.factory.createLabel("Offline.");
-        }
-        this.bottompanel.setLayout(new BorderLayout());
-        this.bottompanel.add(this.lblname, BorderLayout.LINE_START);
-        this.bottompanel.add(this.lblonline, BorderLayout.LINE_END);
-        this.add(this.bottompanel, BorderLayout.SOUTH);
-    }
 
     private void createLobbyListPanel() {
         lobbypanel = factory.createPanel();
@@ -157,6 +143,7 @@ public class MenuPanel extends JPanel {
     }
 
     public void updateLobby(Lobby lobby) {
+
         for (int i = 0; i < this.lobbypanel.getComponentCount(); i++) {
             if (((LobbyPanel) this.lobbypanel.getComponent(i)).getLobby().equals(lobby)) {
                 ((LobbyPanel) this.lobbypanel.getComponent(i)).setLobby(lobby);
@@ -166,5 +153,10 @@ public class MenuPanel extends JPanel {
         if (lobbyinfo.getComponentCount() > 0) {
             ((LobbyInfoPanel) lobbyinfo.getComponent(0)).setLobby(lobby);
         }
+    }
+
+    public void showError(ErrorType errorType) {
+        JOptionPane.showMessageDialog(this, errorType.getMessage(), "Error: "+errorType.getId(),
+                JOptionPane.ERROR_MESSAGE);
     }
 }

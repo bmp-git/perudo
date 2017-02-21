@@ -86,8 +86,10 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void changeNameNotify(User user) {
-        // TODO Auto-generated method stub
+    public void changeNameNotify(User oldUser, User newUser) {
+        if(this.user.equals(oldUser)) {
+            this.menuPanel.setUser(newUser);
+        }
     }
 
     @Override
@@ -187,6 +189,7 @@ public class ViewImpl implements View {
 
     @Override
     public void showError(ErrorType errorType) {
+        this.menuPanel.showError(errorType);
         System.out.println(errorType);
     }
 

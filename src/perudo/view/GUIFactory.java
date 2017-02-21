@@ -17,6 +17,10 @@ public interface GUIFactory {
     JPanel createMenuPanel();
     
     JPanel createCreateLobbyPanel();
+    
+    JPanel createMenuBottomPanel();
+    
+    JPanel createChangeNamePanel();
         
     JComponent createButton(String text);
     
@@ -29,7 +33,7 @@ public interface GUIFactory {
     JComponent createTextField();
     
     JComponent createTopMenu();
-    
+        
     JComponent createMenu();
     
     JComponent createMenuItem();
