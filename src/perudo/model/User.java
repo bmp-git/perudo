@@ -1,5 +1,7 @@
 package perudo.model;
 
+import perudo.utility.ErrorTypeException;
+
 public interface User {
 
     /**
@@ -21,6 +23,6 @@ public interface User {
      * 
      * @return the user with the changed name
      */
-    User changeName(String newName);
+    User changeName(String newName) throws ErrorTypeException;
 
 }

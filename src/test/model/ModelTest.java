@@ -20,12 +20,17 @@ public class ModelTest {
     @org.junit.Test
     public void main() {
         Model model = new ModelImpl();
-        User u1 = new UserImpl("u1");
-        User u2 = new UserImpl("u2");
-        User u3 = new UserImpl("u3");
-        User u4 = new UserImpl("u4");
-        User u5 = new UserImpl("u5");
-        User u6 = new UserImpl("u6");
+        User u1 = null, u2 = null, u3 = null, u4 = null, u5 = null, u6 = null;
+        try {
+            u1 = new UserImpl("u1");
+            u2 = new UserImpl("u2");
+            u3 = new UserImpl("u3");
+            u4 = new UserImpl("u4");
+            u5 = new UserImpl("u5");
+            u6 = new UserImpl("u6");
+        } catch (ErrorTypeException e2) {
+
+        }
         Lobby l1 = null, l2 = null, l3 = null;
         Game g1 = null, g2 = null, g3 = null;
         try {
@@ -105,7 +110,7 @@ public class ModelTest {
         }
 
         assertTrue(model.getLobbies().containsAll(Arrays.asList(l1, l2, l3)));
-        
+
         // GAMES
         try {
             model.removeGame(g1);

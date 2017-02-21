@@ -20,6 +20,9 @@ public enum ErrorType {
     USER_DOES_NOT_OWN_LOBBY(3004, " "),
     USER_IS_NOT_IN_A_LOBBY(3005, "The user is not in a lobby."),
     USER_IS_NOT_IN_A_GAME(3006, "The user is not in a game."),
+    USER_NAME_TOO_LONG(3000, "The user name is too long."),
+    USER_NAME_TOO_SHORT(3000, "The user name is too long."),
+    USER_NAME_INVALID(3000, "The user name contains invalid characters."),
     
     GAME_NOT_YOUR_TURN(4000, " "),
     GAME_INVALID_BID(4001, " "),

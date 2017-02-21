@@ -19,9 +19,14 @@ import java.util.Arrays;
 public class GameTest {
     @org.junit.Test
     public void main() {
-        User u1 = new UserImpl("u1");
-        User u2 = new UserImpl("u2");
-        User u3 = new UserImpl("u3");
+        User u1 = null, u2 = null, u3 = null;
+        try {
+            u1 = new UserImpl("u1");
+            u2 = new UserImpl("u2");
+            u3 = new UserImpl("u3");
+        } catch (ErrorTypeException e2) {
+
+        }
         GameSettings setts = new GameSettingsImpl(3, 6, 5, Duration.ofMinutes(10));
         Game game = null;
         try {
@@ -96,13 +101,12 @@ public class GameTest {
         }
 
         assertEquals(game.getUserStatus(ut).getRemainingDice(), 4);
-        
-        
+
         ut = game.getTurn();
         int utDice = game.getUserStatus(ut).getRemainingDice();
         try {
             game.play(new BidImpl(20, 3), game.getTurn());
-            game.doubt( game.getTurn());
+            game.doubt(game.getTurn());
         } catch (Exception e1) {
             throw new IllegalStateException("Should be ok");
         }
