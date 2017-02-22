@@ -7,6 +7,8 @@ import perudo.utility.ErrorTypeException;
 
 public class BidImpl implements Bid {
 
+    private static final long serialVersionUID = -50636686196288999L;
+
     private final int diceValue, quantity;
 
     public BidImpl(final int quantity, final int diceValue) throws ErrorTypeException {
@@ -107,7 +109,7 @@ public class BidImpl implements Bid {
             quantity = this.quantity;
         } else if (diceValue <= this.diceValue) {
             quantity = this.quantity + 1;
-        } 
+        }
 
         try {
 

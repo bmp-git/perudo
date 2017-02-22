@@ -7,6 +7,7 @@ import perudo.utility.IdDispenser;
 
 public class UserImpl implements User {
 
+    private static final long serialVersionUID = 3324295008073807947L;
     public static final int MAX_USER_NAME_LENGTH = 12;
     public static final int MIN_USER_NAME_LENGTH = 2;
     public static final String PERMITTED_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";

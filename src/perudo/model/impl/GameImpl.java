@@ -22,6 +22,8 @@ import perudo.utility.IdDispenser;
 
 public class GameImpl implements Game {
 
+    private static final long serialVersionUID = 462313460628002640L;
+    
     private final int id;
     private final List<User> userList;
     private final Map<User, PlayerStatus> usersStatus;

@@ -1,8 +1,10 @@
 package perudo.model;
 
+import java.io.Serializable;
+
 import perudo.utility.ErrorTypeException;
 
-public interface User {
+public interface User extends Serializable{
 
     /**
      * Gets the unique id of the user.

@@ -1,12 +1,13 @@
 package perudo.model;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
 import perudo.utility.ErrorTypeException;
 
-public interface Game {
+public interface Game extends Serializable {
     /**
      * Gets the unique id of the game.
      * 
@@ -106,14 +107,14 @@ public interface Game {
      *         made the optional will be empty
      */
     Optional<User> getBidUser();
-    
+
     /**
      * Gets the numbers of dice that apply to the current bid
      * 
      * @return the quantity of valid dice that count for this bid
      */
     int getRealBidDiceCount();
-    
+
     /**
      * Gets the remaining time to play.
      * 

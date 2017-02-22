@@ -1,6 +1,8 @@
 package perudo.model;
 
-public interface Bid {
+import java.io.Serializable;
+
+public interface Bid extends Serializable {
     /**
      * Gets the value of the dice face.
      * 
