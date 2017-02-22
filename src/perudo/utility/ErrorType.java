@@ -35,6 +35,8 @@ public enum ErrorType {
     GAME_CANT_DOUBT_NOW(4008, " "),
     GAME_IS_OVER(4009, " "),
     
+    METHOD_NOT_FOUND(5001, "Network error or application not updated."),
+    METHOD_INVALID(5002, "Network error or application not updated."),
     NONE(0, "No error.");
     
 	private int id;
