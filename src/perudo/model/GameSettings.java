@@ -1,8 +1,9 @@
 package perudo.model;
 
+import java.io.Serializable;
 import java.time.Duration;
 
-public interface GameSettings {
+public interface GameSettings extends Serializable {
 
     /**
      * Gets the maximum players.
@@ -31,7 +32,7 @@ public interface GameSettings {
      * @return amount of time
      */
     Duration getMaxTurnTime();
-    
+
     /**
      * Gets the name.
      * 

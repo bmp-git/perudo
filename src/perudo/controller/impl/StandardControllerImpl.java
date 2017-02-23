@@ -344,7 +344,44 @@ public class StandardControllerImpl implements Controller, Closeable {
                 view.showError(e.getErrorType());
             }
         });
+    }
 
+    @Override
+    public void closeNow(User user) {
+        Objects.requireNonNull(user);
+        this.executor.execute(() -> {
+            try {
+                if (this.userIsInLobby(user)) {
+                    final Lobby lobby = this.getLobbyFromModel(user);
+                    lobby.removeUser(user);
+                    this.getViewsExceptUser(user).forEach((u, v) -> v.exitLobbyNotify(lobby, user));
+                    if (lobby.getUsers().isEmpty()) {
+                        this.model.removeLobby(lobby);
+                        this.getViewsExceptUser(user).forEach((u, v) -> v.removeLobbyNotify(lobby));
+                    }
+                }
+                if (this.userIsInGame(user)) {
+                    final Game game = this.getGameFromModel(user);
+                    final boolean gameAlreadyOver = game.isOver();
+                    game.removeUser(user);
+                    final Map<User, View> gameViews = this.getViewsfromGame(game);
+                    gameViews.forEach((u, v) -> v.exitGameNotify(game, user));
+                    if (game.getUsers().size() == 1 && !gameAlreadyOver) {
+                        gameViews.forEach((u, v) -> v.gameEndedNotify(game));
+                    } else if (game.getUsers().isEmpty()) {
+                        this.model.removeGame(game);
+                        this.getViewsExceptUser(user).forEach((u, v) -> v.removeGameNotify(game));
+                    }
+                }
+                if(this.model.getUsers().contains(user)) {
+                    this.model.removeUser(user);
+                }
+                this.getViewsExceptUser(user).forEach((u, v) -> v.userExitNotify(user));
+                this.views.remove(user);
+            } catch (ErrorTypeException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -422,6 +459,11 @@ public class StandardControllerImpl implements Controller, Closeable {
 
     private Map<User, View> getViewsfromGame(final Game game) {
         return this.views.entrySet().stream().filter(e -> game.getUsers().contains(e.getKey()))
+                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+    }
+
+    private Map<User, View> getViewsExceptUser(final User user) {
+        return this.views.entrySet().stream().filter(e -> !Objects.equals(e, user))
                 .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
     }
 

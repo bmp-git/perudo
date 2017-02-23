@@ -5,6 +5,9 @@ import java.time.Duration;
 import perudo.model.GameSettings;
 
 public class GameSettingsImpl implements GameSettings {
+
+    private static final long serialVersionUID = 2049188859139952036L;
+
     public static final int MIN_PLAYER_NUMBERS = 2;
     public static final int MAX_PLAYER_NUMBERS = 10;
 

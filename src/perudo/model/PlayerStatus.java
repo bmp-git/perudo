@@ -1,10 +1,11 @@
 package perudo.model;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import perudo.utility.ErrorTypeException;
 
-public interface PlayerStatus {
+public interface PlayerStatus extends Serializable {
     /**
      * Gets a map of <face value, face value count> of the current player's
      * status. Ex. if the hand is 1,1,3,3,4 with dice of six faces the map would

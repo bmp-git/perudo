@@ -4,7 +4,7 @@ import perudo.utility.ErrorType;
 import perudo.utility.Result;
 
 public class ResultImpl implements Result {
-
+    private static final long serialVersionUID = -8127988248059956835L;
     private final boolean ok;
     private final ErrorType error;
 

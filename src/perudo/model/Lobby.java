@@ -1,9 +1,10 @@
 package perudo.model;
 
+import java.io.Serializable;
 import java.util.Set;
 import perudo.utility.ErrorTypeException;
 
-public interface Lobby {
+public interface Lobby extends Serializable {
     /**
      * Gets the unique id of the lobby.
      * 

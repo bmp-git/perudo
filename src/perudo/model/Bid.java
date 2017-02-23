@@ -1,6 +1,10 @@
 package perudo.model;
 
-public interface Bid {
+import java.io.Serializable;
+
+import perudo.utility.ErrorTypeException;
+
+public interface Bid extends Serializable {
     /**
      * Gets the value of the dice face.
      * 
@@ -36,7 +40,7 @@ public interface Bid {
      * 
      * @return the new bid increased
      */
-    Bid nextBid(int diceValue);
+    Bid nextBid(int diceValue) throws ErrorTypeException;
 
     /**
      * Gets a new bid with a minimum increase of this bid.
@@ -44,6 +48,10 @@ public interface Bid {
      * @return the new bid increased
      */
     default Bid nextBid() {
-        return this.nextBid(this.getDiceValue());
+        try {
+            return this.nextBid(this.getDiceValue());
+        } catch (ErrorTypeException e) {
+            throw new IllegalStateException();
+        }
     }
 }

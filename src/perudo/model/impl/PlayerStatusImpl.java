@@ -12,6 +12,8 @@ import perudo.utility.ErrorTypeException;
 
 public class PlayerStatusImpl implements PlayerStatus {
 
+    private static final long serialVersionUID = -9211044365486847226L;
+
     public static PlayerStatus fromGameSettings(final GameSettings settings) {
         return new PlayerStatusImpl(settings.getInitialDiceNumber(), settings.getMaxDiceValue(), false);
     }

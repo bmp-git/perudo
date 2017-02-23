@@ -14,6 +14,8 @@ import perudo.utility.IdDispenser;
 
 public class LobbyImpl implements Lobby {
 
+    private static final long serialVersionUID = -2649977195965292303L;
+
     private final int id;
     private final Set<User> userSet;
     private final GameSettings settings;
@@ -45,7 +47,7 @@ public class LobbyImpl implements Lobby {
 
     @Override
     public synchronized void addUser(final User user) throws ErrorTypeException {
-        if(started){
+        if (started) {
             throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_STARTED);
         }
         if (this.getFreeSpace() <= 0) {
@@ -61,7 +63,7 @@ public class LobbyImpl implements Lobby {
 
     @Override
     public synchronized void removeUser(final User user) throws ErrorTypeException {
-        if(started){
+        if (started) {
             throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_STARTED);
         }
         if (!this.userSet.remove(user)) {
@@ -74,7 +76,7 @@ public class LobbyImpl implements Lobby {
 
     @Override
     public synchronized Game startGame(final User starter) throws ErrorTypeException {
-        if(started){
+        if (started) {
             throw new ErrorTypeException(ErrorType.LOBBY_ALREADY_STARTED);
         }
         if (this.getUsers().size() < 2) {
@@ -83,7 +85,7 @@ public class LobbyImpl implements Lobby {
         if (!this.getOwner().equals(starter)) {
             throw new ErrorTypeException(ErrorType.LOBBY_USER_NOT_OWNER);
         }
-        
+
         Game game = new GameImpl(this.getInfo(), this.getUsers());
         this.started = true;
         return game;
