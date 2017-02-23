@@ -1,6 +1,8 @@
 package perudo.utility;
 
-public interface Result {
+import java.io.Serializable;
+
+public interface Result extends Serializable {
     /**
      * Check if the result is correct, if is false call getErrorType for more information
      * @return
