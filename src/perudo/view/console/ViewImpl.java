@@ -77,7 +77,6 @@ public class ViewImpl implements View {
 
         this.setUser(null);
         this.controller.initializeNewUser(this);
-
         textGUI.setActiveWindow(menuForm.getWindow());
 
     }
@@ -122,7 +121,7 @@ public class ViewImpl implements View {
     @Override
     public void userExitNotify(User user) {
         this.runOnGui(() -> {
-            if (user.equals(this.user)) {
+            if (user == null || user.equals(this.user)) {
                 this.menuForm.close();
             }
             this.menuForm.removeUser(user);

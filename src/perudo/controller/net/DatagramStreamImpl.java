@@ -35,9 +35,12 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
     public DatagramStreamImpl(final InputStream inStream, final OutputStream outStream,
             final List<BiConsumer<Datagram, DatagramStream>> observers,
             final List<BiConsumer<IOException, DatagramStream>> exceptionObservers) throws IOException {
+
         this.user = Optional.empty();
-        this.objInStream = new ObjectInputStream(inStream);
+
+        // first set outputstream or does not work
         this.objOutStream = new ObjectOutputStream(outStream);
+        this.objInStream = new ObjectInputStream(inStream);
         this.observers = new CopyOnWriteArrayList<>(observers);
         this.exceptionObservers = new CopyOnWriteArrayList<>(exceptionObservers);
         this.sender = Executors.newSingleThreadExecutor();
@@ -50,6 +53,8 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
                 try {
                     final Object readObj = this.objInStream.readObject();
                     final Datagram readDatagram = (Datagram) readObj;
+                    // TODO for debug
+                    System.out.println("Received -> " + readDatagram.getMethodName());
                     notifier.execute(() -> {
                         observers.forEach(c -> c.accept(readDatagram, this));
                     });
@@ -67,6 +72,8 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
 
     @Override
     public void send(final Datagram datagram) {
+        // TODO for debug
+        System.out.println("Send -> " + datagram.getMethodName());
         sender.execute(() -> {
             try {
                 this.objOutStream.writeObject(datagram);
@@ -90,7 +97,7 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
         exceptionObservers.add(consumer);
 
     }
-    
+
     @Override
     public Optional<User> getUser() {
         return this.user;

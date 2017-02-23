@@ -35,12 +35,13 @@ public class NetworkViewImpl implements View, Closeable {
     public void initializeNewUserRespond(final Response<User> user) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(user));
         this.executor.execute(() -> {
-            if(user.isOk()) {
+            if (user.isOk()) {
                 this.datagramStream.setUser(user.getValue());
             }
-            this.datagramStream.send(
-                    Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(user)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -49,9 +50,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void initializeNewUserNotify(final User user) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(user));
         this.executor.execute(() -> {
-            this.datagramStream.send(
-                    Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(user)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -60,9 +62,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void userExitNotify(final User user) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(user));
         this.executor.execute(() -> {
-            this.datagramStream.send(
-                    Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(user)));
+            this.datagramStream.send(dg);
             try {
                 this.close();
             } catch (IOException e) {
@@ -76,13 +79,13 @@ public class NetworkViewImpl implements View, Closeable {
     public void changeNameNotify(final User oldUser, final User newUser) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(oldUser, newUser));
         this.executor.execute(() -> {
-            if(Objects.equals(this.datagramStream.getUser().orElse(null), oldUser)) {
+            if (Objects.equals(this.datagramStream.getUser().orElse(null), oldUser)) {
                 this.datagramStream.setUser(newUser);
             }
-            this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
-                    Arrays.asList(oldUser, newUser)));
-
+            this.datagramStream.send(dg);
         });
 
     }
@@ -91,9 +94,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void getUsersRespond(final Response<Set<User>> users) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(users));
         this.executor.execute(() -> {
-            this.datagramStream.send(
-                    Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(users)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -102,9 +106,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void createLobbyNotify(final Lobby lobby) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(lobby));
         this.executor.execute(() -> {
-            this.datagramStream.send(
-                    Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(lobby)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -113,9 +118,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void removeLobbyNotify(final Lobby lobby) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(lobby));
         this.executor.execute(() -> {
-            this.datagramStream.send(
-                    Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(lobby)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -124,9 +130,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void getLobbiesRespond(final Response<Set<Lobby>> lobbies) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(lobbies));
         this.executor.execute(() -> {
-            this.datagramStream.send(
-                    Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(lobbies)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -135,9 +142,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void joinLobbyNotify(final Lobby lobby, final User user) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(lobby, user));
         this.executor.execute(() -> {
-            this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
-                    Arrays.asList(lobby, user)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -146,9 +154,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void exitLobbyNotify(final Lobby lobby, final User user) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(lobby, user));
         this.executor.execute(() -> {
-            this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
-                    Arrays.asList(lobby, user)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -157,9 +166,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void startLobbyNotify(final Lobby lobby, final Game game) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(lobby, game));
         this.executor.execute(() -> {
-            this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
-                    Arrays.asList(lobby, game)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -168,9 +178,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void removeGameNotify(final Game game) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(game));
         this.executor.execute(() -> {
-            this.datagramStream.send(
-                    Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(game)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -179,9 +190,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void getGamesRespond(final Response<Set<Game>> games) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(games));
         this.executor.execute(() -> {
-            this.datagramStream.send(
-                    Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(games)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -190,9 +202,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void playNotify(final Game game, final User user) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(game, user));
         this.executor.execute(() -> {
-            this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
-                    Arrays.asList(game, user)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -201,9 +214,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void doubtNotify(final Game game, final User user, final boolean win) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(game, user, win));
         this.executor.execute(() -> {
-            this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
-                    Arrays.asList(game, user, win)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -212,9 +226,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void urgeNotify(final Game game, final User user, final boolean win) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(game, user, win));
         this.executor.execute(() -> {
-            this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
-                    Arrays.asList(game, user, win)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -223,9 +238,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void callPalificoNotify(final Game game, final User user) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(game, user));
         this.executor.execute(() -> {
-            this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
-                    Arrays.asList(game, user)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -234,9 +250,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void exitGameNotify(final Game game, final User user) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(game, user));
         this.executor.execute(() -> {
-            this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
-                    Arrays.asList(game, user)));
+            this.datagramStream.send(dg);
         });
 
     }
@@ -245,9 +262,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void gameEndedNotify(final Game game) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(game));
         this.executor.execute(() -> {
-            this.datagramStream.send(
-                    Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(game)));
+            this.datagramStream.send(dg);
 
         });
 
@@ -257,9 +275,10 @@ public class NetworkViewImpl implements View, Closeable {
     public void showError(final ErrorType errorType) {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
+                Arrays.asList(errorType));
         this.executor.execute(() -> {
-            this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
-                    Arrays.asList(errorType)));
+            this.datagramStream.send(dg);
         });
 
     }

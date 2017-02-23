@@ -1,6 +1,5 @@
 package perudo.controller.net;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
-public class TcpIPv4ServerListener implements NetworkServerListener, Closeable {
+public class TcpIPv4ServerListener implements NetworkServerListener {
     private final ExecutorService networkListener;
     private final ExecutorService notifier;
     private final ServerSocket serverSocket;
