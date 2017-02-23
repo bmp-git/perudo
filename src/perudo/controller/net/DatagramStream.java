@@ -1,9 +1,9 @@
 package perudo.controller.net;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public interface DatagramStream {
 	void send(Datagram datagram);
 
-	void onDatagramReceived(Consumer<Datagram> consumer);
+	void onDatagramReceived(BiConsumer<Datagram, DatagramStream> consumer);
 }

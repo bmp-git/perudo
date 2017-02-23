@@ -4,7 +4,7 @@ import perudo.utility.ErrorType;
 import perudo.utility.Response;
 
 public class ResponseImpl<T> extends ResultImpl implements Response<T> {
-
+    private static final long serialVersionUID = -4669470512321320418L;
     private final T value;
 
     private ResponseImpl(final boolean ok, final ErrorType error, final T value) {
