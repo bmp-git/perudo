@@ -59,6 +59,11 @@ public class NetworkViewImpl implements View, Closeable {
         this.executor.execute(() -> {
             this.datagramStream.send(
                     Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(user)));
+            try {
+                this.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
 
     }
@@ -255,6 +260,7 @@ public class NetworkViewImpl implements View, Closeable {
     @Override
     public void close() throws IOException {
         this.executor.shutdown();
+        this.datagramStream.close();
     }
 
 }

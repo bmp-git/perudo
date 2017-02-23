@@ -27,6 +27,7 @@ public class NetworkControllerImpl implements Controller {
     private final List<DatagramStream> streams;
     private final BiConsumer<InputStream, OutputStream> datagramStreamCreator;
     private final BiConsumer<Datagram, DatagramStream> invoker;
+    private final BiConsumer<IOException, DatagramStream> ioExcHandler;
 
     public static Controller newNetworkController(Controller controller, NetworkServerListener serverListener) {
         return new NetworkControllerImpl(controller, serverListener);
@@ -37,6 +38,10 @@ public class NetworkControllerImpl implements Controller {
         this.methodInvoker = new MethodInvoker(Controller.class);
         this.streams = new CopyOnWriteArrayList<>();
 
+        this.ioExcHandler = (ex, dgs) -> {
+            
+        };
+        
         this.invoker = (dg, dgs) -> {
             try {
                 if (dg.getMethodName().contains("initializeNewUser")) {
@@ -52,9 +57,10 @@ public class NetworkControllerImpl implements Controller {
         this.datagramStreamCreator = (is, os) -> {
             try {
                 final DatagramStream datagramStream = DatagramStreamImpl.initializeNewDatagramStream(is, os,
-                        Arrays.asList(this.invoker));
+                        Arrays.asList(this.invoker), Arrays.asList(ioExcHandler));
                 this.streams.add(datagramStream);
             } catch (IOException e) {
+                //in case of exception the client who has requested a connection is ignored
                 e.printStackTrace();
             }
         };
@@ -150,7 +156,6 @@ public class NetworkControllerImpl implements Controller {
     @Override
     public void close(User user) {
         this.controller.close(user);
-
     }
 
 }

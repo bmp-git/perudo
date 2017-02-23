@@ -53,10 +53,11 @@ public class TcpIPv4ServerListener implements NetworkServerListener, Closeable {
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
         this.run = false;
         this.networkListener.shutdownNow();
         this.notifier.shutdownNow();
+        this.serverSocket.close();
     }
 
 }
