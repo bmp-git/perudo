@@ -1,4 +1,4 @@
-package perudo.controller.net;
+package perudo.controller.net.client;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -9,6 +9,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import perudo.controller.Controller;
+import perudo.controller.net.Datagram;
+import perudo.controller.net.DatagramStream;
+import perudo.controller.net.DatagramStreamSocketImpl;
+import perudo.controller.net.MethodInvoker;
 import perudo.model.Bid;
 import perudo.model.GameSettings;
 import perudo.model.Lobby;
@@ -43,13 +47,19 @@ public class ControllerClientImpl implements Controller, Closeable {
                 }
             });
         });
-        /*
-         * this.stream.onClose(e -> { this.executor.execute(() -> { if
-         * (e.isPresent()) { this.view.showError(e.get()); }
-         * 
-         * try { this.close(); } catch (IOException e1) { // TODO Auto-generated
-         * catch block e1.printStackTrace(); } }); });
-         */
+
+        this.stream.onIOException((exception, dgStream) -> {
+            this.executor.execute(() -> {
+                exception.printStackTrace();
+                if(dgStream.getUser().isPresent()){
+                    this.view.userExitNotify(dgStream.getUser().get());
+                } else {
+                    //TODO don't have user, to resolve
+                    this.view.userExitNotify(null);
+                }
+            });
+        });
+
     }
 
     @Override
@@ -57,7 +67,7 @@ public class ControllerClientImpl implements Controller, Closeable {
         if (this.view != null) {
             throw new IllegalStateException("Only one view is allowed.");
         }
-        this.view = view;
+        this.view = new ViewClientImpl(view, this.stream);
         this.executor.execute(() -> {
             stream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(View.class),
                     Arrays.asList((Serializable) null)));
