@@ -16,6 +16,7 @@ public class ChangeNamePanel extends JPanel {
      * 
      */
     private static final long serialVersionUID = 1L;
+    public final static String TITLE = "Change username...";
     private static final String LABEL_NAME = "New name";
     private final GUIFactory factory;
     private JTextField txfName;

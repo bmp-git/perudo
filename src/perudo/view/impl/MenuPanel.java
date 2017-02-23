@@ -11,8 +11,7 @@ import java.util.Optional;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import perudo.model.Lobby;
@@ -21,8 +20,10 @@ import perudo.utility.ErrorType;
 import perudo.view.GUIFactory;
 import perudo.view.impl.components.TopMenu;
 import perudo.view.impl.panels.LobbyInfoPanel;
+import perudo.view.impl.panels.LobbyListPanel;
 import perudo.view.impl.panels.LobbyPanel;
 import perudo.view.impl.panels.MenuBottomPanel;
+import perudo.view.impl.panels.UserListPanel;
 import perudo.view.impl.panels.UserPanel;
 
 public class MenuPanel extends JPanel {
@@ -33,14 +34,15 @@ public class MenuPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private final GUIFactory factory;
-    private JSplitPane splitPane;
-    
-    private JPanel lobbypanel;
-    private JPanel lobbyinfo;
-    private JPanel pnlUsers;
-    
-    private TopMenu pnlTopMenu;
-    private MenuBottomPanel pnlBottomMenu;
+
+    private JPanel pnlLobbyInfoExtern;
+
+    private final TopMenu pnlTopMenu;
+    private final MenuBottomPanel pnlBottomMenu;
+    private final LobbyListPanel pnlLobbyList;
+    private final UserListPanel pnlUserList;
+
+    private Optional<LobbyInfoPanel> pnlLobbyInfoActive; // DA riguardare//
     private Optional<User> user;
 
     public MenuPanel() {
@@ -48,87 +50,62 @@ public class MenuPanel extends JPanel {
         this.factory = new StandardGUIFactory();
         this.setLayout(new BorderLayout());
         this.user = Optional.empty();
+        this.pnlLobbyInfoActive = Optional.empty();
         this.pnlTopMenu = (TopMenu) this.factory.createTopMenu();
         this.pnlBottomMenu = (MenuBottomPanel) this.factory.createMenuBottomPanel();
-        
-        createUserListPanel();
-        createLobbyListPanel();
-        createLobbyInfoPanel();
-        createSplitPanel();
+        this.pnlLobbyList = new LobbyListPanel();
+        this.pnlUserList = new UserListPanel();
 
-        
+        createLobbyInfoPanel();
+
+        this.add(pnlLobbyList, BorderLayout.WEST);
         this.add(pnlTopMenu, BorderLayout.NORTH);
-        this.add(splitPane, BorderLayout.CENTER);
-        this.add(pnlUsers, BorderLayout.EAST);
+        this.add(pnlLobbyInfoExtern, BorderLayout.CENTER);
+        this.add(pnlUserList, BorderLayout.EAST);
         this.add(pnlBottomMenu, BorderLayout.SOUTH);
+        if (this.user.isPresent()) {
+            ControllerSingleton.getController().getUsers(this.user.get());
+        }
     }
 
     public void setUser(User user) {
         this.user = Optional.of(user);
         this.pnlTopMenu.setUser(user);
         this.pnlBottomMenu.setUser(user);
+        this.pnlLobbyList.setUser(user);
         ControllerSingleton.getController().getUsers(this.user.get());
         this.updateUsers(user);
     }
-    
-    private void createUserListPanel() {
-        this.pnlUsers = factory.createPanel();
-        GridLayout gl = new GridLayout(1, 1);
-        pnlUsers.setLayout(gl);
-        pnlUsers.setBorder(new TitledBorder("Users list"));
-        if(this.user.isPresent()) {
-            ControllerSingleton.getController().getUsers(this.user.get());
-        }
-    }
-    
-    private void createLobbyListPanel() {
-        lobbypanel = factory.createPanel();
-        GridLayout gl = new GridLayout(1, 1);
-        lobbypanel.setLayout(gl);
-        lobbypanel.setBorder(new TitledBorder("Lobbies list"));
-
-    }
 
     private void createLobbyInfoPanel() {
-        lobbyinfo = factory.createPanel();
+        pnlLobbyInfoExtern = factory.createPanel();
         GridLayout gl = new GridLayout(1, 1);
-        lobbyinfo.setLayout(gl);
-        lobbyinfo.setBorder(new TitledBorder("Lobby Info"));
+        pnlLobbyInfoExtern.setLayout(gl);
+        pnlLobbyInfoExtern.setBorder(new TitledBorder("Lobby Info"));
     }
 
-    private void createSplitPanel() {
-        splitPane = (JSplitPane) factory.createVerticalSplitPane();
-        final JScrollPane scroll = (JScrollPane) factory.createVerticalScrollPanel();
-        scroll.getViewport().add(lobbypanel);
-        scroll.setPreferredSize(getPreferredSize());
-        splitPane.setLeftComponent(scroll);
-        splitPane.setRightComponent(lobbyinfo);
-    }
-
-    private void addUser(User user) {
-        UserPanel p = (UserPanel) this.factory.createUserPanel(user);
-        ((GridLayout) pnlUsers.getLayout()).setRows(this.pnlUsers.getComponentCount() + 1);
-        this.pnlUsers.add(p);
-    }
-    
     public void addLobby(Lobby lobby) {
         LobbyPanel p = (LobbyPanel) this.factory.createLobbyPanel(lobby);
         class ML implements MouseListener {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                lobbyinfo.removeAll();
-                lobbyinfo.add(new LobbyInfoPanel(((LobbyPanel) e.getSource()).getLobby(), MenuPanel.this.user.get()));
-                lobbyinfo.repaint();
-                lobbyinfo.revalidate();
+                pnlLobbyInfoExtern.removeAll();
+                pnlLobbyInfoActive = Optional
+                        .of(new LobbyInfoPanel(((LobbyPanel) e.getSource()).getLobby(), MenuPanel.this.user.get()));
+                pnlLobbyInfoExtern.add(pnlLobbyInfoActive.get());
+                pnlLobbyInfoExtern.repaint();
+                pnlLobbyInfoExtern.revalidate();
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                lobbyinfo.removeAll();
-                lobbyinfo.add(new LobbyInfoPanel(((LobbyPanel) e.getSource()).getLobby(), MenuPanel.this.user.get()));
-                lobbyinfo.repaint();
-                lobbyinfo.revalidate();
+                pnlLobbyInfoExtern.removeAll();
+                pnlLobbyInfoActive = Optional
+                        .of(new LobbyInfoPanel(((LobbyPanel) e.getSource()).getLobby(), MenuPanel.this.user.get()));
+                pnlLobbyInfoExtern.add(pnlLobbyInfoActive.get());
+                pnlLobbyInfoExtern.repaint();
+                pnlLobbyInfoExtern.revalidate();
             }
 
             @Override
@@ -137,61 +114,45 @@ public class MenuPanel extends JPanel {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                ((LobbyPanel) e.getSource()).setBorder(BorderFactory.createLineBorder(Color.GRAY));
+                ((LobbyPanel) e.getSource()).setBorder(BorderFactory
+                        .createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY), new EmptyBorder(7, 7, 7, 7)));
                 setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                ((LobbyPanel) e.getSource()).setBorder(BorderFactory.createLineBorder(Color.WHITE));
+                ((LobbyPanel) e.getSource()).setBorder(BorderFactory
+                        .createCompoundBorder(BorderFactory.createLineBorder(Color.WHITE), new EmptyBorder(7, 7, 7, 7)));
                 setCursor(Cursor.getDefaultCursor());
             }
 
         }
         p.addMouseListener(new ML());
-        ((GridLayout) lobbypanel.getLayout()).setRows(this.lobbypanel.getComponentCount() + 1);
-        this.lobbypanel.add(p);
+        this.pnlLobbyList.addLobby(p);
     }
 
     public void removeLobby(Lobby lobby) {
-
-        for (int i = 0; i < this.lobbypanel.getComponentCount(); i++) {
-            if (((LobbyPanel) this.lobbypanel.getComponent(i)).getLobby().equals(lobby)) {
-                this.lobbypanel.remove(this.lobbypanel.getComponent(i));
-                break;
-            }
-        }
-
+        this.pnlLobbyList.removeLobby(lobby);
     }
 
     public void updateLobby(Lobby lobby) {
-
-        for (int i = 0; i < this.lobbypanel.getComponentCount(); i++) {
-            if (((LobbyPanel) this.lobbypanel.getComponent(i)).getLobby().equals(lobby)) {
-                ((LobbyPanel) this.lobbypanel.getComponent(i)).setLobby(lobby);
-            }
-        }
-
-        if (lobbyinfo.getComponentCount() > 0) {
-            ((LobbyInfoPanel) lobbyinfo.getComponent(0)).setLobby(lobby);
-        }
+        this.pnlLobbyList.updateLobby(lobby);
     }
-    
+
+    public void addUser(User user) {
+        UserPanel p = (UserPanel) this.factory.createUserPanel(user);
+        this.pnlUserList.addUser(p);
+    }
+
+    public void removeUser(User user) {
+        this.pnlUserList.removeUser(user);
+    }
+
     public void updateUsers(User user) {
-        boolean inserted = false;
-        for (int i = 0; i < this.pnlUsers.getComponentCount(); i++) {
-            if (((UserPanel) this.pnlUsers.getComponent(i)).getUser().equals(user) && !inserted) {
-                inserted = true;
-                ((UserPanel) this.pnlUsers.getComponent(i)).setUser(user);
-            }
-        }
-        if (!inserted) {
-            this.addUser(user);
-        }
+        this.pnlUserList.updateUser(user);
     }
 
     public void showError(ErrorType errorType) {
-        JOptionPane.showMessageDialog(this, errorType.getMessage(), "Error: "+errorType.getId(),
-                JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, errorType.getMessage(), "Error: " + errorType.getId(), JOptionPane.ERROR_MESSAGE);
     }
 }

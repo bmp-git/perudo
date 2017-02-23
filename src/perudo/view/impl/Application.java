@@ -23,6 +23,7 @@ public class Application {
         }
         
         ViewImpl view = new ViewImpl();
+        ViewImpl view2 = new ViewImpl();
     }
 
 }

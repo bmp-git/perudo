@@ -1,6 +1,5 @@
 package perudo.view.impl;
 
-import java.time.Duration;
 import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -11,11 +10,7 @@ import perudo.controller.Controller;
 import perudo.model.Game;
 import perudo.model.Lobby;
 import perudo.model.User;
-import perudo.model.impl.GameSettingsImpl;
-import perudo.model.impl.LobbyImpl;
-import perudo.model.impl.UserImpl;
 import perudo.utility.ErrorType;
-import perudo.utility.ErrorTypeException;
 import perudo.utility.Response;
 import perudo.view.GUIFactory;
 import perudo.view.View;
@@ -28,8 +23,6 @@ public class ViewImpl implements View {
     private final GUIFactory factory;
     private User user;
     private JFrame mainFrame;
-    
-
 
     /* Application panels */
     private MenuPanel menuPanel;
@@ -67,15 +60,12 @@ public class ViewImpl implements View {
         menuPanel.updateUsers(this.user);
         showPanel(menuPanel);
 
-        try {
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby1"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby2"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby3"),this.user));
-            this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), "Lobby4"), new UserImpl("Simone")));
-        } catch (ErrorTypeException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        /*
+         * try { this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6,
+         * 5, Duration.ofMinutes(1), "Lobby4"), new UserImpl("Simone"))); }
+         * catch (ErrorTypeException e) { // TODO Auto-generated catch block
+         * e.printStackTrace(); }
+         */
     }
 
     @Override
@@ -84,54 +74,68 @@ public class ViewImpl implements View {
             public void run() {
                 menuPanel.updateUsers(user);
                 showPanel(menuPanel);
-              }
-          });
+            }
+        });
     }
+
     @Override
     public void userExitNotify(User user) {
-        // TODO Auto-generated method stub
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (user.equals(ViewImpl.this.user)) {
+                    mainFrame.dispose();
+                }
+                menuPanel.removeUser(user);
+                showPanel(menuPanel);
+            }
+        });
     }
 
     @Override
     public void changeNameNotify(User oldUser, User newUser) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if(user.equals(oldUser)) {
+                if (user.equals(oldUser)) {
                     menuPanel.setUser(newUser);
                 }
                 menuPanel.updateUsers(newUser);
                 showPanel(menuPanel);
-              }
-          });
+            }
+        });
     }
 
     @Override
     public void getUsersRespond(Response<Set<User>> users) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if(users.isOk()) {
+                if (users.isOk()) {
                     users.getValue().forEach(e -> menuPanel.updateUsers(e));
                     showPanel(menuPanel);
                 }
-              }
-          });
+            }
+        });
     }
 
     @Override
     public void createLobbyNotify(Lobby lobby) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                 menuPanel.addLobby(lobby);
-                 showPanel(menuPanel);
-              }
-          });
-        
-    }
-    @Override
-    public void removeLobbyNotify(Lobby lobby) {
-        // TODO Auto-generated method stub
+                menuPanel.addLobby(lobby);
+                showPanel(menuPanel);
+            }
+        });
+
     }
 
+    @Override
+    public void removeLobbyNotify(Lobby lobby) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                menuPanel.removeLobby(lobby);
+                showPanel(menuPanel);
+            }
+        });
+    }
 
     @Override
     public void getLobbiesRespond(Response<Set<Lobby>> lobbies) {
@@ -143,37 +147,36 @@ public class ViewImpl implements View {
     public void joinLobbyNotify(Lobby lobby, User user) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                 menuPanel.updateLobby(lobby);
-                 showPanel(menuPanel);
-              }
-          });
+                menuPanel.updateLobby(lobby);
+                showPanel(menuPanel);
+            }
+        });
     }
 
     @Override
     public void exitLobbyNotify(Lobby lobby, User user) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                 menuPanel.updateLobby(lobby);
-                 showPanel(menuPanel);
-              }
-          });
+                menuPanel.removeLobby(lobby);
+                showPanel(menuPanel);
+            }
+        });
     }
 
     @Override
     public void startLobbyNotify(Lobby lobby, Game game) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                 menuPanel.removeLobby(lobby);
-                 showPanel(menuPanel);
-              }
-          });
+                menuPanel.removeLobby(lobby);
+                showPanel(menuPanel);
+            }
+        });
     }
-    
 
     @Override
     public void removeGameNotify(Game game) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override

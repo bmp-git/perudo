@@ -2,15 +2,21 @@ package perudo.view.impl.panels;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.Optional;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 import perudo.model.Lobby;
 import perudo.model.User;
 import perudo.view.GUIFactory;
+import perudo.view.impl.ControllerSingleton;
 import perudo.view.impl.StandardGUIFactory;
 
 public class LobbyInfoPanel extends JPanel {
@@ -26,48 +32,69 @@ public class LobbyInfoPanel extends JPanel {
     
     private final GUIFactory factory;
     private Lobby lobby;
-    
+    private User user;
     private final JButton btnEnterLobby;
     private final JButton btnExitLobby;
     private final JButton btnStartLobby;
-
+    
     public LobbyInfoPanel(Lobby lobby, User user) {
         this.factory = new StandardGUIFactory();
         this.lobby = lobby;
+        this.user = user;
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         this.add(Box.createRigidArea(new Dimension(0,10)));
-        if(this.lobby.getOwner().equals(user)) {
-            this.add(this.factory.createLabel("YOU ARE THE OWNER"),Color.BLUE);
-        }
         this.add(Box.createRigidArea(new Dimension(0,10)));
-        this.add(factory.createLabel(("Name: "+this.lobby.getInfo().getName())));
-        this.add(Box.createRigidArea(new Dimension(0,10)));
-        this.add(factory.createLabel(("Owner: "+this.lobby.getOwner().getName())));
+        JLabel name = (JLabel) factory.createLabel(this.lobby.getInfo().getName());
+        this.add(factory.createLabel((this.lobby.getInfo().getName())));
         this.add(Box.createRigidArea(new Dimension(0,10)));
         this.add(factory.createLabel(("Players: ")));
-        this.lobby.getUsers().forEach(u -> this.add(factory.createLabel(u.getName())));
+        
+        this.lobby.getUsers().forEach(u -> {
+            if(u.equals(this.lobby.getOwner())) {
+                JLabel label = new JLabel(u.getName(), new ImageIcon(StandardGUIFactory.class.getResource("/images/crown_gold.png")), JLabel.RIGHT );
+                label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(7, 7, 7, 7)));
+                this.add(label);
+            } else {
+                JLabel label = new JLabel(u.getName());
+                label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(7, 7, 7, 7)));
+                this.add(label);
+            }
+            this.add(Box.createRigidArea(new Dimension(0,10)));
+        });
+        for(int i = 0; i < this.lobby.getFreeSpace(); i++) {
+            JLabel label = new JLabel("Empty space.");
+            label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(7, 7, 7, 7)));
+            this.add(label);
+            this.add(Box.createRigidArea(new Dimension(0,10)));
+        }
         this.add(Box.createRigidArea(new Dimension(0,10)));
         this.add(factory.createLabel(this.lobby.getInfo().toString()));
         this.add(Box.createRigidArea(new Dimension(0,10)));
         this.btnEnterLobby = (JButton)factory.createButton(ENTER_LOBBY);
+        this.btnEnterLobby.addActionListener(e -> {
+            ControllerSingleton.getController().joinLobby(this.user, this.lobby);
+        });
         this.add(this.btnEnterLobby);
         this.add(Box.createRigidArea(new Dimension(0,10)));
         this.btnExitLobby = (JButton)factory.createButton(EXIT_LOBBY);
         this.add(this.btnExitLobby);
         this.add(Box.createRigidArea(new Dimension(0,10)));
         this.btnStartLobby = (JButton)factory.createButton(START_LOBBY);
+        this.btnStartLobby.addActionListener(e -> {
+            ControllerSingleton.getController().startLobby(this.user);
+        });
         this.add(this.btnStartLobby);
-        if(this.lobby.getOwner().equals(user) && this.lobby.getUsers().size() >= MINUMUM_PLAYERS) {
-            this.btnStartLobby.setVisible(true);
+        if(this.lobby.getOwner().equals(this.user) && this.lobby.getUsers().size() >= MINUMUM_PLAYERS) {
+            this.btnStartLobby.setEnabled(true);
         } else {
-            this.btnStartLobby.setVisible(false);
+            this.btnStartLobby.setEnabled(false);
         }
-        if (this.lobby.getUsers().contains(user)) {
-            this.btnExitLobby.setVisible(true);
-            this.btnEnterLobby.setVisible(false);
+        if (this.lobby.getUsers().contains(this.user)) {
+            this.btnExitLobby.setEnabled(true);
+            this.btnEnterLobby.setEnabled(false);
         } else {
-            this.btnExitLobby.setVisible(false);
-            this.btnEnterLobby.setVisible(true);
+            this.btnExitLobby.setEnabled(false);
+            this.btnEnterLobby.setEnabled(true);
         }
     }
     

@@ -21,6 +21,8 @@ public class CreateLobbyPanel extends JPanel {
          * 
          */
         private static final long serialVersionUID = 1L;
+        public final static String TITLE = "Create a new lobby...";
+        public final static String ICON_RESPATH = "/images/perudo-logo.png";
         private final static String LABEL_NAME = "Name";
         private final static String LABEL_PLAYERS_NUM = "Max players";
         private final static String LABEL_DICES_NUM = "Max dices";

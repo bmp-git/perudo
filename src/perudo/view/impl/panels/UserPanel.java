@@ -6,6 +6,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 import perudo.model.User;
 import perudo.view.GUIFactory;
@@ -30,6 +31,8 @@ public class UserPanel extends JPanel {
         this.add(Box.createRigidArea(new Dimension(0,10)));
         this.add(this.lblUser);
         this.add(Box.createRigidArea(new Dimension(0,10)));
+        this.setBorder(new EmptyBorder(0, 5, 0, 5));
+
     }
     
     public void setUser(User user) {
