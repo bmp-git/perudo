@@ -167,6 +167,13 @@ public class ControllerClientImpl implements Controller, Closeable {
     }
 
     @Override
+    public void closeNow(User user) {
+        this.executor.execute(() -> {
+            stream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(User.class), Arrays.asList(user)));
+        });        
+    }
+    
+    @Override
     public void close() throws IOException {
         this.executor.shutdownNow();
         this.stream.close();

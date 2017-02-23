@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +36,9 @@ public class NetworkViewImpl implements View, Closeable {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
         this.executor.execute(() -> {
+            if(user.isOk()) {
+                this.datagramStream.setUser(user.getValue());
+            }
             this.datagramStream.send(
                     Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()), Arrays.asList(user)));
         });
@@ -73,6 +77,9 @@ public class NetworkViewImpl implements View, Closeable {
         final Method m = new Object() {
         }.getClass().getEnclosingMethod();
         this.executor.execute(() -> {
+            if(Objects.equals(this.datagramStream.getUser().orElse(null), oldUser)) {
+                this.datagramStream.setUser(newUser);
+            }
             this.datagramStream.send(Datagram.createCurrentMethodDatagram(Arrays.asList(m.getParameterTypes()),
                     Arrays.asList(oldUser, newUser)));
 

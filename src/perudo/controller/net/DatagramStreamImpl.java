@@ -23,7 +23,7 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
     private final ExecutorService sender;
     private final ExecutorService receiver;
     private final ExecutorService notifier;
-    private Optional<User> user;
+    private volatile Optional<User> user;
     private volatile boolean read;
 
     public static DatagramStream initializeNewDatagramStream(final InputStream inStream, final OutputStream outStream,
@@ -56,8 +56,8 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
-                    notifier.execute( () -> {
-                        exceptionObservers.forEach( c -> c.accept(e, this));
+                    notifier.execute(() -> {
+                        exceptionObservers.forEach(c -> c.accept(e, this));
                     });
                 }
             }
@@ -72,8 +72,8 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
                 this.objOutStream.writeObject(datagram);
                 this.objOutStream.flush();
             } catch (IOException e) {
-                notifier.execute( () -> {
-                    exceptionObservers.forEach( c -> c.accept(e, this));
+                notifier.execute(() -> {
+                    exceptionObservers.forEach(c -> c.accept(e, this));
                 });
             }
         });
@@ -90,6 +90,16 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
         exceptionObservers.add(consumer);
 
     }
+    
+    @Override
+    public Optional<User> getUser() {
+        return this.user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = Optional.ofNullable(user);
+    }
 
     @Override
     public void close() throws IOException {
@@ -99,16 +109,6 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
         this.notifier.shutdownNow();
         this.objInStream.close();
         this.objOutStream.close();
-    }
-
-    @Override
-    public Optional<User> getUser() {
-        return this.user;
-    }
-
-    @Override
-    public void setUser(User user) {
-        this.user = Optional.ofNullable(user);
     }
 
 }

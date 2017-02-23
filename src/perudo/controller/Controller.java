@@ -133,4 +133,13 @@ public interface Controller {
      *            user leaving
      */
     void close(User user);
+
+    /**
+     * User leaves the controller now, a notify isn't sent to the user and he
+     * leaves his lobby or game.
+     * 
+     * @param user
+     *            user leaving
+     */
+    void closeNow(User user);
 }

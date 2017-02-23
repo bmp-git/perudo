@@ -39,7 +39,14 @@ public class NetworkControllerImpl implements Controller {
         this.streams = new CopyOnWriteArrayList<>();
 
         this.ioExcHandler = (ex, dgs) -> {
-            
+            if(dgs.getUser().isPresent()) {
+                this.controller.closeNow(dgs.getUser().get());
+            }
+            try {
+                dgs.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }           
         };
         
         this.invoker = (dg, dgs) -> {
@@ -57,7 +64,7 @@ public class NetworkControllerImpl implements Controller {
         this.datagramStreamCreator = (is, os) -> {
             try {
                 final DatagramStream datagramStream = DatagramStreamImpl.initializeNewDatagramStream(is, os,
-                        Arrays.asList(this.invoker), Arrays.asList(ioExcHandler));
+                        Arrays.asList(this.invoker), Arrays.asList(this.ioExcHandler));
                 this.streams.add(datagramStream);
             } catch (IOException e) {
                 //in case of exception the client who has requested a connection is ignored
@@ -156,6 +163,12 @@ public class NetworkControllerImpl implements Controller {
     @Override
     public void close(User user) {
         this.controller.close(user);
+    }
+
+    @Override
+    public void closeNow(User user) {
+        this.controller.close(user);
+        
     }
 
 }
