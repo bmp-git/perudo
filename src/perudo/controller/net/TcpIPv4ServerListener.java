@@ -31,6 +31,15 @@ public class TcpIPv4ServerListener implements NetworkServerListener, Closeable {
         this.run = true;
         this.notifier = Executors.newSingleThreadExecutor();
         this.networkListener = Executors.newSingleThreadExecutor();
+    }
+
+    @Override
+    public void addNewConnectionObserver(BiConsumer<InputStream, OutputStream> inOutStreamConsumer) {
+        observers.add(inOutStreamConsumer);
+    }
+    
+    @Override
+    public void start() {
         this.networkListener.execute(() -> {
             try {
                 while (run) {
@@ -45,11 +54,6 @@ public class TcpIPv4ServerListener implements NetworkServerListener, Closeable {
                 e.printStackTrace();
             }
         });
-    }
-
-    @Override
-    public void addNewConnectionObserver(BiConsumer<InputStream, OutputStream> inOutStreamConsumer) {
-        observers.add(inOutStreamConsumer);
     }
 
     @Override

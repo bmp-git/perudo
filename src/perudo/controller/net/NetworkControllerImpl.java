@@ -73,6 +73,7 @@ public class NetworkControllerImpl implements Controller {
         };
 
         serverListener.addNewConnectionObserver(this.datagramStreamCreator);
+        serverListener.start();
 
     }
 
