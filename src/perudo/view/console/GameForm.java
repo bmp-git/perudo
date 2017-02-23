@@ -210,10 +210,10 @@ public class GameForm extends BaseForm {
                 int value = this.game.getCurrentBid().get().getDiceValue();
                 try {
                     value = Integer.parseInt(this.txbDiceValue.getText());
+                    this.txbDiceQuantity
+                            .setText(Integer.toString((this.game.getCurrentBid().get().nextBid(value).getQuantity())));
                 } catch (Exception ex) {
                 }
-                this.txbDiceQuantity
-                        .setText(Integer.toString((this.game.getCurrentBid().get().nextBid(value).getQuantity())));
 
             }
 
@@ -293,7 +293,7 @@ public class GameForm extends BaseForm {
         }
         diceCount.clear();
         diceCount.add("## DICE COUNT ##");
-        
+
         for (int i = 0; i < this.game.getUsers().size(); i++) {
             if (this.game.getUserStatus(this.game.getUsers().get(i)).getRemainingDice() > 0) {
                 diceCount.add(" " + this.game.getUsers().get(i).getName() + ": "
@@ -305,7 +305,7 @@ public class GameForm extends BaseForm {
         diceCount.add("Bid  : " + this.game.getCurrentBid().get().getQuantity() + " dice of "
                 + this.game.getCurrentBid().get().getDiceValue());
         diceCount.add("Bid from " + this.game.getBidUser().get().getName());
-        
+
         diceCount.add("## DICE COUNT ##");
     }
 
