@@ -26,7 +26,7 @@ public class CreateLobbyForm extends BaseForm {
     private final Button btnOk, btnCancel;
     private GameSettings lobby;
 
-    public CreateLobbyForm(MultiWindowTextGUI textGUI) {
+    public CreateLobbyForm(final MultiWindowTextGUI textGUI) {
         super(textGUI);
         this.lobby = null;
         this.txbPlayers = new TextBox(new TerminalSize(30, 1)).setText("4");
@@ -112,7 +112,7 @@ public class CreateLobbyForm extends BaseForm {
                     Integer.parseInt(this.txbDiceFaces.getText()), Integer.parseInt(this.txbDiceN.getText()),
                     Duration.ofSeconds(Integer.parseInt(this.txbTurnTime.getText())), txbName.getText().trim());
             this.close();
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             new MessageDialogBuilder().setTitle("Input error").setText(ex.getMessage()).addButton(MessageDialogButton.OK).build()
             .showDialog(this.textGUI);
             this.lobby = null;
