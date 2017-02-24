@@ -78,96 +78,96 @@ public class NetworkControllerImpl implements Controller {
     }
 
     @Override
-    public void initializeNewUser(View view) {
+    public void initializeNewUser(final View view) {
         this.controller.initializeNewUser(view);
 
     }
 
     @Override
-    public void changeUserName(User user, String name) {
+    public void changeUserName(final User user, final String name) {
         this.controller.changeUserName(user, name);
 
     }
 
     @Override
-    public void getUsers(User user) {
+    public void getUsers(final User user) {
         this.controller.getUsers(user);
 
     }
 
     @Override
-    public void createLobby(User user, GameSettings info) {
+    public void createLobby(final User user, final GameSettings info) {
         this.controller.createLobby(user, info);
 
     }
 
     @Override
-    public void getLobbies(User user) {
+    public void getLobbies(final User user) {
         this.controller.getLobbies(user);
 
     }
 
     @Override
-    public void joinLobby(User user, Lobby lobby) {
+    public void joinLobby(final User user, final Lobby lobby) {
         this.controller.joinLobby(user, lobby);
 
     }
 
     @Override
-    public void exitLobby(User user) {
+    public void exitLobby(final User user) {
         this.controller.exitLobby(user);
 
     }
 
     @Override
-    public void startLobby(User user) {
+    public void startLobby(final User user) {
         this.controller.startLobby(user);
 
     }
 
     @Override
-    public void getGames(User user) {
+    public void getGames(final User user) {
         this.controller.getGames(user);
 
     }
 
     @Override
-    public void play(User user, Bid bid) {
+    public void play(final User user, final Bid bid) {
         this.controller.play(user, bid);
 
     }
 
     @Override
-    public void doubt(User user) {
+    public void doubt(final User user) {
         this.controller.doubt(user);
 
     }
 
     @Override
-    public void urge(User user) {
+    public void urge(final User user) {
         this.controller.urge(user);
 
     }
 
     @Override
-    public void callPalifico(User user) {
+    public void callPalifico(final User user) {
         this.controller.callPalifico(user);
 
     }
 
     @Override
-    public void exitGame(User user) {
+    public void exitGame(final User user) {
         this.controller.exitGame(user);
 
     }
 
     @Override
-    public void close(User user) {
+    public void close(final User user) {
         this.controller.close(user);
     }
 
     @Override
-    public void closeNow(User user) {
+    public void closeNow(final User user) {
         this.controller.close(user);
         
     }

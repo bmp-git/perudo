@@ -33,8 +33,8 @@ public class TcpIPv4ServerListener implements NetworkServerListener {
     }
 
     @Override
-    public void addNewConnectionObserver(BiConsumer<InputStream, OutputStream> inOutStreamConsumer) {
-        observers.add(inOutStreamConsumer);
+    public void addNewConnectionObserver(final BiConsumer<InputStream, OutputStream> inOutStreamConsumer) {
+        this.observers.add(inOutStreamConsumer);
     }
     
     @Override
@@ -45,8 +45,8 @@ public class TcpIPv4ServerListener implements NetworkServerListener {
                     final Socket clientSocket = serverSocket.accept();
                     final InputStream inStream = clientSocket.getInputStream();
                     final OutputStream outStream = clientSocket.getOutputStream();
-                    notifier.execute(() -> {
-                        observers.forEach(bc -> bc.accept(inStream, outStream));
+                    this.notifier.execute(() -> {
+                        this.observers.forEach(bc -> bc.accept(inStream, outStream));
                     });
                 }
             } catch (IOException e) {

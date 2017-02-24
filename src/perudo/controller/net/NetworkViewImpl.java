@@ -66,11 +66,6 @@ public class NetworkViewImpl implements View, Closeable {
                 Arrays.asList(user));
         this.executor.execute(() -> {
             this.datagramStream.send(dg);
-            try {
-                this.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         });
 
     }

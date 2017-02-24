@@ -60,7 +60,7 @@ public class ControllerClientImpl implements Controller, Closeable {
 
             });
         };
-        this.stream = new DatagramStreamImpl(socket.getInputStream(), socket.getOutputStream(), Arrays.asList(receiver),
+        this.stream = DatagramStreamImpl.initializeNewDatagramStream(socket.getInputStream(), socket.getOutputStream(), Arrays.asList(receiver),
                 Arrays.asList(ioExcHandler));
     }
 

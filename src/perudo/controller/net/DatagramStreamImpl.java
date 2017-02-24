@@ -1,6 +1,5 @@
 package perudo.controller.net;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -15,7 +14,7 @@ import java.util.function.BiConsumer;
 
 import perudo.model.User;
 
-public class DatagramStreamImpl implements DatagramStream, Closeable {
+public class DatagramStreamImpl implements DatagramStream {
     private final ObjectInputStream objInStream;
     private final ObjectOutputStream objOutStream;
     private final List<BiConsumer<Datagram, DatagramStream>> observers;
@@ -32,7 +31,7 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
         return new DatagramStreamImpl(inStream, outStream, observers, exceptionObservers);
     }
 
-    public DatagramStreamImpl(final InputStream inStream, final OutputStream outStream,
+    private DatagramStreamImpl(final InputStream inStream, final OutputStream outStream,
             final List<BiConsumer<Datagram, DatagramStream>> observers,
             final List<BiConsumer<IOException, DatagramStream>> exceptionObservers) throws IOException {
 
@@ -48,21 +47,21 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
         this.notifier = Executors.newSingleThreadExecutor();
         this.read = true;
 
-        receiver.execute(() -> {
+        this.receiver.execute(() -> {
             while (read) {
                 try {
                     final Object readObj = this.objInStream.readObject();
                     final Datagram readDatagram = (Datagram) readObj;
                     // TODO for debug
                     System.out.println("Received -> " + readDatagram.getMethodName());
-                    notifier.execute(() -> {
-                        observers.forEach(c -> c.accept(readDatagram, this));
+                    this.notifier.execute(() -> {
+                        this.observers.forEach(c -> c.accept(readDatagram, this));
                     });
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
-                    notifier.execute(() -> {
-                        exceptionObservers.forEach(c -> c.accept(e, this));
+                    this.notifier.execute(() -> {
+                        this.exceptionObservers.forEach(c -> c.accept(e, this));
                     });
                 }
             }
@@ -74,13 +73,13 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
     public void send(final Datagram datagram) {
         // TODO for debug
         System.out.println("Send -> " + datagram.getMethodName());
-        sender.execute(() -> {
+        this.sender.execute(() -> {
             try {
                 this.objOutStream.writeObject(datagram);
                 this.objOutStream.flush();
             } catch (IOException e) {
-                notifier.execute(() -> {
-                    exceptionObservers.forEach(c -> c.accept(e, this));
+                this.notifier.execute(() -> {
+                    this.exceptionObservers.forEach(c -> c.accept(e, this));
                 });
             }
         });
@@ -89,12 +88,12 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
 
     @Override
     public void onDatagramReceived(final BiConsumer<Datagram, DatagramStream> consumer) {
-        observers.add(consumer);
+        this.observers.add(consumer);
     }
 
     @Override
-    public void onIOException(BiConsumer<IOException, DatagramStream> consumer) {
-        exceptionObservers.add(consumer);
+    public void onIOException(final BiConsumer<IOException, DatagramStream> consumer) {
+        this.exceptionObservers.add(consumer);
 
     }
 
@@ -104,7 +103,7 @@ public class DatagramStreamImpl implements DatagramStream, Closeable {
     }
 
     @Override
-    public void setUser(User user) {
+    public void setUser(final User user) {
         this.user = Optional.ofNullable(user);
     }
 

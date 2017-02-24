@@ -15,7 +15,7 @@ public class DatagramStreamSocketImpl implements DatagramStream {
     public DatagramStreamSocketImpl(Socket socket, final List<BiConsumer<Datagram, DatagramStream>> observers,
             final List<BiConsumer<IOException, DatagramStream>> exceptionObservers) throws IOException {
         this.socket = socket;
-        this.stream = new DatagramStreamImpl(socket.getInputStream(), socket.getOutputStream(), observers,
+        this.stream = DatagramStreamImpl.initializeNewDatagramStream(socket.getInputStream(), socket.getOutputStream(), observers,
                 exceptionObservers);
     }
 
@@ -31,7 +31,7 @@ public class DatagramStreamSocketImpl implements DatagramStream {
 
     @Override
     public void onIOException(BiConsumer<IOException, DatagramStream> consumer) {
-        // TODO Auto-generated method stub
+        stream.onIOException(consumer);
 
     }
 
