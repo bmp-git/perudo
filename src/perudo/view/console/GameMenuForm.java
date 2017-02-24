@@ -30,7 +30,7 @@ public class GameMenuForm extends BaseForm {
     private final Controller controller;
     private User user;
 
-    public GameMenuForm(Controller controller, MultiWindowTextGUI textGUI) {
+    public GameMenuForm(final Controller controller, final MultiWindowTextGUI textGUI) {
         super(textGUI);
         this.controller = controller;
         this.window.setHints(Arrays.asList(Window.Hint.CENTERED, Window.Hint.EXPANDED));
