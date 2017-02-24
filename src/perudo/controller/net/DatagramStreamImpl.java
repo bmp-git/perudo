@@ -76,6 +76,7 @@ public class DatagramStreamImpl implements DatagramStream {
         System.out.println("Send -> " + datagram.getMethodName());
         this.sender.execute(() -> {
             try {
+                this.objOutStream.reset();
                 this.objOutStream.writeObject(datagram);
                 this.objOutStream.flush();
             } catch (IOException e) {
