@@ -63,17 +63,13 @@ public class MenuPanel extends JPanel {
         this.add(pnlLobbyInfoExtern, BorderLayout.CENTER);
         this.add(pnlUserList, BorderLayout.EAST);
         this.add(pnlBottomMenu, BorderLayout.SOUTH);
-        if (this.user.isPresent()) {
-            ControllerSingleton.getController().getUsers(this.user.get());
-        }
     }
 
-    public void setUser(User user) {
+    public void setUser(final User user) {
         this.user = Optional.of(user);
         this.pnlTopMenu.setUser(user);
         this.pnlBottomMenu.setUser(user);
         this.pnlLobbyList.setUser(user);
-        ControllerSingleton.getController().getUsers(this.user.get());
         this.updateUsers(user);
     }
 
@@ -84,10 +80,16 @@ public class MenuPanel extends JPanel {
         pnlLobbyInfoExtern.setBorder(new TitledBorder("Lobby Info"));
     }
 
-    public void addLobby(Lobby lobby) {
+    public void updateAll() {
+        if (this.user.isPresent()) {
+            ControllerSingleton.getController().getUsers(this.user.get());
+            ControllerSingleton.getController().getLobbies(this.user.get());
+        }
+    }
+
+    public void addLobby(final Lobby lobby) {
         LobbyPanel p = (LobbyPanel) this.factory.createLobbyPanel(lobby);
         class ML implements MouseListener {
-
             @Override
             public void mouseClicked(MouseEvent e) {
                 pnlLobbyInfoExtern.removeAll();
@@ -131,28 +133,28 @@ public class MenuPanel extends JPanel {
         this.pnlLobbyList.addLobby(p);
     }
 
-    public void removeLobby(Lobby lobby) {
+    public void removeLobby(final Lobby lobby) {
         this.pnlLobbyList.removeLobby(lobby);
     }
 
-    public void updateLobby(Lobby lobby) {
+    public void updateLobby(final Lobby lobby) {
         this.pnlLobbyList.updateLobby(lobby);
     }
 
-    public void addUser(User user) {
+    public void addUser(final User user) {
         UserPanel p = (UserPanel) this.factory.createUserPanel(user);
         this.pnlUserList.addUser(p);
     }
 
-    public void removeUser(User user) {
+    public void removeUser(final User user) {
         this.pnlUserList.removeUser(user);
     }
 
-    public void updateUsers(User user) {
+    public void updateUsers(final User user) {
         this.pnlUserList.updateUser(user);
     }
 
-    public void showError(ErrorType errorType) {
+    public void showError(final ErrorType errorType) {
         JOptionPane.showMessageDialog(this, errorType.getMessage(), "Error: " + errorType.getId(), JOptionPane.ERROR_MESSAGE);
     }
 }

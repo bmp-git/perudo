@@ -17,13 +17,13 @@ public class Application {
         if(start.getResult().get() == StartingFrameResult.SINGLEPLAYER) {
             ControllerSingleton.setSingleplayerController();
         } else if (start.getResult().get() == StartingFrameResult.MULTIPLAYER) {
-            ControllerSingleton.setMultiplayerController();
+            ControllerSingleton.setMultiplayerController("2.224.173.8",45555);
         } else if (start.getResult().get() == StartingFrameResult.EXIT) {
             System.exit(1);
         }
         
         ViewImpl view = new ViewImpl();
-        ViewImpl view2 = new ViewImpl();
+        //ViewImpl view2 = new ViewImpl();
     }
 
 }

@@ -21,6 +21,7 @@ public class RemoteApp {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         NetworkServerListener listener = null;
+        args = new String[]{"2.224.173.8","45555"};
         if (args.length < 2) {
             int port = 45555;
             listener = TcpIPv4ServerListener.startNewServerListener(port, Arrays.asList());
