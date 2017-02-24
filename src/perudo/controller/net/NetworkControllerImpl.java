@@ -172,4 +172,9 @@ public class NetworkControllerImpl implements Controller {
         
     }
 
+    @Override
+    public void close() throws IOException {
+        this.controller.close();
+    }
+
 }

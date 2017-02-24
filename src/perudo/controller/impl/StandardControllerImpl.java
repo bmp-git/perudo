@@ -1,6 +1,5 @@
 package perudo.controller.impl;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +26,7 @@ import perudo.utility.ErrorTypeException;
 import perudo.utility.impl.ResponseImpl;
 import perudo.view.View;
 
-public class StandardControllerImpl implements Controller, Closeable {
+public class StandardControllerImpl implements Controller {
     private final Model model;
     private final Map<User, View> views;
     private final ExecutorService executor;

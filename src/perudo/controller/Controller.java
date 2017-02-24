@@ -1,12 +1,14 @@
 package perudo.controller;
 
+import java.io.Closeable;
+
 import perudo.model.Bid;
 import perudo.model.Lobby;
 import perudo.model.GameSettings;
 import perudo.model.User;
 import perudo.view.View;
 
-public interface Controller {
+public interface Controller extends Closeable {
     /**
      * Initializes a new user.
      * 
