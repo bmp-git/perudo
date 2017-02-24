@@ -201,22 +201,22 @@ public class GameForm extends BaseForm {
         }
 
         // auto set a decent value in the textboxs
+
         if (this.game.getTurn().equals(this.user) && !this.game.isOver()) {
-            if (this.game.turnIsPalifico() && this.game.getCurrentBid().isPresent()) {
+            String quantity = "";
+            try {
+                if (this.game.turnIsPalifico() && this.game.getCurrentBid().isPresent()) {
+                    quantity = Integer.toString(this.game.getCurrentBid().get().getQuantity() + 1);
 
-                this.txbDiceQuantity.setText(Integer.toString(this.game.getCurrentBid().get().getQuantity() + 1));
-
-            } else if (this.game.getCurrentBid().isPresent()) {
-                int value = this.game.getCurrentBid().get().getDiceValue();
-                try {
-                    value = Integer.parseInt(this.txbDiceValue.getText());
-                    this.txbDiceQuantity
-                            .setText(Integer.toString((this.game.getCurrentBid().get().nextBid(value).getQuantity())));
-                } catch (Exception ex) {
+                } else if (this.game.getCurrentBid().isPresent()) {
+                    int value = Integer.parseInt(this.txbDiceValue.getText());
+                    quantity = Integer.toString((this.game.getCurrentBid().get().nextBid(value).getQuantity()));
                 }
-
+            } catch (Exception ex) {
             }
-
+            if (quantity.length() <= 2) {
+                this.txbDiceQuantity.setText(quantity);
+            }
             Utils.showMessageBox("Your turn", "Is your turn", this.textGUI);
         }
 

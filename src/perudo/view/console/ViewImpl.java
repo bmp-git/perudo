@@ -1,6 +1,5 @@
 package perudo.view.console;
 
-import java.io.IOException;
 import java.util.Set;
 
 import com.googlecode.lanterna.TextColor;
@@ -10,12 +9,8 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
 
 import perudo.controller.Controller;
-import perudo.controller.impl.StandardControllerImpl;
 import perudo.model.Game;
 import perudo.model.Lobby;
 import perudo.model.User;
@@ -25,42 +20,11 @@ import perudo.view.View;
 
 public class ViewImpl implements View {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        StandardControllerImpl controller = new StandardControllerImpl();
-        Terminal terminal1 = new DefaultTerminalFactory().createTerminal();
-        Screen screen1 = new TerminalScreen(terminal1);
-        screen1.startScreen();
-        ViewImpl w2 = new ViewImpl(screen1, controller);
-
-        Thread th = new Thread(() -> {
-            Screen screen = null;
-            try {
-                Terminal terminal = new DefaultTerminalFactory().createTerminal();
-                screen = new TerminalScreen(terminal);
-                screen.startScreen();
-            } catch (IOException e) {
-            }
-            ViewImpl w1 = new ViewImpl(screen, controller);
-            w1.waitEnd();
-            try {
-                screen.stopScreen();
-            } catch (IOException e) {
-            }
-        });
-        th.start();
-
-        w2.waitEnd();
-        screen1.stopScreen();
-        th.join();
-        controller.close();
-        System.out.println("bye");
-    }
-
     private final MultiWindowTextGUI textGUI;
     private User user;
 
     private final GameMenuForm menuForm;
-    private final LobbyForm lobbyInForm;
+    private final LobbyForm lobbyForm;
     private final GameForm gameForm;
     private final Controller controller;
 
@@ -68,10 +32,10 @@ public class ViewImpl implements View {
         this.controller = controller;
         this.textGUI = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
         this.menuForm = new GameMenuForm(controller, this.textGUI);
-        this.lobbyInForm = new LobbyForm(controller, textGUI);
+        this.lobbyForm = new LobbyForm(controller, textGUI);
         this.gameForm = new GameForm(controller, textGUI);
 
-        textGUI.addWindow(lobbyInForm.getWindow());
+        textGUI.addWindow(lobbyForm.getWindow());
         textGUI.addWindow(menuForm.getWindow());
         textGUI.addWindow(gameForm.getWindow());
 
@@ -86,21 +50,21 @@ public class ViewImpl implements View {
         this.gameForm.close();
     }
 
-    private void runOnGui(Runnable run) {
+    private void runOnGui(final Runnable run) {
         textGUI.getGUIThread().invokeLater(run);
     }
 
-    private void setUser(User user) {
+    private void setUser(final User user) {
         this.user = user;
         this.runOnGui(() -> {
             this.menuForm.setUser(this.user);
-            this.lobbyInForm.setUser(this.user);
+            this.lobbyForm.setUser(this.user);
             this.gameForm.setUser(this.user);
         });
     }
 
     @Override
-    public void initializeNewUserRespond(Response<User> user) {
+    public void initializeNewUserRespond(final Response<User> user) {
         if (user.isOk()) {
             setUser(user.getValue());
             this.controller.getUsers(this.user);
@@ -112,14 +76,14 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void initializeNewUserNotify(User user) {
+    public void initializeNewUserNotify(final User user) {
         this.runOnGui(() -> {
             this.menuForm.addUser(user);
         });
     }
 
     @Override
-    public void userExitNotify(User user) {
+    public void userExitNotify(final User user) {
         this.runOnGui(() -> {
             if (user == null || user.equals(this.user)) {
                 this.menuForm.close();
@@ -129,7 +93,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void changeNameNotify(User oldUser, User newUser) {
+    public void changeNameNotify(final User oldUser, final User newUser) {
         this.runOnGui(() -> {
             if (oldUser.equals(this.user)) {
                 this.setUser(newUser);
@@ -140,7 +104,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void getUsersRespond(Response<Set<User>> users) {
+    public void getUsersRespond(final Response<Set<User>> users) {
         this.runOnGui(() -> {
             if (users.isOk()) {
                 this.menuForm.setUsers(users.getValue());
@@ -152,7 +116,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void createLobbyNotify(Lobby lobby) {
+    public void createLobbyNotify(final Lobby lobby) {
         this.runOnGui(() -> {
             this.menuForm.addLobby(lobby);
         });
@@ -160,7 +124,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void removeLobbyNotify(Lobby lobby) {
+    public void removeLobbyNotify(final Lobby lobby) {
         this.runOnGui(() -> {
             this.menuForm.removeLobby(lobby);
         });
@@ -168,7 +132,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void getLobbiesRespond(Response<Set<Lobby>> lobbies) {
+    public void getLobbiesRespond(final Response<Set<Lobby>> lobbies) {
         this.runOnGui(() -> {
             if (lobbies.isOk()) {
                 this.menuForm.setLobbies(lobbies.getValue());
@@ -180,15 +144,15 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void joinLobbyNotify(Lobby lobby, User user) {
+    public void joinLobbyNotify(final Lobby lobby, final User user) {
         this.runOnGui(() -> {
             if (user.equals(this.user)) {
                 // start lobby in view
-                this.lobbyInForm.setLobby(lobby);
-                this.textGUI.setActiveWindow(this.lobbyInForm.getWindow());
+                this.lobbyForm.setLobby(lobby);
+                this.textGUI.setActiveWindow(this.lobbyForm.getWindow());
             }
 
-            this.lobbyInForm.updateLobby(lobby);
+            this.lobbyForm.updateLobby(lobby);
             this.menuForm.removeLobby(lobby);
             this.menuForm.addLobby(lobby);
 
@@ -197,13 +161,13 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void exitLobbyNotify(Lobby lobby, User user) {
+    public void exitLobbyNotify(final Lobby lobby, final User user) {
         this.runOnGui(() -> {
             if (user.equals(this.user)) {
                 this.textGUI.setActiveWindow(this.menuForm.getWindow());
             }
 
-            this.lobbyInForm.updateLobby(lobby);
+            this.lobbyForm.updateLobby(lobby);
             this.menuForm.removeLobby(lobby);
             this.menuForm.addLobby(lobby);
         });
@@ -224,7 +188,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void getGamesRespond(Response<Set<Game>> games) {
+    public void getGamesRespond(final Response<Set<Game>> games) {
         this.runOnGui(() -> {
             if (games.isOk()) {
                 this.menuForm.setGames(games.getValue());
@@ -236,7 +200,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void playNotify(Game game, User user) {
+    public void playNotify(final Game game, final User user) {
         this.runOnGui(() -> {
             this.gameForm.playNotify(game, user);
         });
@@ -244,7 +208,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void doubtNotify(Game game, User user, boolean win) {
+    public void doubtNotify(final Game game, final User user, final boolean win) {
         this.runOnGui(() -> {
             this.gameForm.doubtNotify(game, user, win);
         });
@@ -252,7 +216,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void urgeNotify(Game game, User user, boolean win) {
+    public void urgeNotify(final Game game, final User user, final boolean win) {
         this.runOnGui(() -> {
             this.gameForm.urgeNotify(game, user, win);
         });
@@ -260,7 +224,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void callPalificoNotify(Game game, User user) {
+    public void callPalificoNotify(final Game game, final User user) {
         this.runOnGui(() -> {
             this.gameForm.callPalificoNotify(game, user);
         });
@@ -268,7 +232,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void exitGameNotify(Game game, User user) {
+    public void exitGameNotify(final Game game, final User user) {
         this.runOnGui(() -> {
             if (user.equals(this.user)) {
                 Utils.showMessageBox("Left game", "You left the game", this.textGUI);
@@ -280,7 +244,7 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void gameEndedNotify(Game game) {
+    public void gameEndedNotify(final Game game) {
         this.runOnGui(() -> {
             if (game.equals(this.gameForm.getGame())) {
                 String win = (game.getUserStatus(this.user) != null
@@ -293,14 +257,14 @@ public class ViewImpl implements View {
     }
 
     @Override
-    public void removeGameNotify(Game game) {
+    public void removeGameNotify(final Game game) {
         this.runOnGui(() -> {
             this.menuForm.removeGame(game);
         });
     }
 
     @Override
-    public void showError(ErrorType errorType) {
+    public void showError(final ErrorType errorType) {
         this.runOnGui(() -> {
             new MessageDialogBuilder().setTitle("Error - " + errorType.name()).setText(errorType.getMessage())
                     .addButton(MessageDialogButton.OK).build().showDialog(this.textGUI);

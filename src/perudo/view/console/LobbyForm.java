@@ -33,7 +33,7 @@ public class LobbyForm extends BaseForm {
 
     class UserPanel extends Panel {
 
-        public UserPanel(Optional<User> user) {
+        public UserPanel(final Optional<User> user) {
             Label label;
             Button btnAddBot;
             this.setLayoutManager(new BorderLayout());
@@ -55,7 +55,7 @@ public class LobbyForm extends BaseForm {
         }
     }
 
-    public LobbyForm(Controller controller, MultiWindowTextGUI textGUI) {
+    public LobbyForm(final Controller controller, final MultiWindowTextGUI textGUI) {
         super(textGUI);
         this.controller = controller;
         this.btnExit = new Button("Exit", () -> {
@@ -89,7 +89,7 @@ public class LobbyForm extends BaseForm {
         this.window.setComponent(mainPanel);
     }
 
-    public void setUser(User user) {
+    public void setUser(final User user) {
         this.user = user;
     }
 
@@ -110,17 +110,18 @@ public class LobbyForm extends BaseForm {
         }
     }
 
-    public void updateLobby(Lobby lobby) {
+    public void updateLobby(final Lobby lobby) {
         if (lobby.equals(this.lobby)) {
             this.setLobby(lobby);
         }
     }
 
-    public void setLobby(Lobby lobby) {
+    public void setLobby(final Lobby lobby) {
+        this.lobby = lobby;
+        
         this.btnStart.setEnabled(lobby.getOwner() != null && lobby.getOwner().equals(user));
         this.lblInfo.setText(Utils.lobbyToString(lobby));
 
-        this.lobby = lobby;
         this.centerPanel.removeAllComponents();
         Panel panel = new Panel();
         panel.setLayoutManager(new BorderLayout());

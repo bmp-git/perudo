@@ -1,6 +1,5 @@
 package perudo.controller.net.client;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.Socket;
@@ -21,7 +20,7 @@ import perudo.model.User;
 import perudo.utility.ErrorTypeException;
 import perudo.view.View;
 
-public class ControllerClientImpl implements Controller, Closeable {
+public class ControllerClientImpl implements Controller {
 
     public static Controller createFromIPv4(String host, int port) throws IOException {
         Socket socket = new Socket(host, port);

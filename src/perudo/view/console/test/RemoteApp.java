@@ -27,12 +27,43 @@ public class RemoteApp {
             listener = TcpIPv4ServerListener.startNewServerListener(port, Arrays.asList());
             NetworkControllerImpl.newNetworkController(new StandardControllerImpl(), listener);
 
-            args = new String[] { "192.168.1.54", Integer.toString(port) };
+            args = new String[] { "127.0.0.1", Integer.toString(port) };
         }
         arguments = args;
 
-        runGUI();
+        Thread th = new Thread(() -> {
+            try {
+                runGUI();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
+        th.start();
+        Thread th1 = new Thread(() -> {
+            try {
+                runGUI();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
+        th1.start();
+        Thread th2 = new Thread(() -> {
+            try {
+                runGUI();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
+        th2.start();
+        
+        th.join();
+        th1.join();
+        th2.join();
 
+        System.out.println("bye");
         if (listener != null) {
             listener.close();
         }
