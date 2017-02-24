@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import perudo.controller.Controller;
 import perudo.controller.net.Datagram;
@@ -32,29 +34,30 @@ public class NetworkControllerImpl implements Controller {
     public static Controller newNetworkController(Controller controller, NetworkServerListener serverListener) {
         return new NetworkControllerImpl(controller, serverListener);
     }
-    
+
     private NetworkControllerImpl(Controller controller, NetworkServerListener serverListener) {
         this.controller = controller;
         this.methodInvoker = new MethodInvoker(Controller.class);
         this.streams = new CopyOnWriteArrayList<>();
 
         this.ioExcHandler = (ex, dgs) -> {
-            if(dgs.getUser().isPresent()) {
-                this.controller.closeNow(dgs.getUser().get());
+            if (dgs.getUser().isPresent()) {
+                this.closeNow(dgs.getUser().get());
+            } else {
+                try {
+                    dgs.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            try {
-                dgs.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }           
         };
-        
+
         this.invoker = (dg, dgs) -> {
             try {
                 if (dg.getMethodName().contains("initializeNewUser")) {
                     controller.initializeNewUser(NetworkViewImpl.newNetworkView(dgs));
                 } else {
-                    methodInvoker.execute(controller, dg);
+                    methodInvoker.execute(this, dg);
                 }
             } catch (ErrorTypeException e) {
                 e.printStackTrace();
@@ -67,7 +70,8 @@ public class NetworkControllerImpl implements Controller {
                         Arrays.asList(this.invoker), Arrays.asList(this.ioExcHandler));
                 this.streams.add(datagramStream);
             } catch (IOException e) {
-                //in case of exception the client who has requested a connection is ignored
+                // in case of exception the client who has requested a
+                // connection is ignored
                 e.printStackTrace();
             }
         };
@@ -168,8 +172,13 @@ public class NetworkControllerImpl implements Controller {
 
     @Override
     public void closeNow(final User user) {
-        this.controller.close(user);
-        
+        try {
+            this.streams.stream().filter(s -> Objects.equals(user, s.getUser().orElse(null)))
+                    .collect(Collectors.toList()).get(0).close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.controller.closeNow(user);
     }
 
     @Override

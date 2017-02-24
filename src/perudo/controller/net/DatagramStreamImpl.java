@@ -66,7 +66,6 @@ public class DatagramStreamImpl implements DatagramStream {
                     this.exceptionObservers.forEach(c -> c.accept(e, this));
                 });
             }
-
         });
     }
 
@@ -76,9 +75,11 @@ public class DatagramStreamImpl implements DatagramStream {
         System.out.println("Send -> " + datagram.getMethodName());
         this.sender.execute(() -> {
             try {
-                this.objOutStream.reset();
-                this.objOutStream.writeObject(datagram);
-                this.objOutStream.flush();
+                synchronized (this.objOutStream) {
+                    this.objOutStream.reset();
+                    this.objOutStream.writeObject(datagram);
+                    this.objOutStream.flush();
+                }
             } catch (IOException e) {
                 this.notifier.execute(() -> {
                     this.exceptionObservers.forEach(c -> c.accept(e, this));
@@ -112,11 +113,13 @@ public class DatagramStreamImpl implements DatagramStream {
     @Override
     public void close() throws IOException {
         this.read = false;
+        /*
         this.sender.shutdownNow();
         this.receiver.shutdownNow();
         this.notifier.shutdownNow();
         this.objInStream.close();
         this.objOutStream.close();
+        */
     }
 
 }
