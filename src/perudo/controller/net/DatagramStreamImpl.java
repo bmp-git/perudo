@@ -48,8 +48,8 @@ public class DatagramStreamImpl implements DatagramStream {
         this.read = true;
 
         this.receiver.execute(() -> {
-            while (read) {
-                try {
+            try {
+                while (read) {
                     final Object readObj = this.objInStream.readObject();
                     final Datagram readDatagram = (Datagram) readObj;
                     // TODO for debug
@@ -57,13 +57,14 @@ public class DatagramStreamImpl implements DatagramStream {
                     this.notifier.execute(() -> {
                         this.observers.forEach(c -> c.accept(readDatagram, this));
                     });
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    this.notifier.execute(() -> {
-                        this.exceptionObservers.forEach(c -> c.accept(e, this));
-                    });
+
                 }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                this.notifier.execute(() -> {
+                    this.exceptionObservers.forEach(c -> c.accept(e, this));
+                });
             }
 
         });
