@@ -50,7 +50,7 @@ public class TcpIPv4ServerListener implements NetworkServerListener {
                     });
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Server listener closed...");
             }
         });
     }

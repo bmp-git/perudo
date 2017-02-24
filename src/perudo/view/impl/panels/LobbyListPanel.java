@@ -90,10 +90,15 @@ public class LobbyListPanel extends JPanel {
     }
     
     public void updateLobby(final Lobby lobby) {
+        boolean inserted = false;
         for (int i = 0; i < this.pnlLobbyList.getComponentCount(); i++) {
             if (((LobbyPanel) this.pnlLobbyList.getComponent(i)).getLobby().equals(lobby)) {
+                inserted = true;
                 ((LobbyPanel) this.pnlLobbyList.getComponent(i)).setLobby(lobby);
             }
+        }
+        if(!inserted) {
+            this.addLobby((LobbyPanel)this.factory.createLobbyPanel(lobby));
         }
     }
     
