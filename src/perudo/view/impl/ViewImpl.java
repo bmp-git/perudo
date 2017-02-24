@@ -57,15 +57,9 @@ public class ViewImpl implements View {
         this.user = user.getValue();
         /* setto i pannelli */
         this.menuPanel.setUser(this.user);
+        this.menuPanel.updateAll();
         menuPanel.updateUsers(this.user);
         showPanel(menuPanel);
-
-        /*
-         * try { this.createLobbyNotify(new LobbyImpl(new GameSettingsImpl(4, 6,
-         * 5, Duration.ofMinutes(1), "Lobby4"), new UserImpl("Simone"))); }
-         * catch (ErrorTypeException e) { // TODO Auto-generated catch block
-         * e.printStackTrace(); }
-         */
     }
 
     @Override
@@ -139,8 +133,12 @@ public class ViewImpl implements View {
 
     @Override
     public void getLobbiesRespond(Response<Set<Lobby>> lobbies) {
-        // TODO Auto-generated method stub
-
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                    lobbies.getValue().forEach(l -> menuPanel.updateLobby(l));
+                    showPanel(menuPanel);
+            }
+        });
     }
 
     @Override
