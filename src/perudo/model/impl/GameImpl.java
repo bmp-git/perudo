@@ -23,7 +23,7 @@ import perudo.utility.IdDispenser;
 public class GameImpl implements Game {
 
     private static final long serialVersionUID = 462313460628002640L;
-    
+
     private final int id;
     private final List<User> userList;
     private final Map<User, PlayerStatus> usersStatus;
@@ -46,21 +46,29 @@ public class GameImpl implements Game {
         this.usersStatus = new HashMap<>();
         this.userList.forEach(u -> this.usersStatus.put(u, PlayerStatusImpl.fromGameSettings(this.getSettings())));
 
-        this.currentTurn = this.getUsers().get(new Random().nextInt(this.getUsers().size()));
-        this.resetGame();
+        // random start player
+        this.resetGame(this.getUsers().get(new Random().nextInt(this.getUsers().size())));
     }
 
-    private void resetGame() {
+    private void resetGame(final User playerTurn) {
         if (this.isOver()) {
             return;
         }
 
+        this.resetTurnStartTime();
         this.palifico = false;
         this.currentBid = null;
         this.bidUser = null;
+        
         // reroll all dice
         this.userList.forEach(u -> this.usersStatus.put(u, this.usersStatus.get(u).rollDice()));
-        this.goNextTurn();
+
+        
+        this.currentTurn = playerTurn;
+        if ((!this.userList.contains(playerTurn)) || this.getUserStatus(playerTurn).getRemainingDice() == 0) {
+            this.goNextTurn();
+        }
+
     }
 
     private void goNextTurn() {
@@ -196,12 +204,13 @@ public class GameImpl implements Game {
         if (this.getRealBidDiceCount() < this.getCurrentBid().get().getQuantity()) {
             // doubt is correct, bid user loss 1 dice
             this.removeDice(this.getBidUser().get(), 1);
-            this.resetGame();
+            this.resetGame(this.getBidUser().get());
+
             return true;
         } else {
             // doubt is wrong, user loss 1 dice
             this.removeDice(user, 1);
-            this.resetGame();
+            this.resetGame(user);
             return false;
         }
     }
@@ -219,12 +228,12 @@ public class GameImpl implements Game {
                     .filter(u -> !u.equals(user)).forEach(u -> this.removeDice(u, 1));
             // user get 1 dice
             this.addDice(user, 1);
-            this.resetGame();
+            this.resetGame(this.getTurn());
             return true;
         } else {
             // urge is wrong, user loss 1 dice
             this.removeDice(user, 1);
-            this.resetGame();
+            this.resetGame(user);
             return false;
         }
 
@@ -307,7 +316,7 @@ public class GameImpl implements Game {
         this.usersStatus.remove(user);
 
         if (status.getRemainingDice() != 0) {
-            this.resetGame();
+            this.resetGame(this.getTurn());
         }
     }
 
