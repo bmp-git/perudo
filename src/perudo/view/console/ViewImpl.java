@@ -1,5 +1,6 @@
 package perudo.view.console;
 
+import java.io.IOException;
 import java.util.Set;
 
 import com.googlecode.lanterna.TextColor;
@@ -278,6 +279,12 @@ public class ViewImpl implements View {
         synchronized (this) {
             this.notify();
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        // TODO Auto-generated method stub
+        
     }
 
 }

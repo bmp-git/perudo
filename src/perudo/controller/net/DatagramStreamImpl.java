@@ -15,11 +15,11 @@ import java.util.function.BiConsumer;
 import perudo.model.User;
 
 public class DatagramStreamImpl implements DatagramStream {
-    private final ObjectInputStream objInStream;
     private final ObjectOutputStream objOutStream;
+    private final InputStream inStream;
     private final List<BiConsumer<Datagram, DatagramStream>> observers;
     private final List<BiConsumer<IOException, DatagramStream>> exceptionObservers;
-    private final ExecutorService sender;
+    //private final ExecutorService sender;
     private final ExecutorService receiver;
     private final ExecutorService notifier;
     private volatile Optional<User> user;
@@ -37,27 +37,27 @@ public class DatagramStreamImpl implements DatagramStream {
 
         this.user = Optional.empty();
 
-        // first set outputstream or does not work
         this.objOutStream = new ObjectOutputStream(outStream);
-        this.objInStream = new ObjectInputStream(inStream);
+        this.inStream = inStream;
         this.observers = new CopyOnWriteArrayList<>(observers);
         this.exceptionObservers = new CopyOnWriteArrayList<>(exceptionObservers);
-        this.sender = Executors.newSingleThreadExecutor();
+        //this.sender = Executors.newSingleThreadExecutor();
         this.receiver = Executors.newSingleThreadExecutor();
         this.notifier = Executors.newSingleThreadExecutor();
         this.read = true;
 
         this.receiver.execute(() -> {
-            try {
+            try (ObjectInputStream objInStream = new ObjectInputStream(this.inStream)) {
                 while (read) {
-                    final Object readObj = this.objInStream.readObject();
-                    final Datagram readDatagram = (Datagram) readObj;
-                    // TODO for debug
-                    System.out.println("Received -> " + readDatagram.getMethodName());
-                    this.notifier.execute(() -> {
-                        this.observers.forEach(c -> c.accept(readDatagram, this));
-                    });
-
+                    final Object readObj = objInStream.readObject();
+                    if (read) {
+                        final Datagram readDatagram = (Datagram) readObj;
+                        // TODO for debug
+                        System.out.println("Received -> " + readDatagram.getMethodName());
+                        this.notifier.execute(() -> {
+                            this.observers.forEach(c -> c.accept(readDatagram, this));
+                        });
+                    }
                 }
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -71,21 +71,19 @@ public class DatagramStreamImpl implements DatagramStream {
 
     @Override
     public void send(final Datagram datagram) {
-        // TODO for debug
-        System.out.println("Send -> " + datagram.getMethodName());
-        this.sender.execute(() -> {
+        //this.sender.execute(() -> {
+            // TODO for debug
+            System.out.println("Send -> " + datagram.getMethodName());
             try {
-                synchronized (this.objOutStream) {
-                    this.objOutStream.reset();
-                    this.objOutStream.writeObject(datagram);
-                    this.objOutStream.flush();
-                }
+                objOutStream.reset();
+                objOutStream.writeObject(datagram);
+                objOutStream.flush();
             } catch (IOException e) {
                 this.notifier.execute(() -> {
                     this.exceptionObservers.forEach(c -> c.accept(e, this));
                 });
             }
-        });
+        //});
 
     }
 
@@ -113,13 +111,12 @@ public class DatagramStreamImpl implements DatagramStream {
     @Override
     public void close() throws IOException {
         this.read = false;
-        /*
-        this.sender.shutdownNow();
+        //this.sender.shutdownNow();
         this.receiver.shutdownNow();
         this.notifier.shutdownNow();
-        this.objInStream.close();
-        this.objOutStream.close();
-        */
+
+        // TODO for debug
+        System.out.println("DatagramStream: datagramStream of user " + user.get().getName() + " shutted down!");
     }
 
 }

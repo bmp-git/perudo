@@ -1,5 +1,6 @@
 package perudo.controller.net.client;
 
+import java.io.IOException;
 import java.util.Set;
 
 import perudo.controller.net.DatagramStream;
@@ -121,6 +122,12 @@ public class ViewClientImpl implements View {
     @Override
     public void showError(ErrorType errorType) {
         this.view.showError(errorType);
+    }
+
+    @Override
+    public void close() throws IOException {
+        // TODO Auto-generated method stub
+        
     }
 
 }

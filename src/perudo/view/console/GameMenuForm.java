@@ -43,7 +43,7 @@ public class GameMenuForm extends BaseForm {
             this.btnCreateLobbyClicked();
         });
         btnExit = new Button("Exit", () -> {
-            this.controller.closeNow(this.user);
+            this.controller.close(this.user);
         });
         btnRefresh = new Button("Refresh", () -> {
             this.controller.getGames(this.user);

@@ -1,11 +1,12 @@
 package perudo.view;
 
+import java.io.Closeable;
 import java.util.Set;
 import perudo.model.*;
 import perudo.utility.ErrorType;
 import perudo.utility.Response;
 
-public interface View {
+public interface View extends Closeable {
 
     /**
      * Tells the view that the new user has been initialized.

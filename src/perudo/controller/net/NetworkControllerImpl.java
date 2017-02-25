@@ -5,11 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
 import perudo.controller.Controller;
 import perudo.controller.net.Datagram;
 import perudo.controller.net.DatagramStream;
@@ -30,6 +29,7 @@ public class NetworkControllerImpl implements Controller {
     private final BiConsumer<InputStream, OutputStream> datagramStreamCreator;
     private final BiConsumer<Datagram, DatagramStream> invoker;
     private final BiConsumer<IOException, DatagramStream> ioExcHandler;
+    private final ExecutorService executor;
 
     public static Controller newNetworkController(Controller controller, NetworkServerListener serverListener) {
         return new NetworkControllerImpl(controller, serverListener);
@@ -39,41 +39,44 @@ public class NetworkControllerImpl implements Controller {
         this.controller = controller;
         this.methodInvoker = new MethodInvoker(Controller.class);
         this.streams = new CopyOnWriteArrayList<>();
+        this.executor = Executors.newSingleThreadExecutor();
 
         this.ioExcHandler = (ex, dgs) -> {
-            if (dgs.getUser().isPresent()) {
-                this.closeNow(dgs.getUser().get());
-            } else {
-                try {
-                    dgs.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            this.executor.execute(() -> {
+                if (dgs.getUser().isPresent()) {
+                    this.closeNow(dgs.getUser().get());
                 }
-            }
+            });
+
         };
 
         this.invoker = (dg, dgs) -> {
-            try {
-                if (dg.getMethodName().contains("initializeNewUser")) {
-                    controller.initializeNewUser(NetworkViewImpl.newNetworkView(dgs));
-                } else {
-                    methodInvoker.execute(this, dg);
+            this.executor.execute(() -> {
+                try {
+                    if (dg.getMethodName().contains("initializeNewUser")) {
+                        controller.initializeNewUser(NetworkViewImpl.newNetworkView(dgs));
+                    } else {
+                        methodInvoker.execute(this, dg);
+                    }
+                } catch (ErrorTypeException e) {
+                    e.printStackTrace();
                 }
-            } catch (ErrorTypeException e) {
-                e.printStackTrace();
-            }
+            });
+
         };
 
         this.datagramStreamCreator = (is, os) -> {
-            try {
-                final DatagramStream datagramStream = DatagramStreamImpl.initializeNewDatagramStream(is, os,
-                        Arrays.asList(this.invoker), Arrays.asList(this.ioExcHandler));
-                this.streams.add(datagramStream);
-            } catch (IOException e) {
-                // in case of exception the client who has requested a
-                // connection is ignored
-                e.printStackTrace();
-            }
+            this.executor.execute( () -> {
+                try {
+                    final DatagramStream datagramStream = DatagramStreamImpl.initializeNewDatagramStream(is, os,
+                            Arrays.asList(this.invoker), Arrays.asList(this.ioExcHandler));
+                    this.streams.add(datagramStream);
+                } catch (IOException e) {
+                    // in case of exception the client who has requested a
+                    // connection is ignored
+                    e.printStackTrace();
+                }
+            });
         };
 
         serverListener.addNewConnectionObserver(this.datagramStreamCreator);
@@ -172,18 +175,19 @@ public class NetworkControllerImpl implements Controller {
 
     @Override
     public void closeNow(final User user) {
-        try {
-            this.streams.stream().filter(s -> Objects.equals(user, s.getUser().orElse(null)))
-                    .collect(Collectors.toList()).get(0).close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        /*
+         * try { this.streams.stream().filter(s -> Objects.equals(user,
+         * s.getUser().orElse(null)))
+         * .collect(Collectors.toList()).get(0).close(); } catch (IOException e)
+         * { e.printStackTrace(); }
+         */
         this.controller.closeNow(user);
     }
 
     @Override
     public void close() throws IOException {
         this.controller.close();
+        this.executor.shutdown();
     }
 
 }

@@ -1,5 +1,6 @@
 package perudo.view.impl;
 
+import java.io.IOException;
 import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -222,6 +223,12 @@ public class ViewImpl implements View {
     public void showError(ErrorType errorType) {
         this.menuPanel.showError(errorType);
         System.out.println(errorType);
+    }
+
+    @Override
+    public void close() throws IOException {
+        // TODO Auto-generated method stub
+        
     }
 
 }

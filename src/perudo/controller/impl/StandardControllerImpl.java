@@ -2,8 +2,10 @@ package perudo.controller.impl;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -336,11 +338,16 @@ public class StandardControllerImpl implements Controller {
                 } else {
                     this.model.removeUser(user);
                     this.views.forEach((u, v) -> v.userExitNotify(user));
+                    this.views.get(user).close();
                     this.views.remove(user);
+                    // TODO for debug
+                    System.out.println("StandardController: view of user" + user.getName() + " closed and removed.");
                 }
             } catch (ErrorTypeException e) {
                 final View view = this.views.get(user);
                 view.showError(e.getErrorType());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
     }
@@ -372,12 +379,24 @@ public class StandardControllerImpl implements Controller {
                         this.getViewsExceptUser(user).forEach((u, v) -> v.removeGameNotify(game));
                     }
                 }
-                if(this.model.getUsers().contains(user)) {
+                if (this.model.getUsers().contains(user)) {
                     this.model.removeUser(user);
                 }
-                this.getViewsExceptUser(user).forEach((u, v) -> v.userExitNotify(user));
-                this.views.remove(user);
+                if (this.views.containsKey(user)) {
+                    this.getViewsExceptUser(user).forEach((u, v) -> {
+                        // TODO for debug
+                        // System.out.println("Sending userExitNotifyTo: " +
+                        // u.getName());
+                        v.userExitNotify(user);
+                    });
+                    this.views.get(user).close();
+                    this.views.remove(user);
+                    // TODO for debug
+                    System.out.println("StandardController: view of user" + user.getName() + " closed and removed.");
+                }
             } catch (ErrorTypeException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         });
@@ -462,8 +481,22 @@ public class StandardControllerImpl implements Controller {
     }
 
     private Map<User, View> getViewsExceptUser(final User user) {
-        return this.views.entrySet().stream().filter(e -> !Objects.equals(e, user))
-                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+        Map<User, View> result = new HashMap<>();
+        for (final Entry<User, View> e : this.views.entrySet()) {
+            if (!e.getKey().equals(user)) {
+                result.put(e.getKey(), e.getValue());
+            } /*
+               * else { // TODO for debug
+               * System.out.println("StandardController: User found: " +
+               * e.getKey().getName() + " , excluded."); }
+               */
+        }
+        // TODO for debug
+        /*
+         * System.out.println( "StandardController: Excluding user " +
+         * user.getName() + ". Size of remaining users: " + result.size());
+         */
+        return result;
     }
 
 }
