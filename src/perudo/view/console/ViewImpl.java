@@ -72,7 +72,11 @@ public class ViewImpl implements View {
             this.controller.getLobbies(this.user);
             this.controller.getGames(this.user);
         } else {
-            this.closeNotify();
+            try {
+                this.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -87,7 +91,11 @@ public class ViewImpl implements View {
     public void userExitNotify(final User user) {
         this.runOnGui(() -> {
             if (user == null || user.equals(this.user)) {
-                this.menuForm.close();
+                try {
+                    this.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             this.menuForm.removeUser(user);
         });
@@ -273,18 +281,13 @@ public class ViewImpl implements View {
 
     }
 
-    public void closeNotify() {
-        this.menuForm.close();
-
-        synchronized (this) {
-            this.notify();
-        }
-    }
 
     @Override
     public void close() throws IOException {
-        // TODO Auto-generated method stub
-        
+        this.menuForm.close();
+        this.gameForm.close();
+        this.lobbyForm.close();
+        this.controller.close();
     }
 
 }

@@ -58,4 +58,11 @@ public interface PlayerStatus extends Serializable {
      * @return the PlayerStatus with palifico called
      */
     PlayerStatus callPalifico() throws ErrorTypeException;
+
+    /**
+     * Create a new PlayerStatus without the dice value informations
+     * 
+     * @return a PlayerStatus without some dice informations
+     */
+    PlayerStatus withoutDiceValues();
 }

@@ -24,7 +24,8 @@ public class PlayerStatusImpl implements PlayerStatus {
     private final int remainingDice, maxDiceValue;
     private final boolean hasCalledPalifico;
 
-    public PlayerStatusImpl(final int remainingDice, final int maxDiceValue, final boolean hasCalledPalifico) {
+    private PlayerStatusImpl(final int remainingDice, final int maxDiceValue, final boolean hasCalledPalifico,
+            final boolean rollDice) {
         if (remainingDice < 0) {
             throw new IllegalArgumentException("remainingDice should be positive");
         }
@@ -35,42 +36,59 @@ public class PlayerStatusImpl implements PlayerStatus {
         this.hasCalledPalifico = hasCalledPalifico;
         this.maxDiceValue = maxDiceValue;
 
-        // roll dice
         this.diceValues = new HashMap<>();
         for (Integer i = 1; i <= this.getMaxDiceValue(); i++) {
             this.diceValues.put(i, 0);
         }
-        for (Integer i = 0; i < this.getRemainingDice(); i++) {
-            Integer diceV = random.nextInt(this.getMaxDiceValue()) + 1;
-            this.diceValues.put(diceV, this.diceValues.get(diceV) + 1);
+        if (rollDice) {
+            for (Integer i = 0; i < this.getRemainingDice(); i++) {
+                Integer diceV = random.nextInt(this.getMaxDiceValue()) + 1;
+                this.diceValues.put(diceV, this.diceValues.get(diceV) + 1);
+            }
         }
     }
 
+    public PlayerStatusImpl(final int remainingDice, final int maxDiceValue, final boolean hasCalledPalifico) {
+        this(remainingDice, maxDiceValue, hasCalledPalifico, true);
+    }
+
+    @Override
     public PlayerStatus rollDice() {
-        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), this.hasCalledPalifico());
+        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), this.hasCalledPalifico(), true);
+    }
+
+    @Override
+    public PlayerStatus withoutDiceValues() {
+        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), this.hasCalledPalifico(), false);
 
     }
 
+    @Override
     public Map<Integer, Integer> getDiceCount() {
         return Collections.unmodifiableMap(this.diceValues);
     }
 
+    @Override
     public int getRemainingDice() {
         return this.remainingDice;
     }
 
+    @Override
     public int getMaxDiceValue() {
         return this.maxDiceValue;
     }
 
+    @Override
     public PlayerStatus setRemainingDice(final int remainingDice) {
         return new PlayerStatusImpl(remainingDice, this.getMaxDiceValue(), this.hasCalledPalifico());
     }
 
+    @Override
     public boolean hasCalledPalifico() {
         return this.hasCalledPalifico;
     }
 
+    @Override
     public PlayerStatus callPalifico() throws ErrorTypeException {
         if (this.hasCalledPalifico) {
             throw new ErrorTypeException(ErrorType.GAME_PALIFICO_ALREADY_USED);
