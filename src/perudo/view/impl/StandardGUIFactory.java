@@ -4,6 +4,7 @@ package perudo.view.impl;
 import java.awt.Color;
 import java.io.IOException;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -18,6 +19,8 @@ import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import perudo.model.Lobby;
 import perudo.model.User;
@@ -48,8 +51,8 @@ public class StandardGUIFactory implements GUIFactory {
     
 
     @Override
-    public JPanel createUserPanel(User user) {
-        return new UserPanel(user);
+    public JPanel createUserPanel(User user, boolean myUser) {
+        return new UserPanel(user, myUser);
     }
     
     @Override
@@ -66,6 +69,12 @@ public class StandardGUIFactory implements GUIFactory {
     @Override
     public JPanel createChangeNamePanel() {
        return new ChangeNamePanel();
+    }
+    
+    @Override
+    public Border createBorder(Color color, int padding) {
+        return BorderFactory
+                .createCompoundBorder(BorderFactory.createLineBorder(color), new EmptyBorder(padding, padding, padding, padding));
     }
 
     @Override

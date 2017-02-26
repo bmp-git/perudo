@@ -80,7 +80,7 @@ public class LobbyListPanel extends JPanel {
         
     }
     
-    public void setUser(User user) {
+    public void setUser(final User user) {
         this.user = Optional.of(user);
     }
 
@@ -102,7 +102,7 @@ public class LobbyListPanel extends JPanel {
         }
     }
     
-    public void removeLobby(Lobby lobby) {
+    public void removeLobby(final Lobby lobby) {
         for (int i = 0; i < this.pnlLobbyList.getComponentCount(); i++) {
             if (((LobbyPanel) this.pnlLobbyList.getComponent(i)).getLobby().equals(lobby)) {
                 this.pnlLobbyList.remove(this.pnlLobbyList.getComponent(i));

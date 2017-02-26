@@ -7,6 +7,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 import perudo.model.Lobby;
 import perudo.model.User;
@@ -21,13 +22,15 @@ public interface GUIFactory {
     
     JPanel createLobbyPanel(Lobby lobby);
     
-    JPanel createUserPanel(User user);
+    JPanel createUserPanel(User user, boolean myUser);
     
     JPanel createCreateLobbyPanel();
     
     JPanel createMenuBottomPanel();
     
     JPanel createChangeNamePanel();
+    
+    Border createBorder(Color color, int padding);
         
     JComponent createButton(String text);
     

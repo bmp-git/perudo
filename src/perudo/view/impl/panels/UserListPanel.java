@@ -20,6 +20,7 @@ public class UserListPanel extends JPanel {
     private final GUIFactory factory;
     private final GridBagConstraints cnst;
     private final JPanel pnlUserList;
+    private User user;
     
     public UserListPanel() {
         this.setLayout(new FlowLayout());
@@ -32,9 +33,14 @@ public class UserListPanel extends JPanel {
         this.cnst.insets = new Insets(0,0,0,0);
         this.add(this.pnlUserList);
     }
-
-    public void addUser(final UserPanel userpnl) {    
-        this.pnlUserList.add(userpnl,this.cnst);
+    
+    public void setUser(final User user) {
+        this.user = user;
+    }
+    
+    public void addUser(final User user) {
+        UserPanel p = (UserPanel) this.factory.createUserPanel(user,this.user.equals(user));
+        this.pnlUserList.add(p,this.cnst);
         this.cnst.gridy++;
     }
     
@@ -47,7 +53,7 @@ public class UserListPanel extends JPanel {
             }
         }
         if(!inserted) {
-            this.addUser((UserPanel)this.factory.createUserPanel(user));
+            this.addUser(user);
         }
     }
     

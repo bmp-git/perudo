@@ -30,7 +30,7 @@ public class MenuBottomPanel extends JPanel {
         this.setBorder(new EmptyBorder(5, 10, 5, 10));
 
         if (this.user.isPresent()) {
-            if (ControllerSingleton.getController().getClass().getName().equals("perudo.controller.net.client.NetworkControllerImpl")) {
+            if (ControllerSingleton.getController().getClass().getName().equals("perudo.controller.net.client.ControllerClientImpl")) {
                 this.lblname = (JLabel) this.factory.createLabel("Logged as " + this.user.get().getName());
                 this.lblonline = (JLabel) this.factory.createLabel("Online.");
             } else {
@@ -46,10 +46,10 @@ public class MenuBottomPanel extends JPanel {
         this.add(this.lblonline, BorderLayout.LINE_END);
     }
 
-    public void setUser(User user) {
+    public void setUser(final User user) {
         this.user = Optional.ofNullable(user);
         if (this.user.isPresent()) {
-            if (ControllerSingleton.getController().getClass().getName().equals("perudo.controller.net.client.NetworkControllerImpl")) {
+            if (ControllerSingleton.getController().getClass().getName().equals("perudo.controller.net.client.ControllerClientImpl")) {
                 System.out.println(ControllerSingleton.getController().getClass().getName());
                 this.lblname.setText("Logged as " + this.user.get().getName());
                 this.lblonline.setText("Online.");

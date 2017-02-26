@@ -21,13 +21,19 @@ public class UserPanel extends JPanel {
     private final GUIFactory factory;
     private User user;
     private JLabel lblUser;
+    private final boolean myUser;
     
-    public UserPanel(User user) {
+    public UserPanel(User user, boolean myUser) {
         super();
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         this.factory = new StandardGUIFactory();
         this.user = user;
-        this.lblUser = (JLabel) this.factory.createLabel(this.user.getName());
+        this.myUser = myUser;
+        if(this.myUser) {
+            this.lblUser = new JLabel("<html><font color='green'>"+this.user.getName()+"</font></html>");
+        } else {
+            this.lblUser = (JLabel) this.factory.createLabel(this.user.getName());
+        }
         this.add(Box.createRigidArea(new Dimension(0,10)));
         this.add(this.lblUser);
         this.add(Box.createRigidArea(new Dimension(0,10)));
@@ -35,9 +41,13 @@ public class UserPanel extends JPanel {
 
     }
     
-    public void setUser(User user) {
+    public void setUser(final User user) {
         this.user = user;
-        this.lblUser.setText(this.user.getName());
+        if(this.myUser) {
+            this.lblUser.setText("<html><font color='green'>"+this.user.getName()+"</font></html>");
+        } else {
+            this.lblUser.setText(this.user.getName());
+        }
     }
     
     public User getUser() {
