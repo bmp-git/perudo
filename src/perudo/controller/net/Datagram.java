@@ -1,6 +1,7 @@
 package perudo.controller.net;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +26,13 @@ public class Datagram implements Serializable {
 
     private final String methodName;
     private final List<Serializable> params;
+    private final Instant creationTime;
 
     public Datagram(String methodName, List<Class<?>> paramsType, List<Serializable> params) {
         Optional<String> paramsName = paramsType.stream().map(t -> t.getName()).reduce((t1, t2) -> t1 + ", " + t2);
         this.methodName = methodName + "(" + paramsName.orElse("") + ")";
         this.params = params;
+        this.creationTime = Instant.now();
     }
 
     public String getMethodName() {
@@ -38,6 +41,10 @@ public class Datagram implements Serializable {
 
     public Object[] getParams() {
         return params.toArray();
+    }
+    
+    public Instant getCreationTime(){
+        return creationTime;
     }
 
 }

@@ -16,6 +16,7 @@ import perudo.model.Game;
 import perudo.model.GameSettings;
 import perudo.model.PlayerStatus;
 import perudo.model.User;
+import perudo.utility.DiffTime;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 import perudo.utility.IdDispenser;
@@ -278,7 +279,8 @@ public class GameImpl implements Game {
 
     @Override
     public synchronized Duration getTurnRemainingTime() {
-        return this.getSettings().getMaxTurnTime().minus(Duration.between(this.turnStartTime, Instant.now()));
+        return this.getSettings().getMaxTurnTime()
+                .minus(Duration.between(this.turnStartTime, Instant.now().plus(DiffTime.getServerDiffTime())));
     }
 
     @Override
