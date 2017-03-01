@@ -109,7 +109,6 @@ public class GameMenuForm extends BaseForm {
         this.window.setTitle("PERUDO - GAME MENU" + (this.user == null ? "" : " - " + this.user.getName()));
     }
 
-
     private void btnMenuChangeNameClicked() {
         if (!checkUserNotNull()) {
             return;
@@ -160,9 +159,12 @@ public class GameMenuForm extends BaseForm {
         this.lstUsers.clearItems();
         users.stream().forEach(u -> {
             Runnable run = () -> {
-                Utils.showMessageBox("User", u.getName() + " - id: " + u.getId(), this.textGUI);
+                Utils.showMessageBox("User", u.getName() + " - id: " + u.getId() + (u.getType().isBot() ? "\nBOT" : ""),
+                        this.textGUI);
             };
-            this.lstUsers.addItem(" "+u.getName() + (u.equals(this.user) ? " <-" : ""), run);
+            this.lstUsers.addItem(
+                    " " + u.getName() + (u.equals(this.user) ? " <-" : "") + (u.getType().isBot() ? " (bot)" : ""),
+                    run);
         });
     }
 
@@ -181,10 +183,10 @@ public class GameMenuForm extends BaseForm {
         lobbies.stream().forEach(l -> this.lobbies.add(l));
         this.refreshLobbiesList();
     }
-    
-    private void refreshLobbiesList(){
+
+    private void refreshLobbiesList() {
         this.lstLobbies.clearItems();
-        this.lobbies.forEach(l->{
+        this.lobbies.forEach(l -> {
             Runnable run = () -> {
                 MessageDialogButton response = new MessageDialogBuilder().setTitle("Join lobby")
                         .setText("Do you want to join this lobby?\n\n" + Utils.lobbyToString(l))
@@ -198,11 +200,11 @@ public class GameMenuForm extends BaseForm {
                     this.controller.joinLobby(this.user, l);
                 }
             };
-            this.lstLobbies.addItem(" "+
-                    l.getInfo().getName() + " " + l.getUsers().size() + "/" + l.getInfo().getMaxPlayer(), run);
+            this.lstLobbies.addItem(
+                    " " + l.getInfo().getName() + " " + l.getUsers().size() + "/" + l.getInfo().getMaxPlayer(), run);
         });
     }
-    
+
     public void addGame(final Game game) {
         this.games.add(game);
         this.refreshGamesList();
@@ -218,18 +220,15 @@ public class GameMenuForm extends BaseForm {
         games.stream().forEach(l -> this.games.add(l));
         this.refreshGamesList();
     }
-    
-    private void refreshGamesList(){
+
+    private void refreshGamesList() {
         this.lstGames.clearItems();
-        this.games.forEach(g->{
+        this.games.forEach(g -> {
             Runnable run = () -> {
-                new MessageDialogBuilder().setTitle("Spectate game")
-                        .setText("This feature is not implemented yet")
-                        .addButton(MessageDialogButton.OK).build()
-                        .showDialog(this.textGUI);
+                new MessageDialogBuilder().setTitle("Spectate game").setText("This feature is not implemented yet")
+                        .addButton(MessageDialogButton.OK).build().showDialog(this.textGUI);
             };
-            this.lstGames.addItem(" "+
-                    g.getSettings().getName(), run);
+            this.lstGames.addItem(" " + g.getSettings().getName(), run);
         });
     }
 

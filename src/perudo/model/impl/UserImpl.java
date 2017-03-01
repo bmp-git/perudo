@@ -43,8 +43,11 @@ public class UserImpl implements User {
         return new UserImpl(IdDispenser.getUserIdDispenser().getNextId(), name, UserType.PLAYER);
     }
 
-    public static User createBot(final String name) throws ErrorTypeException {
-        return new UserImpl(IdDispenser.getUserIdDispenser().getNextId(), name, UserType.BOT);
+    public static User createBot(final String name, final UserType type) throws ErrorTypeException {
+        if (!type.isBot()) {
+            throw new IllegalArgumentException();
+        }
+        return new UserImpl(IdDispenser.getUserIdDispenser().getNextId(), name, type);
     }
 
     private final int id;

@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import perudo.bot.BotFactory;
 import perudo.controller.Controller;
 import perudo.model.Bid;
 import perudo.model.Game;
@@ -174,8 +175,8 @@ public class StandardControllerImpl implements Controller {
                 if (!Objects.equals(lobbyModelTemp.getOwner(), user)) {
                     throw new ErrorTypeException(ErrorType.USER_DOES_NOT_OWN_LOBBY);
                 }
-                botUTemp = null;
-                botVTemp = null;
+                botUTemp = UserImpl.getNewAnonymousUser("Bot", type);
+                botVTemp = BotFactory.createBot(this, botUTemp);
                 this.model.addUser(botUTemp);
             } catch (ErrorTypeException e) {
                 view.showError(e.getErrorType());

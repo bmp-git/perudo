@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor.ANSI;
 import com.googlecode.lanterna.gui2.BorderLayout;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.Button;
@@ -14,12 +15,11 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import perudo.controller.Controller;
 import perudo.model.Lobby;
 import perudo.model.User;
+import perudo.model.UserType;
 
 public class LobbyForm extends BaseForm {
 
@@ -33,20 +33,33 @@ public class LobbyForm extends BaseForm {
 
     class UserPanel extends Panel {
 
-        public UserPanel(final Optional<User> user) {
+        public UserPanel(final Optional<User> user, final Lobby lobby, final User me) {
             Label label;
             Button btnAddBot;
             this.setLayoutManager(new BorderLayout());
 
             if (user.isPresent()) {
+
                 label = new Label(user.get().getName());
+                if (user.get().equals(me)) {
+                    label.setForegroundColor(ANSI.RED);
+                }
+                if (user.get().getType().isBot() && me.equals(lobby.getOwner())) {
+                    btnAddBot = new Button("Remove bot", () -> {
+                        btnStart.takeFocus();
+                        controller.closeNow(user.get());
+                    });
+                    this.addComponent(btnAddBot, BorderLayout.Location.RIGHT);
+                }
             } else {
                 label = new Label("Free Space");
-                btnAddBot = new Button("Add bot", () -> {
-                    new MessageDialogBuilder().setTitle("Error").setText("Not implemented yet")
-                            .addButton(MessageDialogButton.OK).build().showDialog(textGUI);
-                });
-                this.addComponent(btnAddBot, BorderLayout.Location.RIGHT);
+                if (me.equals(lobby.getOwner())) {
+                    btnAddBot = new Button("Add bot", () -> {
+                        btnStart.takeFocus();
+                        controller.addBotToLobby(me, lobby, UserType.BOT_EASY);
+                    });
+                    this.addComponent(btnAddBot, BorderLayout.Location.RIGHT);
+                }
             }
 
             this.setPreferredSize(new TerminalSize(25, 1));
@@ -118,17 +131,18 @@ public class LobbyForm extends BaseForm {
 
     public void setLobby(final Lobby lobby) {
         this.lobby = lobby;
-        
+
         this.btnStart.setEnabled(lobby.getOwner() != null && lobby.getOwner().equals(user));
         this.lblInfo.setText(Utils.lobbyToString(lobby));
 
+        this.btnExit.takeFocus();
         this.centerPanel.removeAllComponents();
         Panel panel = new Panel();
         panel.setLayoutManager(new BorderLayout());
         this.userSpacePanel.clear();
 
         for (int i = 0; i < lobby.getInfo().getMaxPlayer(); i++) {
-            UserPanel p = new UserPanel(lobby.getUsers().stream().skip(i).findFirst());
+            UserPanel p = new UserPanel(lobby.getUsers().stream().skip(i).findFirst(), this.lobby, this.user);
             this.userSpacePanel.add(p);
             this.centerPanel.addComponent(p.withBorder(Borders.singleLine()));
         }
