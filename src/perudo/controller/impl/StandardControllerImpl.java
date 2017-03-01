@@ -160,6 +160,53 @@ public class StandardControllerImpl implements Controller {
     }
 
     @Override
+    public void addBotToLobby(final User user, final Lobby lobby, final UserType type) {
+        Objects.requireNonNull(user);
+        Objects.requireNonNull(lobby);
+        Objects.requireNonNull(type);
+        this.executor.execute(() -> {
+            final View view = this.views.get(user);
+            Lobby lobbyModelTemp = null;
+            User botUTemp = null;
+            View botVTemp = null;
+            try {
+                lobbyModelTemp = this.getLobbyFromModel(lobby);
+                if (!Objects.equals(lobbyModelTemp.getOwner(), user)) {
+                    throw new ErrorTypeException(ErrorType.USER_DOES_NOT_OWN_LOBBY);
+                }
+                botUTemp = null;
+                botVTemp = null;
+                this.model.addUser(botUTemp);
+            } catch (ErrorTypeException e) {
+                view.showError(e.getErrorType());
+                return;
+            }
+
+            final Lobby lobbyModel = lobbyModelTemp;
+            final User botU = botUTemp;
+            final View botV = botVTemp;
+            
+            try {
+                this.views.put(botU, botV);
+                views.entrySet().stream().forEach(e -> e.getValue().initializeNewUserNotify(botU));
+                lobbyModel.addUser(botU);
+                this.views.forEach((u, v) -> v.joinLobbyNotify(lobbyModel, botU));
+            } catch (ErrorTypeException e) {
+                try {
+                    this.model.removeUser(botU);
+                    this.views.forEach((u, v) -> v.userExitNotify(botU));
+                    this.views.remove(botU);
+                } catch (ErrorTypeException e1) {
+                    e1.printStackTrace();
+                    view.showError(e1.getErrorType());
+                }
+                view.showError(e.getErrorType());
+            }
+        });
+
+    }
+
+    @Override
     public void exitLobby(final User user) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {

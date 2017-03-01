@@ -19,6 +19,7 @@ import perudo.model.Bid;
 import perudo.model.GameSettings;
 import perudo.model.Lobby;
 import perudo.model.User;
+import perudo.model.UserType;
 import perudo.utility.DiffTime;
 import perudo.utility.ErrorTypeException;
 import perudo.view.View;
@@ -121,6 +122,16 @@ public class ControllerClientImpl implements Controller {
         this.executor.execute(() -> {
             stream.send(dg);
         });
+    }
+    
+    @Override
+    public void addBotToLobby(User user, Lobby lobby, UserType type) {
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(User.class, Lobby.class, UserType.class),
+                Arrays.asList(user, lobby, type));
+        this.executor.execute(() -> {
+            stream.send(dg);
+        });
+        
     }
 
     @Override

@@ -19,6 +19,7 @@ import perudo.model.Bid;
 import perudo.model.GameSettings;
 import perudo.model.Lobby;
 import perudo.model.User;
+import perudo.model.UserType;
 import perudo.utility.ErrorTypeException;
 import perudo.view.View;
 
@@ -66,7 +67,7 @@ public class NetworkControllerImpl implements Controller {
         };
 
         this.datagramStreamCreator = (is, os) -> {
-            this.executor.execute( () -> {
+            this.executor.execute(() -> {
                 try {
                     final DatagramStream datagramStream = DatagramStreamImpl.initializeNewDatagramStream(is, os,
                             Arrays.asList(this.invoker), Arrays.asList(this.ioExcHandler));
@@ -118,6 +119,11 @@ public class NetworkControllerImpl implements Controller {
     public void joinLobby(final User user, final Lobby lobby) {
         this.controller.joinLobby(user, lobby);
 
+    }
+
+    @Override
+    public void addBotToLobby(final User user, final Lobby lobby, final UserType type) {
+        this.controller.addBotToLobby(user, lobby, type);
     }
 
     @Override
@@ -189,5 +195,4 @@ public class NetworkControllerImpl implements Controller {
         this.controller.close();
         this.executor.shutdown();
     }
-
 }
