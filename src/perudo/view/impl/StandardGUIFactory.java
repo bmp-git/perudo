@@ -3,7 +3,6 @@ package perudo.view.impl;
 
 import java.awt.Color;
 import java.io.IOException;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,7 +20,6 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-
 import perudo.model.Lobby;
 import perudo.model.User;
 import perudo.view.GUIFactory;
@@ -42,6 +40,11 @@ public class StandardGUIFactory implements GUIFactory {
     @Override
     public JPanel createMenuPanel() {
         return new MenuPanel();
+    }
+    
+    @Override
+    public JPanel createGamePanel() {
+        return new GamePanel();
     }
     
     @Override
@@ -149,4 +152,5 @@ public class StandardGUIFactory implements GUIFactory {
     public JFrame createFrame(String title) {
         return new JFrame(title);
     }
+
 }

@@ -20,6 +20,8 @@ public interface GUIFactory {
     
     JPanel createMenuPanel();
     
+    JPanel createGamePanel();
+    
     JPanel createLobbyPanel(Lobby lobby);
     
     JPanel createUserPanel(User user, boolean myUser);

@@ -19,6 +19,7 @@ import perudo.view.View;
 public class ViewImpl implements View {
 
     private static final String TITLE = "Perudo";
+    private static final String ICON_RESPATH = "/images/perudo-logo.png";
 
     private final Controller controller;
     private final GUIFactory factory;
@@ -27,13 +28,16 @@ public class ViewImpl implements View {
 
     /* Application panels */
     private final MenuPanel menuPanel;
+    private final GamePanel gamePanel;
 
     public ViewImpl() {
         this.controller = ControllerSingleton.getController();
         this.factory = new StandardGUIFactory();
         this.mainFrame = this.factory.createFrame(TITLE);
         this.mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.mainFrame.setIconImage(GUIUtility.getIcon(ICON_RESPATH).getImage());
         this.menuPanel = (MenuPanel) this.factory.createMenuPanel();
+        this.gamePanel = (GamePanel) this.factory.createGamePanel();
         this.controller.initializeNewUser(this);
         this.mainFrame.setLocationByPlatform(true);
         this.showFrame();
@@ -172,8 +176,9 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (lobby.getUsers().contains(user)) {
-                    // menuPanel.start(game);
-                    // showPanel(gamePanel);
+                    gamePanel.setGame(game);
+                    gamePanel.setUser(user);
+                    showPanel(gamePanel);
                 } else {
                     menuPanel.removeLobby(lobby);
                     // menuPanel.addGame(game);
@@ -185,19 +190,32 @@ public class ViewImpl implements View {
 
     @Override
     public void removeGameNotify(final Game game) {
-        // TODO Auto-generated method stub
-
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                // menuPanel.removeGame(game);
+                showPanel(menuPanel);
+            }
+        });
     }
 
     @Override
     public void getGamesRespond(final Response<Set<Game>> games) {
-        // TODO Auto-generated method stub
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                // games.getValue().forEach(g -> menuPanel.updateGame(g));
+                showPanel(menuPanel);
+            }
+        });
     }
 
     @Override
     public void playNotify(final Game game, final User user) {
-        // TODO Auto-generated method stub
-
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                gamePanel.playNotify(game,user);
+                showPanel(gamePanel);
+            }
+        });
     }
 
     @Override
