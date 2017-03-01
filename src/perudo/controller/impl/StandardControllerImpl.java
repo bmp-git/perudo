@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import perudo.bot.BotFactory;
 import perudo.controller.Controller;
 import perudo.model.Bid;
 import perudo.model.Game;
@@ -19,6 +20,7 @@ import perudo.model.GameSettings;
 import perudo.model.Lobby;
 import perudo.model.Model;
 import perudo.model.User;
+import perudo.model.UserType;
 import perudo.model.impl.BidImpl;
 import perudo.model.impl.LobbyImpl;
 import perudo.model.impl.ModelImpl;
@@ -46,7 +48,7 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(view);
         this.executor.execute(() -> {
             try {
-                final User newUser = UserImpl.getNewAnonymousUser("Anonymous");
+                final User newUser = UserImpl.getNewAnonymousUser("Anonymous", UserType.PLAYER);
                 this.model.addUser(newUser);
                 this.views.put(newUser, view);
                 view.initializeNewUserRespond(ResponseImpl.of(newUser));
@@ -152,6 +154,53 @@ public class StandardControllerImpl implements Controller {
                 this.views.forEach((u, v) -> v.joinLobbyNotify(lobbyModel, user));
             } catch (ErrorTypeException e) {
                 final View view = this.views.get(user);
+                view.showError(e.getErrorType());
+            }
+        });
+
+    }
+
+    @Override
+    public void addBotToLobby(final User user, final Lobby lobby, final UserType type) {
+        Objects.requireNonNull(user);
+        Objects.requireNonNull(lobby);
+        Objects.requireNonNull(type);
+        this.executor.execute(() -> {
+            final View view = this.views.get(user);
+            Lobby lobbyModelTemp = null;
+            User botUTemp = null;
+            View botVTemp = null;
+            try {
+                lobbyModelTemp = this.getLobbyFromModel(lobby);
+                if (!Objects.equals(lobbyModelTemp.getOwner(), user)) {
+                    throw new ErrorTypeException(ErrorType.USER_DOES_NOT_OWN_LOBBY);
+                }
+                botUTemp = UserImpl.getNewAnonymousUser("Bot", type);
+                botVTemp = BotFactory.createBot(this, botUTemp);
+                this.model.addUser(botUTemp);
+            } catch (ErrorTypeException e) {
+                view.showError(e.getErrorType());
+                return;
+            }
+
+            final Lobby lobbyModel = lobbyModelTemp;
+            final User botU = botUTemp;
+            final View botV = botVTemp;
+            
+            try {
+                this.views.put(botU, botV);
+                views.entrySet().stream().forEach(e -> e.getValue().initializeNewUserNotify(botU));
+                lobbyModel.addUser(botU);
+                this.views.forEach((u, v) -> v.joinLobbyNotify(lobbyModel, botU));
+            } catch (ErrorTypeException e) {
+                try {
+                    this.model.removeUser(botU);
+                    this.views.forEach((u, v) -> v.userExitNotify(botU));
+                    this.views.remove(botU);
+                } catch (ErrorTypeException e1) {
+                    e1.printStackTrace();
+                    view.showError(e1.getErrorType());
+                }
                 view.showError(e.getErrorType());
             }
         });

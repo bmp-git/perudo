@@ -16,6 +16,7 @@ import perudo.model.Game;
 import perudo.model.GameSettings;
 import perudo.model.PlayerStatus;
 import perudo.model.User;
+import perudo.utility.DiffTime;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 import perudo.utility.IdDispenser;
@@ -34,18 +35,6 @@ public class GameImpl implements Game {
     private Bid currentBid;
     private User bidUser;
     private boolean palifico;
-
-    private GameImpl(GameImpl game) {
-        this.id = game.id;
-        this.userList = new ArrayList<>(game.userList);
-        this.usersStatus = new HashMap<>(game.usersStatus);
-        this.settings = game.settings;
-        this.currentTurn = game.currentTurn;
-        this.turnStartTime = game.turnStartTime;
-        this.currentBid = game.currentBid;
-        this.bidUser = game.bidUser;
-        this.palifico = game.palifico;
-    }
 
     public GameImpl(final GameSettings settings, final Set<User> users) {
         if (settings == null || users == null || users.size() > settings.getMaxPlayer()) {
@@ -278,7 +267,8 @@ public class GameImpl implements Game {
 
     @Override
     public synchronized Duration getTurnRemainingTime() {
-        return this.getSettings().getMaxTurnTime().minus(Duration.between(this.turnStartTime, Instant.now()));
+        return this.getSettings().getMaxTurnTime()
+                .minus(Duration.between(this.turnStartTime, Instant.now().plus(DiffTime.getServerDiffTime())));
     }
 
     @Override
@@ -330,14 +320,4 @@ public class GameImpl implements Game {
             this.resetGame(this.getTurn());
         }
     }
-
-    @Override
-    public synchronized Game getPrivateGame(User user) {
-        GameImpl game = new GameImpl(this);
-        game.userList.stream().forEach(u -> {
-            game.usersStatus.put(u, u.equals(user) ? game.getUserStatus(u) : game.getUserStatus(u).withoutDiceValues());
-        });
-        return game;
-    }
-
 }

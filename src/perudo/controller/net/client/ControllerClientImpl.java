@@ -3,6 +3,8 @@ package perudo.controller.net.client;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.Socket;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,6 +19,8 @@ import perudo.model.Bid;
 import perudo.model.GameSettings;
 import perudo.model.Lobby;
 import perudo.model.User;
+import perudo.model.UserType;
+import perudo.utility.DiffTime;
 import perudo.utility.ErrorTypeException;
 import perudo.view.View;
 
@@ -41,6 +45,7 @@ public class ControllerClientImpl implements Controller {
         BiConsumer<Datagram, DatagramStream> receiver = (datagram, dgStream) -> {
             this.executor.execute(() -> {
                 try {
+                    DiffTime.setServerDiffTime(Duration.between(Instant.now(), datagram.getCreationTime()));
                     this.invoker.execute(view, datagram);
                 } catch (final ErrorTypeException e) {
                     this.view.showError(e.getErrorType());
@@ -117,6 +122,16 @@ public class ControllerClientImpl implements Controller {
         this.executor.execute(() -> {
             stream.send(dg);
         });
+    }
+    
+    @Override
+    public void addBotToLobby(User user, Lobby lobby, UserType type) {
+        final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(User.class, Lobby.class, UserType.class),
+                Arrays.asList(user, lobby, type));
+        this.executor.execute(() -> {
+            stream.send(dg);
+        });
+        
     }
 
     @Override

@@ -139,16 +139,4 @@ public interface Game extends Serializable {
      * 
      */
     void removeUser(User user) throws ErrorTypeException;
-
-    /**
-     * Removes all users dice values informations excluded the one of the user
-     * specified
-     * 
-     * @param user
-     *            the user whose informations will be kept
-     * 
-     * @return a copy of the current game without some dice informations
-     * 
-     */
-    Game getPrivateGame(User user);
 }

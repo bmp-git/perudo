@@ -21,9 +21,9 @@ public class GameTest {
     public void main() {
         User u1 = null, u2 = null, u3 = null;
         try {
-            u1 = new UserImpl("u1");
-            u2 = new UserImpl("u2");
-            u3 = new UserImpl("u3");
+            u1 = UserImpl.createPlayer("u1");
+            u2 = UserImpl.createPlayer("u2");
+            u3 = UserImpl.createPlayer("u3");
         } catch (ErrorTypeException e2) {
 
         }

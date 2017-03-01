@@ -6,6 +6,7 @@ import perudo.model.Bid;
 import perudo.model.Lobby;
 import perudo.model.GameSettings;
 import perudo.model.User;
+import perudo.model.UserType;
 import perudo.view.View;
 
 public interface Controller extends Closeable {
@@ -60,6 +61,18 @@ public interface Controller extends Closeable {
      *            lobby to join
      */
     void joinLobby(User user, Lobby lobby);
+
+    /**
+     * The user adds a bot to a given lobby
+     * 
+     * @param user
+     *            user requesting to add a bot
+     * @param lobby
+     *            in which lobby add the bot
+     * @param type
+     *            strength of the bot (wrong type notifies an error)
+     */
+    void addBotToLobby(User user, Lobby lobby, UserType type);
 
     /**
      * Exits from a lobby.

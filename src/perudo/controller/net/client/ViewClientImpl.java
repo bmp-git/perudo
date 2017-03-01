@@ -126,8 +126,8 @@ public class ViewClientImpl implements View {
 
     @Override
     public void close() throws IOException {
-        // TODO Auto-generated method stub
-        
+        this.view.close();
+        this.stream.close();
     }
 
 }

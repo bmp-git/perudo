@@ -65,6 +65,16 @@ public class BidTest {
             assertFalse(bid.isNextBidValid(new BidImpl(1, 1), false, setts));
 
             assertFalse(bid.isNextBidValid(new BidImpl(10, 7), false, setts));
+            
+            assertEquals(bid.nextBid(), new BidImpl(5, 5));
+            assertEquals(bid.nextBid(6), new BidImpl(4, 6));
+            assertEquals(bid.nextBid(4), new BidImpl(5, 4));
+            assertEquals(bid.nextBid(1), new BidImpl(2, 1));
+            bid = new BidImpl(5, 5);
+            assertEquals(bid.nextBid(1), new BidImpl(3, 1));
+            bid = new BidImpl(3, 1);
+            assertEquals(bid.nextBid(), new BidImpl(4, 1));
+            assertEquals(bid.nextBid(2), new BidImpl(7, 2));
         } catch (ErrorTypeException e) {
             throw new IllegalStateException("Should be ok");
         }

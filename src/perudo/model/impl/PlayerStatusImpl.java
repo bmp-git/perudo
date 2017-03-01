@@ -80,7 +80,7 @@ public class PlayerStatusImpl implements PlayerStatus {
 
     @Override
     public PlayerStatus setRemainingDice(final int remainingDice) {
-        return new PlayerStatusImpl(remainingDice, this.getMaxDiceValue(), this.hasCalledPalifico());
+        return new PlayerStatusImpl(remainingDice, this.getMaxDiceValue(), this.hasCalledPalifico(), true);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class PlayerStatusImpl implements PlayerStatus {
         if (this.getRemainingDice() != 1) {
             throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
         }
-        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), true);
+        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), true, false);
     }
 
     @Override

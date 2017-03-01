@@ -18,7 +18,7 @@ public class LobbyTest {
     public void main() {
         User owner = null;
         try {
-            owner = new UserImpl("host");
+            owner = UserImpl.createPlayer("host");
         } catch (ErrorTypeException e) {
         }
         Lobby l, l1;
@@ -60,10 +60,10 @@ public class LobbyTest {
 
         User u1 = null, u2 = null, u3 = null, u4 = null;
         try {
-            u1 = new UserImpl("u1");
-            u2 = new UserImpl("u2");
-            u3 = new UserImpl("u3");
-            u4 = new UserImpl("u4");
+            u1 = UserImpl.createPlayer("u1");
+            u2 = UserImpl.createPlayer("u2");
+            u3 = UserImpl.createPlayer("u3");
+            u4 = UserImpl.createPlayer("u4");
         } catch (ErrorTypeException e2) {
 
         }
