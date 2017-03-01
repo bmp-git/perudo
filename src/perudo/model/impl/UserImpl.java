@@ -1,6 +1,7 @@
 package perudo.model.impl;
 
 import perudo.model.User;
+import perudo.model.UserType;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 import perudo.utility.IdDispenser;
@@ -21,39 +22,39 @@ public class UserImpl implements User {
      * 
      * @return an initialized new user
      */
-    public static User getNewAnonymousUser(String prefix) {
-        User user = null;
+    public static User getNewAnonymousUser(final String prefix, final UserType type) {
+        final int id = IdDispenser.getUserIdDispenser().getNextId();
         try {
-            user = new UserImpl();
-            return user.changeName(prefix + user.getId());
+            return new UserImpl(id, prefix + id, type);
         } catch (ErrorTypeException e) {
             // try without the prefix
             try {
-                return user.changeName(Integer.toString(user.getId()));
+                return new UserImpl(id, Integer.toString(id), type);
             } catch (ErrorTypeException e1) {
 
             }
-
+            IdDispenser.getUserIdDispenser().freeId(id);
             // can't generate an anonymous user correctly
             throw new IllegalStateException();
         }
     }
 
+    public static User createPlayer(final String name) throws ErrorTypeException {
+        return new UserImpl(IdDispenser.getUserIdDispenser().getNextId(), name, UserType.PLAYER);
+    }
+
+    public static User createBot(final String name) throws ErrorTypeException {
+        return new UserImpl(IdDispenser.getUserIdDispenser().getNextId(), name, UserType.BOT);
+    }
+
     private final int id;
     private final String name;
+    private final UserType type;
 
-    public UserImpl(String name) throws ErrorTypeException {
-        this(IdDispenser.getUserIdDispenser().getNextId(), name);
-    }
-
-    private UserImpl() {
-        this.id = IdDispenser.getUserIdDispenser().getNextId();
-        this.name = "";
-    }
-
-    private UserImpl(int id, String name) throws ErrorTypeException {
+    private UserImpl(final int id, final String name, final UserType type) throws ErrorTypeException {
         this.id = id;
         this.name = name;
+        this.type = type;
 
         if (name.length() > MAX_USER_NAME_LENGTH) {
             throw new ErrorTypeException(ErrorType.USER_NAME_TOO_LONG);
@@ -80,7 +81,12 @@ public class UserImpl implements User {
 
     @Override
     public User changeName(String newName) throws ErrorTypeException {
-        return new UserImpl(this.getId(), newName);
+        return new UserImpl(this.getId(), newName, this.type);
+    }
+
+    @Override
+    public UserType getType() {
+        return this.type;
     }
 
     @Override
@@ -104,5 +110,4 @@ public class UserImpl implements User {
             return false;
         return true;
     }
-
 }

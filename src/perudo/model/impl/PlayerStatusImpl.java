@@ -80,7 +80,7 @@ public class PlayerStatusImpl implements PlayerStatus {
 
     @Override
     public PlayerStatus setRemainingDice(final int remainingDice) {
-        return new PlayerStatusImpl(remainingDice, this.getMaxDiceValue(), this.hasCalledPalifico(), false);
+        return new PlayerStatusImpl(remainingDice, this.getMaxDiceValue(), this.hasCalledPalifico(), true);
     }
 
     @Override

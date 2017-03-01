@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import perudo.utility.ErrorTypeException;
 
-public interface User extends Serializable{
+public interface User extends Serializable {
 
     /**
      * Gets the unique id of the user.
@@ -21,10 +21,16 @@ public interface User extends Serializable{
     String getName();
 
     /**
-     * Set a new name for the user
+     * Sets a new name for the user
      * 
      * @return the user with the changed name
      */
     User changeName(String newName) throws ErrorTypeException;
 
+    /**
+     * Gets the type of this user
+     * 
+     * @return the type
+     */
+    UserType getType();
 }

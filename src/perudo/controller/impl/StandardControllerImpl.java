@@ -19,6 +19,7 @@ import perudo.model.GameSettings;
 import perudo.model.Lobby;
 import perudo.model.Model;
 import perudo.model.User;
+import perudo.model.UserType;
 import perudo.model.impl.BidImpl;
 import perudo.model.impl.LobbyImpl;
 import perudo.model.impl.ModelImpl;
@@ -46,7 +47,7 @@ public class StandardControllerImpl implements Controller {
         Objects.requireNonNull(view);
         this.executor.execute(() -> {
             try {
-                final User newUser = UserImpl.getNewAnonymousUser("Anonymous");
+                final User newUser = UserImpl.getNewAnonymousUser("Anonymous", UserType.PLAYER);
                 this.model.addUser(newUser);
                 this.views.put(newUser, view);
                 view.initializeNewUserRespond(ResponseImpl.of(newUser));

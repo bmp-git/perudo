@@ -2,6 +2,7 @@ package test.model;
 
 import perudo.model.User;
 import perudo.model.impl.UserImpl;
+import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 
 import static org.junit.Assert.*;
@@ -10,12 +11,26 @@ public class UserTest {
     @org.junit.Test
     public void main() {
         User u1 = null, u2 = null;
+        try{
+            u1 = UserImpl.createPlayer("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        }catch(ErrorTypeException e){
+            assertEquals(e.getErrorType(), ErrorType.USER_NAME_TOO_LONG);
+        }
+        try{
+            u1 = UserImpl.createPlayer("");
+        }catch(ErrorTypeException e){
+            assertEquals(e.getErrorType(), ErrorType.USER_NAME_TOO_SHORT);
+        }
+        try{
+            u1 = UserImpl.createPlayer("!?\"£$%&/()");
+        }catch(ErrorTypeException e){
+            assertEquals(e.getErrorType(), ErrorType.USER_NAME_INVALID);
+        }
         try {
-            u1 = new UserImpl("Nome");
-            u2 = new UserImpl("Nome");
+            u1 = UserImpl.createPlayer("Nome");
+            u2 = UserImpl.createPlayer("Nome");
         } catch (ErrorTypeException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new IllegalStateException("Should be ok");
         }
 
         assertEquals(u1.getName(), "Nome");

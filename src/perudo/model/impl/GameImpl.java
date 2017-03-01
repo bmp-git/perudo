@@ -36,18 +36,6 @@ public class GameImpl implements Game {
     private User bidUser;
     private boolean palifico;
 
-    private GameImpl(GameImpl game) {
-        this.id = game.id;
-        this.userList = new ArrayList<>(game.userList);
-        this.usersStatus = new HashMap<>(game.usersStatus);
-        this.settings = game.settings;
-        this.currentTurn = game.currentTurn;
-        this.turnStartTime = game.turnStartTime;
-        this.currentBid = game.currentBid;
-        this.bidUser = game.bidUser;
-        this.palifico = game.palifico;
-    }
-
     public GameImpl(final GameSettings settings, final Set<User> users) {
         if (settings == null || users == null || users.size() > settings.getMaxPlayer()) {
             throw new IllegalArgumentException();
@@ -332,14 +320,4 @@ public class GameImpl implements Game {
             this.resetGame(this.getTurn());
         }
     }
-
-    @Override
-    public synchronized Game getPrivateGame(User user) {
-        GameImpl game = new GameImpl(this);
-        game.userList.stream().forEach(u -> {
-            game.usersStatus.put(u, u.equals(user) ? game.getUserStatus(u) : game.getUserStatus(u).withoutDiceValues());
-        });
-        return game;
-    }
-
 }
