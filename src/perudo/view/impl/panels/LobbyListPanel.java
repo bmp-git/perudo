@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JButton;
@@ -90,15 +92,10 @@ public class LobbyListPanel extends JPanel {
     }
     
     public void updateLobby(final Lobby lobby) {
-        boolean inserted = false;
         for (int i = 0; i < this.pnlLobbyList.getComponentCount(); i++) {
             if (((LobbyPanel) this.pnlLobbyList.getComponent(i)).getLobby().equals(lobby)) {
-                inserted = true;
                 ((LobbyPanel) this.pnlLobbyList.getComponent(i)).setLobby(lobby);
             }
-        }
-        if(!inserted) {
-            this.addLobby((LobbyPanel)this.factory.createLobbyPanel(lobby));
         }
     }
     
@@ -109,6 +106,14 @@ public class LobbyListPanel extends JPanel {
                 break;
             }
         }
+    }
+    
+    public List<Lobby> getLobbies() {
+        List<Lobby> l = new ArrayList<>();
+        for (int i = 0; i < this.pnlLobbyList.getComponentCount(); i++) {
+            l.add(((LobbyPanel)this.pnlLobbyList.getComponent(i)).getLobby());
+        }
+        return l;
     }
 
 }

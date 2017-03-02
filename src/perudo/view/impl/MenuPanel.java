@@ -145,7 +145,11 @@ public class MenuPanel extends JPanel {
             this.pnlLobbyInfoActive = Optional.of(new LobbyInfoPanel(lobby, this.user.get()));
             showPanelCenter(this.pnlLobbyInfoActive.get(), BorderLayout.CENTER);
         }
-        this.pnlLobbyList.updateLobby(lobby);
+        if (this.pnlLobbyList.getLobbies().contains(lobby)) {
+            this.pnlLobbyList.updateLobby(lobby);
+        } else {
+            this.addLobby(lobby);
+        }
     }
 
     public void addUser(final User user) {
