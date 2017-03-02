@@ -72,23 +72,18 @@ public abstract class AbstractBot implements View {
         this.executor.execute(() -> {
             if (this.user.equals(lobby.getOwner())) {
                 this.controller.closeNow(this.user);
-                try {
-                    this.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         });
     }
 
     @Override
     public void startLobbyNotify(Lobby lobby, Game game) {
-            this.executor.execute(() -> {
-                if (lobby.equals(this.lobby)) {
-                    this.game = game;
-                    this.play(game);
-                }
-            });
+        this.executor.execute(() -> {
+            if (lobby.equals(this.lobby)) {
+                this.game = game;
+                this.play(game);
+            }
+        });
     }
 
     @Override
@@ -102,28 +97,36 @@ public abstract class AbstractBot implements View {
     @Override
     public void playNotify(Game game, User user) {
         this.executor.execute(() -> {
-            this.play(game);
+            if (game.equals(this.game)) {
+                this.play(game);
+            }
         });
     }
 
     @Override
     public void doubtNotify(Game game, User user, boolean win) {
         this.executor.execute(() -> {
-            this.play(game);
+            if (game.equals(this.game)) {
+                this.play(game);
+            }
         });
     }
 
     @Override
     public void urgeNotify(Game game, User user, boolean win) {
         this.executor.execute(() -> {
-            this.play(game);
+            if (game.equals(this.game)) {
+                this.play(game);
+            }
         });
     }
 
     @Override
     public void callPalificoNotify(Game game, User user) {
         this.executor.execute(() -> {
-            this.play(game);
+            if (game.equals(this.game)) {
+                this.play(game);
+            }
         });
     }
 
@@ -133,18 +136,22 @@ public abstract class AbstractBot implements View {
             if (this.user.equals(user)) {
                 this.controller.closeNow(this.user);
             }
+
+            if (game.equals(this.game)) {
+                if (game.getUsers().stream().allMatch(u -> u.getType().isBot())) {
+                    //all bots
+                    this.controller.closeNow(this.user);
+                } else {
+                    this.play(game);
+                }
+            }
+
         });
 
     }
 
     @Override
     public void gameEndedNotify(Game game) {
-        this.executor.execute(() -> {
-            if (game.equals(this.game)) {
-                this.controller.closeNow(this.user);
-            }
-        });
-
     }
 
     @Override

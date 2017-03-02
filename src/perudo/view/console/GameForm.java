@@ -301,7 +301,7 @@ public class GameForm extends BaseForm {
             }
         }
 
-        diceCount.add("Total: " + this.game.getRealBidDiceCount());
+        diceCount.add("Total: " + this.game.getRealBidDiceCount().get());
         diceCount.add("Bid  : " + this.game.getCurrentBid().get().getQuantity() + " dice of "
                 + this.game.getCurrentBid().get().getDiceValue());
         diceCount.add("Bid from " + this.game.getBidUser().get().getName());

@@ -138,9 +138,9 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public synchronized int getRealBidDiceCount() {
+    public synchronized Optional<Integer> getRealBidDiceCount() {
         if (!this.getCurrentBid().isPresent()) {
-            throw new IllegalStateException();
+            return Optional.empty();
         }
         int bidUserJollyCount = this.userList.stream().filter(u -> this.getBidUser().get().equals(u))
                 .mapToInt(u -> this.usersStatus.get(u).getDiceCount().get(1)).sum();
@@ -148,7 +148,20 @@ public class GameImpl implements Game {
                 .mapToInt(u -> this.usersStatus.get(u).getDiceCount().get(this.getCurrentBid().get().getDiceValue()))
                 .sum();
 
-        return (this.getCurrentBid().get().getDiceValue() == 1 ? usersDiceCount : (usersDiceCount + bidUserJollyCount));
+        return Optional.of((this.getCurrentBid().get().getDiceValue() == 1 ? usersDiceCount
+                : (usersDiceCount + bidUserJollyCount)));
+    }
+
+    @Override
+    public synchronized boolean isOver() {
+        return getUsers().stream().filter(u -> getUserStatus(u).getRemainingDice() > 0).count() <= 1;
+    }
+
+    @Override
+    public synchronized boolean canCallPalifico(final User user) {
+        return this.getUsers().contains(user) && this.getUserStatus(user).getRemainingDice() == 1
+                && !this.getUserStatus(user).hasCalledPalifico() && !this.turnIsPalifico()
+                && !this.getCurrentBid().isPresent();
     }
 
     @Override
@@ -201,7 +214,7 @@ public class GameImpl implements Game {
             throw new ErrorTypeException(ErrorType.GAME_CANT_DOUBT_NOW);
         }
 
-        if (this.getRealBidDiceCount() < this.getCurrentBid().get().getQuantity()) {
+        if (this.getRealBidDiceCount().get() < this.getCurrentBid().get().getQuantity()) {
             // doubt is correct, bid user loss 1 dice
             this.removeDice(this.getBidUser().get(), 1);
             this.resetGame(this.getBidUser().get());
@@ -222,7 +235,7 @@ public class GameImpl implements Game {
         this.checkUserNotLose(user);
         this.checkUserCanUrge(user);
 
-        if (this.getRealBidDiceCount() == this.getCurrentBid().get().getQuantity()) {
+        if (this.getRealBidDiceCount().get() == this.getCurrentBid().get().getQuantity()) {
             // urge is correct, all users (user excluded) loss 1 dice
             this.userList.stream().filter(u -> this.usersStatus.get(u).getRemainingDice() > 0)
                     .filter(u -> !u.equals(user)).forEach(u -> this.removeDice(u, 1));
@@ -245,7 +258,7 @@ public class GameImpl implements Game {
         this.checkUserExistence(user);
 
         // bid already started
-        if (this.getCurrentBid().isPresent()) {
+        if (this.getCurrentBid().isPresent() || this.turnIsPalifico()) {
             throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
         }
 

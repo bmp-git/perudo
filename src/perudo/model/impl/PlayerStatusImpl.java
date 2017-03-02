@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import perudo.model.GameSettings;
 import perudo.model.PlayerStatus;
@@ -25,7 +26,14 @@ public class PlayerStatusImpl implements PlayerStatus {
     private final boolean hasCalledPalifico;
 
     private PlayerStatusImpl(final int remainingDice, final int maxDiceValue, final boolean hasCalledPalifico,
-            final boolean rollDice) {
+            final Map<Integer, Integer> diceValues) {
+        this.remainingDice = remainingDice;
+        this.hasCalledPalifico = hasCalledPalifico;
+        this.maxDiceValue = maxDiceValue;
+        this.diceValues = diceValues.entrySet().stream().collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+    }
+
+    public PlayerStatusImpl(final int remainingDice, final int maxDiceValue, final boolean hasCalledPalifico) {
         if (remainingDice < 0) {
             throw new IllegalArgumentException("remainingDice should be positive");
         }
@@ -40,27 +48,33 @@ public class PlayerStatusImpl implements PlayerStatus {
         for (Integer i = 1; i <= this.getMaxDiceValue(); i++) {
             this.diceValues.put(i, 0);
         }
-        if (rollDice) {
-            for (Integer i = 0; i < this.getRemainingDice(); i++) {
-                Integer diceV = random.nextInt(this.getMaxDiceValue()) + 1;
-                this.diceValues.put(diceV, this.diceValues.get(diceV) + 1);
-            }
+        // roll dice
+        for (Integer i = 0; i < this.getRemainingDice(); i++) {
+            Integer diceV = random.nextInt(this.getMaxDiceValue()) + 1;
+            this.diceValues.put(diceV, this.diceValues.get(diceV) + 1);
         }
-    }
 
-    public PlayerStatusImpl(final int remainingDice, final int maxDiceValue, final boolean hasCalledPalifico) {
-        this(remainingDice, maxDiceValue, hasCalledPalifico, true);
     }
 
     @Override
     public PlayerStatus rollDice() {
-        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), this.hasCalledPalifico(), true);
+        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), this.hasCalledPalifico());
     }
 
     @Override
-    public PlayerStatus withoutDiceValues() {
-        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), this.hasCalledPalifico(), false);
+    public PlayerStatus setRemainingDice(final int remainingDice) {
+        return new PlayerStatusImpl(remainingDice, this.getMaxDiceValue(), this.hasCalledPalifico());
+    }
 
+    @Override
+    public PlayerStatus callPalifico() throws ErrorTypeException {
+        if (this.hasCalledPalifico) {
+            throw new ErrorTypeException(ErrorType.GAME_PALIFICO_ALREADY_USED);
+        }
+        if (this.getRemainingDice() != 1) {
+            throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
+        }
+        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), true, this.getDiceCount());
     }
 
     @Override
@@ -79,24 +93,8 @@ public class PlayerStatusImpl implements PlayerStatus {
     }
 
     @Override
-    public PlayerStatus setRemainingDice(final int remainingDice) {
-        return new PlayerStatusImpl(remainingDice, this.getMaxDiceValue(), this.hasCalledPalifico(), true);
-    }
-
-    @Override
     public boolean hasCalledPalifico() {
         return this.hasCalledPalifico;
-    }
-
-    @Override
-    public PlayerStatus callPalifico() throws ErrorTypeException {
-        if (this.hasCalledPalifico) {
-            throw new ErrorTypeException(ErrorType.GAME_PALIFICO_ALREADY_USED);
-        }
-        if (this.getRemainingDice() != 1) {
-            throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
-        }
-        return new PlayerStatusImpl(this.getRemainingDice(), this.getMaxDiceValue(), true, false);
     }
 
     @Override
