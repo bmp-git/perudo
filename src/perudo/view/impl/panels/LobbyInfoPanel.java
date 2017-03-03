@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import perudo.model.Lobby;
 import perudo.model.User;
+import perudo.model.UserType;
 import perudo.view.GUIFactory;
 import perudo.view.impl.ControllerSingleton;
 import perudo.view.impl.StandardGUIFactory;
@@ -74,12 +75,12 @@ public class LobbyInfoPanel extends JPanel {
                 class ML implements MouseListener {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        // Add bot
+                        ControllerSingleton.getController().addBotToLobby(user, lobby, UserType.BOT_EASY);
                     }
 
                     @Override
                     public void mousePressed(MouseEvent e) {
-                        // Add bot
+                        ControllerSingleton.getController().addBotToLobby(user, lobby, UserType.BOT_EASY);
                     }
 
                     @Override

@@ -3,11 +3,8 @@ package perudo.view.impl.panels;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
 import perudo.model.Game;
 
 public class TimePanel extends JPanel {
@@ -16,28 +13,24 @@ public class TimePanel extends JPanel {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final JLabel lblTime;
     private Game game;
     private final ScheduledExecutorService executor;
+    private CircolarTimeBar pnlTime;
 
     public TimePanel() {
         super();
-        this.lblTime = new JLabel("Time : ");
         this.executor = Executors.newScheduledThreadPool(1);
-        this.add(this.lblTime);
     }
 
     public void setGame(final Game game) {
         this.game = game;
+        this.pnlTime = new CircolarTimeBar(this.game.getSettings().getMaxTurnTime());
+        this.add(this.pnlTime);
         this.executor.scheduleAtFixedRate(() -> {
             SwingUtilities.invokeLater(() -> {
-                if (this.game != null) {
-                    this.lblTime.setText("Time: " + this.game.getTurnRemainingTime().getSeconds() + "s");
-                } else {
-                    this.lblTime.setText("lblTime");
-                }
+                this.pnlTime.setRemainingTime(this.game.getTurnRemainingTime());
             });
-        }, 0, 1, TimeUnit.SECONDS);
+        }, 0, this.game.getTurnRemainingTime().getSeconds(), TimeUnit.MILLISECONDS);
 
     }
 }

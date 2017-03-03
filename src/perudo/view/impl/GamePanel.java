@@ -62,6 +62,8 @@ public class GamePanel extends JPanel {
         this.pnlTime.setGame(game);
         this.pnlBid = new BidPanel(game);
         this.add(this.pnlBid, BorderLayout.CENTER);
+        this.add(this.pnlTime, BorderLayout.EAST);
+
     }
 
     public void setUser(final User user) {
