@@ -3,6 +3,7 @@ package perudo.view;
 import java.awt.Color;
 import java.io.IOException;
 
+import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -39,6 +40,8 @@ public interface GUIFactory {
     JComponent createLabel(String text);
     
     JComponent createLabel(String text, Color color);
+    
+    JComponent createLabel(String text, Icon icon, int alignment);
     
     JComponent createPicLabel(String respath) throws IOException;
     

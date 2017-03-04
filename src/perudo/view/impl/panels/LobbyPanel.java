@@ -2,6 +2,8 @@ package perudo.view.impl.panels;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import perudo.model.Lobby;
@@ -25,7 +27,7 @@ public class LobbyPanel extends JPanel {
         this.setLayout(new GridLayout(2,1,0,5));
         this.lblLobby = (JLabel) this.factory.createLabel((this.lobby.getInfo().getName()));
         int players = this.lobby.getInfo().getMaxPlayer() - this.lobby.getFreeSpace();
-        this.lblPlayers = (JLabel) this.factory.createLabel("Players: "+ players+"/"+this.lobby.getInfo().getMaxPlayer());
+        this.lblPlayers = (JLabel) this.factory.createLabel(players+"/"+this.lobby.getInfo().getMaxPlayer(),new ImageIcon(StandardGUIFactory.class.getResource("/images/player.png")), JLabel.RIGHT);
 
 
         this.setBorder(factory.createBorder(Color.BLACK, 7));
@@ -42,6 +44,6 @@ public class LobbyPanel extends JPanel {
         this.lobby = lobby;
         this.lblLobby.setText((this.lobby.getInfo().getName()));
         int players = this.lobby.getInfo().getMaxPlayer() - this.lobby.getFreeSpace();
-        this.lblPlayers.setText("Players: "+ players+"/"+this.lobby.getInfo().getMaxPlayer());
+        this.lblPlayers.setText(players+"/"+this.lobby.getInfo().getMaxPlayer());
     }
 }

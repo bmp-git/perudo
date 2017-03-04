@@ -3,6 +3,7 @@ package perudo.view.impl.panels;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -45,12 +46,15 @@ public class LobbyInfoPanel extends JPanel {
         this.lobby = lobby;
         this.user = user;
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        this.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
         this.add(Box.createRigidArea(new Dimension(0, 10)));
         JLabel name = (JLabel) factory.createLabel(this.lobby.getInfo().getName());
+        name.setFont(new Font("Consolas", Font.PLAIN, 30));
+
         this.add(name);
         this.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        JLabel lbl = new JLabel(this.lobby.getOwner().getName(),
+        JLabel lbl = (JLabel) this.factory.createLabel(this.lobby.getOwner().getName(),
                 new ImageIcon(StandardGUIFactory.class.getResource("/images/crown_gold.png")), JLabel.RIGHT);
         lbl.setBorder(factory.createBorder(Color.BLACK, 7));
         this.add(lbl);
@@ -58,7 +62,7 @@ public class LobbyInfoPanel extends JPanel {
 
         this.lobby.getUsers().forEach(u -> {
             if (!u.equals(this.lobby.getOwner())) {
-                JLabel label = new JLabel(u.getName());
+                JLabel label = (JLabel) this.factory.createLabel(u.getName());
                 label.setBorder(factory.createBorder(Color.BLACK, 7));
                 this.add(label);
                 this.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -66,12 +70,13 @@ public class LobbyInfoPanel extends JPanel {
         });
         for (int i = 0; i < this.lobby.getFreeSpace(); i++) {
             if (!this.user.equals(this.lobby.getOwner())) {
-                JLabel label = new JLabel("Empty space.");
+                JLabel label = (JLabel) this.factory.createLabel("Empty space.");
                 label.setBorder(this.factory.createBorder(Color.BLACK, 7));
                 this.add(label);
                 this.add(Box.createRigidArea(new Dimension(0, 10)));
             } else {
-                JLabel label = new JLabel("Add bot +");
+                JLabel label = (JLabel) this.factory.createLabel("Add bot",
+                        new ImageIcon(StandardGUIFactory.class.getResource("/images/plus.png")), JLabel.RIGHT);
                 class ML implements MouseListener {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -110,9 +115,14 @@ public class LobbyInfoPanel extends JPanel {
 
         }
         
+        this.add(this.factory.createLabel(String.valueOf(this.lobby.getInfo().getMaxPlayer()), new ImageIcon(StandardGUIFactory.class.getResource("/images/player.png")), JLabel.RIGHT));
         this.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(factory.createLabel(this.lobby.getInfo().toString()));
+        this.add(this.factory.createLabel(String.valueOf(this.lobby.getInfo().getInitialDiceNumber()), new ImageIcon(StandardGUIFactory.class.getResource("/images/dice.png")), JLabel.RIGHT));
         this.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.add(this.factory.createLabel(String.valueOf(this.lobby.getInfo().getMaxTurnTime().getSeconds()), new ImageIcon(StandardGUIFactory.class.getResource("/images/time.png")), JLabel.RIGHT));
+        this.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.add(Box.createRigidArea(new Dimension(0, 10)));
+
         this.btnEnterLobby = (JButton) factory.createButton(ENTER_LOBBY);
         this.btnEnterLobby.addActionListener(e -> {
             ControllerSingleton.getController().joinLobby(this.user, this.lobby);

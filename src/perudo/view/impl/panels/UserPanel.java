@@ -1,5 +1,6 @@
 package perudo.view.impl.panels;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.Box;
@@ -30,7 +31,7 @@ public class UserPanel extends JPanel {
         this.user = user;
         this.myUser = myUser;
         if(this.myUser) {
-            this.lblUser = new JLabel("<html><font color='green'>"+this.user.getName()+"</font></html>");
+            this.lblUser = (JLabel) this.factory.createLabel(this.user.getName(),Color.GREEN);
         } else {
             this.lblUser = (JLabel) this.factory.createLabel(this.user.getName());
         }
@@ -44,7 +45,7 @@ public class UserPanel extends JPanel {
     public void setUser(final User user) {
         this.user = user;
         if(this.myUser) {
-            this.lblUser.setText("<html><font color='green'>"+this.user.getName()+"</font></html>");
+            this.lblUser.setText(this.user.getName());
         } else {
             this.lblUser.setText(this.user.getName());
         }

@@ -72,7 +72,7 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 menuPanel.updateUsers(user);
-                showPanel(menuPanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
     }
@@ -85,7 +85,7 @@ public class ViewImpl implements View {
                     mainFrame.dispose();
                 }
                 menuPanel.removeUser(user);
-                showPanel(menuPanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
     }
@@ -99,7 +99,7 @@ public class ViewImpl implements View {
                     user = newUser;
                 }
                 menuPanel.updateUsers(newUser);
-                showPanel(menuPanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
     }
@@ -110,7 +110,7 @@ public class ViewImpl implements View {
             public void run() {
                 if (users.isOk()) {
                     users.getValue().forEach(e -> menuPanel.updateUsers(e));
-                    showPanel(menuPanel);
+                    mainFrame.getContentPane().revalidate();
                 }
             }
         });
@@ -121,7 +121,7 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 menuPanel.addLobby(lobby);
-                showPanel(menuPanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
 
@@ -132,7 +132,7 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 menuPanel.removeLobby(lobby);
-                showPanel(menuPanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
     }
@@ -142,7 +142,7 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 lobbies.getValue().forEach(l -> menuPanel.updateLobby(l));
-                showPanel(menuPanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
     }
@@ -152,7 +152,7 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 menuPanel.updateLobby(lobby);
-                showPanel(menuPanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
     }
@@ -166,7 +166,7 @@ public class ViewImpl implements View {
                 } else {
                     menuPanel.updateLobby(lobby);
                 }
-                showPanel(menuPanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
     }
@@ -193,7 +193,7 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 // menuPanel.removeGame(game);
-                showPanel(menuPanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
     }
@@ -203,7 +203,7 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 // games.getValue().forEach(g -> menuPanel.updateGame(g));
-                showPanel(menuPanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
     }
@@ -213,7 +213,7 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 gamePanel.playNotify(game,user);
-                showPanel(gamePanel);
+                mainFrame.getContentPane().revalidate();
             }
         });
     }

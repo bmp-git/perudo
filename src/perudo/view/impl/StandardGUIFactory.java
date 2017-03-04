@@ -1,9 +1,9 @@
 package perudo.view.impl;
 
-
 import java.awt.Color;
 import java.io.IOException;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,60 +31,57 @@ import perudo.view.impl.panels.MenuBottomPanel;
 import perudo.view.impl.panels.UserPanel;
 
 public class StandardGUIFactory implements GUIFactory {
-    
+
     @Override
     public JPanel createPanel() {
         return new JPanel();
     }
-    
+
     @Override
     public JPanel createMenuPanel() {
         return new MenuPanel();
     }
-    
+
     @Override
     public JPanel createGamePanel() {
         return new GamePanel();
     }
-    
+
     @Override
     public JPanel createLobbyPanel(Lobby lobby) {
         return new LobbyPanel(lobby);
     }
-    
 
     @Override
     public JPanel createUserPanel(User user, boolean myUser) {
         return new UserPanel(user, myUser);
     }
-    
+
     @Override
     public JPanel createCreateLobbyPanel() {
         return new CreateLobbyPanel();
     }
-    
+
     @Override
     public JPanel createMenuBottomPanel() {
         return new MenuBottomPanel();
     }
-    
 
     @Override
     public JPanel createChangeNamePanel() {
-       return new ChangeNamePanel();
+        return new ChangeNamePanel();
     }
-    
+
     @Override
     public Border createBorder(Color color, int padding) {
-        return BorderFactory
-                .createCompoundBorder(BorderFactory.createLineBorder(color), new EmptyBorder(padding, padding, padding, padding));
+        return BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(color),
+                new EmptyBorder(padding, padding, padding, padding));
     }
 
     @Override
     public JComponent createTopMenu() {
         return new TopMenu();
     }
-    
 
     @Override
     public JComponent createMenu() {
@@ -95,7 +92,7 @@ public class StandardGUIFactory implements GUIFactory {
     public JComponent createMenuItem() {
         return new JMenuItem();
     }
-    
+
     @Override
     public JComponent createButton(String text) {
         return new JButton(text);
@@ -105,21 +102,25 @@ public class StandardGUIFactory implements GUIFactory {
     public JComponent createLabel(String text) {
         return new JLabel(text);
     }
-    
 
     @Override
     public JComponent createLabel(String text, Color color) {
         JLabel label = new JLabel(text);
         label.setForeground(color);
-        label.setOpaque(true);
+        label.repaint();
         return label;
     }
-    
+
+    @Override
+    public JComponent createLabel(String text, Icon icon, int alignment) {
+        return new JLabel(text, icon, alignment);
+    }
+
     @Override
     public JComponent createPicLabel(String respath) throws IOException {
         return new JLabel(new ImageIcon(StandardGUIFactory.class.getResource(respath)));
     }
-    
+
     @Override
     public JComponent createTextField() {
         return new JTextField();
@@ -134,7 +135,6 @@ public class StandardGUIFactory implements GUIFactory {
     public JComponent createSliderHorizontal(int minvalue, int maxvalue, int defaultvalue) {
         return new JSlider(JSlider.HORIZONTAL, minvalue, maxvalue, defaultvalue);
     }
-
 
     @Override
     public JComponent createVerticalSplitPane() {
