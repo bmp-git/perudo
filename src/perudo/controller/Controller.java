@@ -9,6 +9,11 @@ import perudo.model.User;
 import perudo.model.UserType;
 import perudo.view.View;
 
+/**
+ * 
+ * Defines a controller that can operate between a model and multiple views.
+ *
+ */
 public interface Controller extends Closeable {
     /**
      * Initializes a new user.
@@ -30,6 +35,9 @@ public interface Controller extends Closeable {
 
     /**
      * Asks for the online users list.
+     * 
+     * @param user
+     *            user requesting
      */
     void getUsers(User user);
 
@@ -63,7 +71,7 @@ public interface Controller extends Closeable {
     void joinLobby(User user, Lobby lobby);
 
     /**
-     * The user adds a bot to a given lobby
+     * The user adds a bot to a given lobby.
      * 
      * @param user
      *            user requesting to add a bot
@@ -104,13 +112,13 @@ public interface Controller extends Closeable {
      * 
      * @param user
      *            user requesting
-     * @param dib
+     * @param bid
      *            the wanted bid
      */
     void play(User user, Bid bid);
 
     /**
-     * Calls a doubt, must be in-game
+     * Calls a doubt, must be in-game.
      * 
      * @param user
      *            user requesting

@@ -2,10 +2,8 @@ package perudo.controller.impl;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -30,12 +28,18 @@ import perudo.utility.ErrorTypeException;
 import perudo.utility.impl.ResponseImpl;
 import perudo.view.View;
 
+/**
+ * A basic controller.
+ */
 public class StandardControllerImpl implements Controller {
     private final Model model;
     private final Map<User, View> views;
     private final ExecutorService executor;
     private final ExecutorService turnTimer;
 
+    /**
+     * Create a new StandardControllerImpl.
+     */
     public StandardControllerImpl() {
         this.model = new ModelImpl();
         this.views = new ConcurrentHashMap<>();
@@ -186,7 +190,7 @@ public class StandardControllerImpl implements Controller {
             final Lobby lobbyModel = lobbyModelTemp;
             final User botU = botUTemp;
             final View botV = botVTemp;
-            
+
             try {
                 this.views.put(botU, botV);
                 views.entrySet().stream().forEach(e -> e.getValue().initializeNewUserNotify(botU));
@@ -377,6 +381,7 @@ public class StandardControllerImpl implements Controller {
     public void close(final User user) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
+            final View view = this.views.get(user);
             try {
                 if (!this.model.getUsers().contains(user)) {
                     throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
@@ -386,14 +391,14 @@ public class StandardControllerImpl implements Controller {
                     throw new ErrorTypeException(ErrorType.USER_IS_IN_GAME);
                 } else {
                     this.model.removeUser(user);
-                    this.views.forEach((u, v) -> v.userExitNotify(user));
-                    this.views.get(user).close();
                     this.views.remove(user);
+                    this.views.forEach((u, v) -> v.userExitNotify(user));
+                    view.userExitNotify(user);
+                    view.close();
                     // TODO for debug
                     System.out.println("StandardController: view of user" + user.getName() + " closed and removed.");
                 }
             } catch (ErrorTypeException e) {
-                final View view = this.views.get(user);
                 view.showError(e.getErrorType());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -402,17 +407,24 @@ public class StandardControllerImpl implements Controller {
     }
 
     @Override
-    public void closeNow(User user) {
+    public void closeNow(final User user) {
         Objects.requireNonNull(user);
         this.executor.execute(() -> {
             try {
+                if (this.views.containsKey(user)) {
+                    this.views.get(user).close();
+                    this.views.remove(user);
+                    // TODO for debug
+                    System.out.println("StandardController: view of user" + user.getName() + " closed and removed.");
+                    this.views.forEach((u, v) -> v.userExitNotify(user));
+                }
                 if (this.userIsInLobby(user)) {
                     final Lobby lobby = this.getLobbyFromModel(user);
                     lobby.removeUser(user);
-                    this.getViewsExceptUser(user).forEach((u, v) -> v.exitLobbyNotify(lobby, user));
+                    this.views.forEach((u, v) -> v.exitLobbyNotify(lobby, user));
                     if (lobby.getUsers().isEmpty()) {
                         this.model.removeLobby(lobby);
-                        this.getViewsExceptUser(user).forEach((u, v) -> v.removeLobbyNotify(lobby));
+                        this.views.forEach((u, v) -> v.removeLobbyNotify(lobby));
                     }
                 }
                 if (this.userIsInGame(user)) {
@@ -425,24 +437,13 @@ public class StandardControllerImpl implements Controller {
                         gameViews.forEach((u, v) -> v.gameEndedNotify(game));
                     } else if (game.getUsers().isEmpty()) {
                         this.model.removeGame(game);
-                        this.getViewsExceptUser(user).forEach((u, v) -> v.removeGameNotify(game));
+                        this.views.forEach((u, v) -> v.removeGameNotify(game));
                     }
                 }
                 if (this.model.getUsers().contains(user)) {
                     this.model.removeUser(user);
                 }
-                if (this.views.containsKey(user)) {
-                    this.getViewsExceptUser(user).forEach((u, v) -> {
-                        // TODO for debug
-                        // System.out.println("Sending userExitNotifyTo: " +
-                        // u.getName());
-                        v.userExitNotify(user);
-                    });
-                    this.views.get(user).close();
-                    this.views.remove(user);
-                    // TODO for debug
-                    System.out.println("StandardController: view of user" + user.getName() + " closed and removed.");
-                }
+
             } catch (ErrorTypeException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -528,24 +529,4 @@ public class StandardControllerImpl implements Controller {
         return this.views.entrySet().stream().filter(e -> game.getUsers().contains(e.getKey()))
                 .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
     }
-
-    private Map<User, View> getViewsExceptUser(final User user) {
-        Map<User, View> result = new HashMap<>();
-        for (final Entry<User, View> e : this.views.entrySet()) {
-            if (!e.getKey().equals(user)) {
-                result.put(e.getKey(), e.getValue());
-            } /*
-               * else { // TODO for debug
-               * System.out.println("StandardController: User found: " +
-               * e.getKey().getName() + " , excluded."); }
-               */
-        }
-        // TODO for debug
-        /*
-         * System.out.println( "StandardController: Excluding user " +
-         * user.getName() + ". Size of remaining users: " + result.size());
-         */
-        return result;
-    }
-
 }

@@ -11,13 +11,28 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
-public class TcpIPv4ServerListener implements NetworkServerListener {
+/**
+ * Listens to new connections over a TCP/IP network.
+ *
+ */
+public final class TcpIPv4ServerListener implements NetworkServerListener {
     private final ExecutorService networkListener;
     private final ExecutorService notifier;
     private final ServerSocket serverSocket;
     private final List<BiConsumer<InputStream, OutputStream>> observers;
     private volatile boolean run;
 
+    /**
+     * Creates a new NetworkServerListener over TCP/IP.
+     * 
+     * @param port
+     *            the port where to listen.
+     * @param observers
+     *            the consumers to be executed when a new connection occurs.
+     * @return the created NetworkServerListner.
+     * @throws IOException
+     *             can't create the NetworkServerListner.
+     */
     public static NetworkServerListener startNewServerListener(final int port,
             final List<BiConsumer<InputStream, OutputStream>> observers) throws IOException {
         return new TcpIPv4ServerListener(port, observers);
@@ -36,7 +51,7 @@ public class TcpIPv4ServerListener implements NetworkServerListener {
     public void addNewConnectionObserver(final BiConsumer<InputStream, OutputStream> inOutStreamConsumer) {
         this.observers.add(inOutStreamConsumer);
     }
-    
+
     @Override
     public void start() {
         this.networkListener.execute(() -> {
