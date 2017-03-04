@@ -53,19 +53,17 @@ public class ControllerClientImpl implements Controller {
             });
         };
         BiConsumer<IOException, DatagramStream> ioExcHandler = (exception, dgStream) -> {
-            this.executor.execute(() -> {
-                exception.printStackTrace();
-                if (dgStream.getUser().isPresent()) {
-                    this.view.userExitNotify(dgStream.getUser().get());
-                } else {
-                    // TODO don't have user, to resolve
-                    this.view.userExitNotify(null);
+            try {
+                if (this.view != null) {
+                    this.view.close();
                 }
+                this.close();
+            } catch (IOException ex) {
 
-            });
+            }
         };
-        this.stream = DatagramStreamImpl.initializeNewDatagramStream(socket.getInputStream(), socket.getOutputStream(), Arrays.asList(receiver),
-                Arrays.asList(ioExcHandler));
+        this.stream = DatagramStreamImpl.initializeNewDatagramStream(socket.getInputStream(), socket.getOutputStream(),
+                Arrays.asList(receiver), Arrays.asList(ioExcHandler));
     }
 
     @Override
@@ -123,15 +121,15 @@ public class ControllerClientImpl implements Controller {
             stream.send(dg);
         });
     }
-    
+
     @Override
-    public void addBotToLobby(User user, Lobby lobby, UserType type) {
+    public void addBotToLobby(final User user, final Lobby lobby, final UserType type) {
         final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(User.class, Lobby.class, UserType.class),
                 Arrays.asList(user, lobby, type));
         this.executor.execute(() -> {
             stream.send(dg);
         });
-        
+
     }
 
     @Override
@@ -208,7 +206,7 @@ public class ControllerClientImpl implements Controller {
     }
 
     @Override
-    public void closeNow(User user) {
+    public void closeNow(final User user) {
         final Datagram dg = Datagram.createCurrentMethodDatagram(Arrays.asList(User.class), Arrays.asList(user));
         this.executor.execute(() -> {
             stream.send(dg);

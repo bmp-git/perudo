@@ -14,17 +14,34 @@ import java.util.function.BiConsumer;
 
 import perudo.model.User;
 
-public class DatagramStreamImpl implements DatagramStream {
+/**
+ * Basic DatagramStream Implementation.
+ */
+public final class DatagramStreamImpl implements DatagramStream {
     private final ObjectOutputStream objOutStream;
-    private final InputStream inStream;
+    private final ObjectInputStream objInStream;
     private final List<BiConsumer<Datagram, DatagramStream>> observers;
     private final List<BiConsumer<IOException, DatagramStream>> exceptionObservers;
-    //private final ExecutorService sender;
     private final ExecutorService receiver;
-    private final ExecutorService notifier;
     private volatile Optional<User> user;
-    private volatile boolean read;
+    private volatile boolean closed;
 
+    /**
+     * Creates a DatagramStream from InputStream and an OutputStream.
+     * 
+     * @param inStream
+     *            Stream in which to write.
+     * @param outStream
+     *            Stream from which to read.
+     * @param observers
+     *            Consumers to be executed when a new datagram has been read
+     *            from inStream
+     * @param exceptionObservers
+     *            Consumers to be executed when an exception occurs.
+     * @return DatagramStream
+     * @throws IOException
+     *             Can't create the DatagramStream from streams given.
+     */
     public static DatagramStream initializeNewDatagramStream(final InputStream inStream, final OutputStream outStream,
             final List<BiConsumer<Datagram, DatagramStream>> observers,
             final List<BiConsumer<IOException, DatagramStream>> exceptionObservers) throws IOException {
@@ -38,53 +55,45 @@ public class DatagramStreamImpl implements DatagramStream {
         this.user = Optional.empty();
 
         this.objOutStream = new ObjectOutputStream(outStream);
-        this.inStream = inStream;
+        this.objInStream = new ObjectInputStream(inStream);
         this.observers = new CopyOnWriteArrayList<>(observers);
         this.exceptionObservers = new CopyOnWriteArrayList<>(exceptionObservers);
-        //this.sender = Executors.newSingleThreadExecutor();
         this.receiver = Executors.newSingleThreadExecutor();
-        this.notifier = Executors.newSingleThreadExecutor();
-        this.read = true;
+        this.closed = false;
 
         this.receiver.execute(() -> {
-            try (ObjectInputStream objInStream = new ObjectInputStream(this.inStream)) {
-                while (read) {
-                    final Object readObj = objInStream.readObject();
-                    if (read) {
+            try {
+                while (!this.closed) {
+                    final Object readObj = this.objInStream.readObject();
+                    if (!this.closed) {
                         final Datagram readDatagram = (Datagram) readObj;
                         // TODO for debug
                         System.out.println("Received -> " + readDatagram.getMethodName());
-                        this.notifier.execute(() -> {
-                            this.observers.forEach(c -> c.accept(readDatagram, this));
-                        });
+                        this.observers.forEach(c -> c.accept(readDatagram, this));
                     }
                 }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
-                this.notifier.execute(() -> {
-                    this.exceptionObservers.forEach(c -> c.accept(e, this));
-                });
+                System.out.println("DatagramStream: Exception in receive.");
+                this.notifyIOException(e);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
 
     @Override
     public void send(final Datagram datagram) {
-        //this.sender.execute(() -> {
-            // TODO for debug
+        if (!this.closed) {
             System.out.println("Send -> " + datagram.getMethodName());
             try {
-                objOutStream.reset();
-                objOutStream.writeObject(datagram);
-                objOutStream.flush();
+                this.objOutStream.reset();
+                this.objOutStream.writeObject(datagram);
+                this.objOutStream.flush();
             } catch (IOException e) {
-                this.notifier.execute(() -> {
-                    this.exceptionObservers.forEach(c -> c.accept(e, this));
-                });
+                System.out.println("DatagramStream: Exception in send.");
+                this.notifyIOException(e);
             }
-        //});
-
+        }
     }
 
     @Override
@@ -110,13 +119,25 @@ public class DatagramStreamImpl implements DatagramStream {
 
     @Override
     public void close() throws IOException {
-        this.read = false;
-        //this.sender.shutdownNow();
-        this.receiver.shutdownNow();
-        this.notifier.shutdownNow();
+        if (!this.closed) {
+            this.closed = true;
+            this.receiver.shutdown();
+            try {
+                this.objInStream.close();
+                this.objOutStream.close();
+            } catch (IOException e) {
 
-        // TODO for debug
-        System.out.println("DatagramStream: datagramStream of user " + user.get().getName() + " shutted down!");
+            }
+
+            // TODO for debug
+            System.out.println("DatagramStream: datagramStream of user " + user.get().getName() + " shutted down!");
+        }
+    }
+
+    private void notifyIOException(final IOException e) {
+        if (!this.closed) {
+            this.exceptionObservers.forEach(c -> c.accept(e, this));
+        }
     }
 
 }

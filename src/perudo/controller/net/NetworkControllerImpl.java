@@ -10,11 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 import perudo.controller.Controller;
-import perudo.controller.net.Datagram;
-import perudo.controller.net.DatagramStream;
-import perudo.controller.net.DatagramStreamImpl;
-import perudo.controller.net.MethodInvoker;
-import perudo.controller.net.NetworkServerListener;
 import perudo.model.Bid;
 import perudo.model.GameSettings;
 import perudo.model.Lobby;
@@ -23,7 +18,10 @@ import perudo.model.UserType;
 import perudo.utility.ErrorTypeException;
 import perudo.view.View;
 
-public class NetworkControllerImpl implements Controller {
+/**
+ * A Basic NetworkControllerImpl.
+ */
+public final class NetworkControllerImpl implements Controller {
     private final Controller controller;
     private final MethodInvoker methodInvoker;
     private final List<DatagramStream> streams;
@@ -32,17 +30,28 @@ public class NetworkControllerImpl implements Controller {
     private final BiConsumer<IOException, DatagramStream> ioExcHandler;
     private final ExecutorService executor;
 
-    public static Controller newNetworkController(Controller controller, NetworkServerListener serverListener) {
+    /**
+     * Creates a new NetworkController.
+     * 
+     * @param controller
+     *            the controller on which the NetworkController will invoke the
+     *            calls received from the network.
+     * @param serverListener
+     *            the listener of new connections from the network.
+     * @return the created NetworkController.
+     */
+    public static Controller newNetworkController(final Controller controller, final NetworkServerListener serverListener) {
         return new NetworkControllerImpl(controller, serverListener);
     }
 
-    private NetworkControllerImpl(Controller controller, NetworkServerListener serverListener) {
+    private NetworkControllerImpl(final Controller controller, final NetworkServerListener serverListener) {
         this.controller = controller;
         this.methodInvoker = new MethodInvoker(Controller.class);
         this.streams = new CopyOnWriteArrayList<>();
         this.executor = Executors.newSingleThreadExecutor();
 
         this.ioExcHandler = (ex, dgs) -> {
+            System.out.println("NetworkController: handling exception (calling CloseNow())");
             this.executor.execute(() -> {
                 if (dgs.getUser().isPresent()) {
                     this.closeNow(dgs.getUser().get());
@@ -181,12 +190,6 @@ public class NetworkControllerImpl implements Controller {
 
     @Override
     public void closeNow(final User user) {
-        /*
-         * try { this.streams.stream().filter(s -> Objects.equals(user,
-         * s.getUser().orElse(null)))
-         * .collect(Collectors.toList()).get(0).close(); } catch (IOException e)
-         * { e.printStackTrace(); }
-         */
         this.controller.closeNow(user);
     }
 
