@@ -21,6 +21,8 @@ public class BidPanel extends JPanel {
      * 
      */
     private static final long serialVersionUID = 1L;
+    private static final int DICE_SIZE = 64;
+
     private final GUIFactory factory;
     private Game game;
     
@@ -40,17 +42,17 @@ public class BidPanel extends JPanel {
         JPanel pnlDice = factory.createPanel();
         pnlDice.setLayout(new FlowLayout());
         
-        this.lblDice = new DiceLabel(Math.round(game.getSettings().getMaxDiceValue()/2));
+        this.lblDice = new DiceLabel(Math.round(game.getSettings().getMaxDiceValue()/2),DICE_SIZE);
         this.btnNextDice = (JButton) this.factory.createButton("Next");
         this.btnPrevDice = (JButton) this.factory.createButton("Prev");
         
         this.btnNextDice.addActionListener(a -> {
-            lblDice.setValue(lblDice.getValue()+1);
+            lblDice.setValue(lblDice.getValue()+1,DICE_SIZE);
             updateDiceButtons();
             repaintPanel(pnlDice);
         });
         this.btnPrevDice.addActionListener(a -> {
-            lblDice.setValue(lblDice.getValue()-1);
+            lblDice.setValue(lblDice.getValue()-1,DICE_SIZE);
             updateDiceButtons();
             repaintPanel(pnlDice);
         });

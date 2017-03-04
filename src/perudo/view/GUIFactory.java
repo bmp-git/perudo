@@ -1,6 +1,7 @@
 package perudo.view;
 
 import java.awt.Color;
+import java.awt.LayoutManager;
 import java.io.IOException;
 
 import javax.swing.Icon;
@@ -19,6 +20,8 @@ public interface GUIFactory {
     
     JPanel createPanel();
     
+	JPanel createPanel(LayoutManager layout);
+    
     JPanel createMenuPanel();
     
     JPanel createGamePanel();
@@ -36,6 +39,8 @@ public interface GUIFactory {
     Border createBorder(Color color, int padding);
         
     JComponent createButton(String text);
+    
+	JComponent createButton(String text, Icon icon);
     
     JComponent createLabel(String text);
     
@@ -60,4 +65,5 @@ public interface GUIFactory {
     JComponent createVerticalSplitPane();
     
     JComponent createVerticalScrollPanel();
+
 }
