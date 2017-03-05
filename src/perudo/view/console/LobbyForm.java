@@ -55,8 +55,12 @@ public class LobbyForm extends BaseForm {
                 label = new Label("Free Space");
                 if (me.equals(lobby.getOwner())) {
                     btnAddBot = new Button("Add bot", () -> {
-                        btnStart.takeFocus();
-                        controller.addBotToLobby(me, lobby, UserType.BOT_EASY);
+                        BotSelectForm botForm = new BotSelectForm(textGUI);
+                        botForm.showDialog();
+                        if (botForm.getBotType().isPresent()) {
+                            btnStart.takeFocus();
+                            controller.addBotToLobby(me, lobby, botForm.getBotType().get());
+                        }
                     });
                     this.addComponent(btnAddBot, BorderLayout.Location.RIGHT);
                 }

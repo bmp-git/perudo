@@ -65,7 +65,5 @@ public interface Lobby extends Serializable {
      * 
      * @return the free space
      */
-    default int getFreeSpace() {
-        return getInfo().getMaxPlayer() - getUsers().size();
-    }
+    int getFreeSpace();
 }

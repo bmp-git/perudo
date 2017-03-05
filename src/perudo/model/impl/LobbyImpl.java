@@ -97,8 +97,13 @@ public class LobbyImpl implements Lobby {
     }
 
     @Override
-    public User getOwner() {
+    public synchronized User getOwner() {
         return this.owner;
+    }
+
+    @Override
+    public synchronized int getFreeSpace() {
+        return getInfo().getMaxPlayer() - getUsers().size();
     }
 
     @Override

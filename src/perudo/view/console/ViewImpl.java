@@ -287,7 +287,6 @@ public class ViewImpl implements View {
         this.menuForm.close();
         this.gameForm.close();
         this.lobbyForm.close();
-        this.controller.close();
     }
 
 }

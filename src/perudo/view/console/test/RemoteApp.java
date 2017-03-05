@@ -8,6 +8,7 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
+import perudo.controller.Controller;
 import perudo.controller.impl.StandardControllerImpl;
 import perudo.controller.net.NetworkControllerImpl;
 import perudo.controller.net.NetworkServerListener;
@@ -21,11 +22,12 @@ public class RemoteApp {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         NetworkServerListener listener = null;
+        Controller controller = null;
         args = new String[]{"2.224.173.8","45555"};
         if (args.length < 2) {
             int port = 45555;
             listener = TcpIPv4ServerListener.startNewServerListener(port, Arrays.asList());
-            NetworkControllerImpl.newNetworkController(new StandardControllerImpl(), listener);
+            controller = NetworkControllerImpl.newNetworkController(new StandardControllerImpl(), listener);
 
             args = new String[] { "127.0.0.1", Integer.toString(port) };
         }
@@ -66,6 +68,9 @@ public class RemoteApp {
         System.out.println("bye");
         if (listener != null) {
             listener.close();
+        }
+        if(controller != null){
+            controller.close();
         }
         System.out.println("bye");
     }
