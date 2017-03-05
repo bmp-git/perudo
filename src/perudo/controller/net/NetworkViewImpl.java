@@ -8,9 +8,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import perudo.controller.net.Datagram;
-import perudo.controller.net.DatagramStream;
 import perudo.model.Game;
 import perudo.model.Lobby;
 import perudo.model.User;
@@ -18,10 +15,21 @@ import perudo.utility.ErrorType;
 import perudo.utility.Response;
 import perudo.view.View;
 
-public class NetworkViewImpl implements View, Closeable {
+/**
+ * A view that sends notifications over the network.
+ *
+ */
+public final class NetworkViewImpl implements View, Closeable {
     private final DatagramStream datagramStream;
     private final ExecutorService executor;
 
+    /**
+     * Creates a new View that sends notifications over the network.
+     * 
+     * @param datagramStream
+     *            The stream into wich send the notifications.
+     * @return The view created.
+     */
     public static View newNetworkView(final DatagramStream datagramStream) {
         return new NetworkViewImpl(datagramStream);
     }

@@ -1,6 +1,7 @@
 package perudo.view.impl;
 
 import java.awt.Color;
+import java.awt.LayoutManager;
 import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -35,6 +36,11 @@ public class StandardGUIFactory implements GUIFactory {
     @Override
     public JPanel createPanel() {
         return new JPanel();
+    }
+    
+    @Override
+    public JPanel createPanel(LayoutManager layout) {
+        return new JPanel(layout);
     }
 
     @Override
@@ -96,6 +102,11 @@ public class StandardGUIFactory implements GUIFactory {
     @Override
     public JComponent createButton(String text) {
         return new JButton(text);
+    }
+    
+    @Override
+    public JComponent createButton(String text, Icon icon) {
+        return new JButton(text,icon);
     }
 
     @Override

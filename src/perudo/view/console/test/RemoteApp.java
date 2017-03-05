@@ -23,7 +23,7 @@ public class RemoteApp {
     public static void main(String[] args) throws IOException, InterruptedException {
         NetworkServerListener listener = null;
         Controller controller = null;
-        args = new String[]{"2.224.173.8","45555"};
+        args = new String[] { "2.224.173.8", "45555" };
         if (args.length < 2) {
             int port = 45555;
             listener = TcpIPv4ServerListener.startNewServerListener(port, Arrays.asList());
@@ -60,7 +60,7 @@ public class RemoteApp {
             }
         });
         th2.start();
-        
+
         th.join();
         th1.join();
         th2.join();
@@ -69,7 +69,7 @@ public class RemoteApp {
         if (listener != null) {
             listener.close();
         }
-        if(controller != null){
+        if (controller != null) {
             controller.close();
         }
         System.out.println("bye");
