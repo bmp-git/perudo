@@ -24,14 +24,12 @@ public class PlayersHandsListPanel extends JPanel {
     public PlayersHandsListPanel(final Game game, final User user) {
         super();
         this.factory = new StandardGUIFactory();
-        this.game = game;
         this.user = user;
         this.setLayout(new GridBagLayout());
         this.cnst = new GridBagConstraints();
         this.cnst.gridy = 0;
         this.cnst.insets = new Insets(5, 0, 5, 0);
-        this.addHand(this.game.getUsers().stream().findAny().get());
-        this.game.getUsers().stream().filter(u -> !this.user.equals(u)).forEach(u -> this.addHand(u));
+        this.setGame(game);
     }
 
     public void addHand(final User user) {
@@ -44,7 +42,7 @@ public class PlayersHandsListPanel extends JPanel {
     public void setGame(final Game game) {
         this.game = game;
         this.removeAll();
-        this.addHand(this.game.getUsers().stream().findAny().get());
+        this.addHand(this.game.getUsers().stream().filter(u -> this.user.equals(u)).findAny().get());
         this.game.getUsers().stream().filter(u -> !this.user.equals(u) && game.getUserStatus(u).getRemainingDice() > 0).forEach(u -> this.addHand(u));
     }
 }
