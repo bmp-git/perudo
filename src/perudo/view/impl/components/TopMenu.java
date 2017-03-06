@@ -42,6 +42,21 @@ public class TopMenu extends JMenuBar {
         this.user = Optional.empty();
         this.pnlcreatelobby = (CreateLobbyPanel) this.factory.createCreateLobbyPanel();
         this.pnlchangename = (ChangeNamePanel) this.factory.createChangeNamePanel();
+        JMenu perudoMenu = new JMenu("Perudo");
+        perudoMenu.setMnemonic(KeyEvent.VK_P);
+        JMenuItem miChangeType = new JMenuItem("Offline/Online");
+        miChangeType.setMnemonic(KeyEvent.VK_C);
+        miChangeType.setToolTipText("Change status from Offline/Online");
+        miChangeType.addActionListener(e -> {
+        	if(ControllerSingleton.getControllerType() == ControllerSingleton.ControllerType.MULTIPLAYER) {
+                ControllerSingleton.setSingleplayerController();
+        	} else if (ControllerSingleton.getControllerType() == ControllerSingleton.ControllerType.SINGLEPLAYER) {
+        		ControllerSingleton.setMultiplayerController("2.224.173.8",45555);
+        	}
+        	//ControllerSingleton.getController().initializeNewUser(view);
+        });
+        perudoMenu.add(miChangeType);
+        
         JMenu userMenu = new JMenu(MENU_USER);
         userMenu.setMnemonic(KeyEvent.VK_U);
         JMenuItem miChangeName = new JMenuItem(MENU_USER_CHANGENAME);

@@ -163,8 +163,4 @@ public class MenuPanel extends JPanel {
     public void updateUsers(final User user) {
         this.pnlUserList.updateUser(user);
     }
-
-    public void showError(final ErrorType errorType) {
-        JOptionPane.showMessageDialog(this, errorType.getMessage(), "Error: " + errorType.getId(), JOptionPane.ERROR_MESSAGE);
-    }
 }

@@ -4,6 +4,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -29,7 +31,8 @@ public class ViewImpl implements View {
 	private final GUIFactory factory;
 	private User user;
 	private final JFrame mainFrame;
-
+	private final CountDownLatch latch;
+	
 	/* Application panels */
 	private final MenuPanel menuPanel;
 	private final GamePanel gamePanel;
@@ -37,20 +40,15 @@ public class ViewImpl implements View {
 	public ViewImpl() {
 		this.controller = ControllerSingleton.getController();
 		this.factory = new StandardGUIFactory();
+		this.latch = new CountDownLatch(1);
 		this.mainFrame = this.factory.createFrame(TITLE);
 		this.mainFrame.setIconImage(GUIUtility.getIcon(ICON_RESPATH).getImage());
-		this.mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
 		this.mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.mainFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				int n = JOptionPane.showConfirmDialog(mainFrame, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
 				if (n == JOptionPane.YES_OPTION) {
-					try {
-						close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+					ControllerSingleton.getController().closeNow(user);
 				}
 			}
 		});
@@ -61,7 +59,7 @@ public class ViewImpl implements View {
 		this.showFrame();
 		this.showPanel(menuPanel);
 	}
-
+	
 	private void showFrame() {
 		GUIUtility.fitFrame(this.mainFrame, 2);
 	}
@@ -72,6 +70,14 @@ public class ViewImpl implements View {
 		this.mainFrame.getContentPane().revalidate();
 	}
 
+	public void await() {
+		try {
+			this.latch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void initializeNewUserRespond(final Response<User> user) {
 		if (!user.isOk()) {
@@ -267,15 +273,16 @@ public class ViewImpl implements View {
 
 	@Override
 	public void showError(final ErrorType errorType) {
-		this.menuPanel.showError(errorType);
-		this.gamePanel.showError(errorType);
+	    JOptionPane.showMessageDialog(mainFrame, errorType.getMessage(), "Error: " + errorType.getId(), JOptionPane.ERROR_MESSAGE);
 		System.out.println(errorType);
 	}
 
 	@Override
 	public void close() throws IOException {
-		ControllerSingleton.getController().closeNow(user);
 		this.mainFrame.setVisible(false);
 		this.mainFrame.dispose();
+		latch.countDown();
 	}
+	
+	
 }

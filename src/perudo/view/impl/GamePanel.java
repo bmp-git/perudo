@@ -93,8 +93,4 @@ public class GamePanel extends JPanel {
 				+ game.getCurrentBid().get().getDiceValue());
 	}
 
-	public void showError(final ErrorType errorType) {
-		JOptionPane.showMessageDialog(this, errorType.getMessage(), "Error: " + errorType.getId(),
-				JOptionPane.ERROR_MESSAGE);
-	}
 }

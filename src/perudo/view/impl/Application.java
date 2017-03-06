@@ -1,5 +1,6 @@
 package perudo.view.impl;
 
+import java.io.IOException;
 import perudo.view.impl.Startpage.StartingFrameResult;
 
 public class Application {
@@ -24,6 +25,14 @@ public class Application {
         
         ViewImpl view = new ViewImpl();
         ViewImpl view2 = new ViewImpl();
+		view.await();
+		view2.await();
+
+        try {
+			ControllerSingleton.getController().close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 
 }
