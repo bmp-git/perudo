@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Set;
 import perudo.utility.ErrorTypeException;
 
+/**
+ * Represent a lobby.
+ */
 public interface Lobby extends Serializable {
     /**
      * Gets the unique id of the lobby.
@@ -22,6 +25,9 @@ public interface Lobby extends Serializable {
     /**
      * Adds the user to the lobby.
      * 
+     * @throws ErrorTypeException
+     *             if an error occurs during invocation
+     * 
      * @param user
      *            the user to add
      */
@@ -29,6 +35,9 @@ public interface Lobby extends Serializable {
 
     /**
      * Removes the user to the lobby.
+     * 
+     * @throws ErrorTypeException
+     *             if an error occurs during invocation
      * 
      * @param user
      *            the user to remove
@@ -42,9 +51,12 @@ public interface Lobby extends Serializable {
      *            the user who start the lobby (must be the owner or an
      *            ErrorTypeException will be thrown)
      * 
+     * @throws ErrorTypeException
+     *             if an error occurs during invocation
+     * 
      * @return return the started game
      */
-    Game startGame(User starter) throws ErrorTypeException;
+    Game startGame(User user) throws ErrorTypeException;
 
     /**
      * Gets the settings for this lobby.

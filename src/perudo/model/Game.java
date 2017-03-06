@@ -7,6 +7,9 @@ import java.util.Optional;
 
 import perudo.utility.ErrorTypeException;
 
+/**
+ * Represent a running game.
+ */
 public interface Game extends Serializable {
     /**
      * Gets the unique id of the game.
@@ -25,6 +28,9 @@ public interface Game extends Serializable {
     /**
      * Gets the status of a user in the game.
      * 
+     * @param user
+     *            the user of which is desired the status
+     * 
      * @return the status of the user
      */
     PlayerStatus getUserStatus(User user);
@@ -34,6 +40,9 @@ public interface Game extends Serializable {
      * 
      * @param bid
      *            the bid to play
+     * 
+     * @throws ErrorTypeException
+     *             if an error occurs during invocation
      * 
      * @param user
      *            the user who plays
@@ -47,6 +56,9 @@ public interface Game extends Serializable {
      * @param user
      *            the user who doubt
      * 
+     * @throws ErrorTypeException
+     *             if an error occurs during invocation
+     * 
      * @return true if the doubt is correct, false otherwise
      */
     Boolean doubt(User user) throws ErrorTypeException;
@@ -57,12 +69,18 @@ public interface Game extends Serializable {
      * @param user
      *            the user who urge
      * 
+     * @throws ErrorTypeException
+     *             if an error occurs during invocation
+     * 
      * @return true if the urge is correct, false otherwise
      */
     Boolean urge(User user) throws ErrorTypeException;
 
     /**
      * Calls palifico for this turn.
+     * 
+     * @throws ErrorTypeException
+     *             if an error occurs during invocation
      * 
      * @param user
      *            the caller.
@@ -86,7 +104,7 @@ public interface Game extends Serializable {
     GameSettings getSettings();
 
     /**
-     * Gets the user whose his turn
+     * Gets the user whose his turn.
      * 
      * @return the user who must play
      */
@@ -116,7 +134,10 @@ public interface Game extends Serializable {
     Duration getTurnRemainingTime();
 
     /**
-     * Remove the selected user
+     * Remove the selected user.
+     * 
+     * @throws ErrorTypeException
+     *             if an error occurs during invocation
      * 
      * @param user
      *            the user to remove
@@ -126,7 +147,7 @@ public interface Game extends Serializable {
 
     /**
      * Checks if a given user can call palifico in this current status of the
-     * game
+     * game.
      * 
      * @param user
      *            the user to check
@@ -134,10 +155,10 @@ public interface Game extends Serializable {
      * @return true if the user can call palifico, false otherwise
      * 
      */
-    boolean canCallPalifico(final User user);
+    boolean canCallPalifico(User user);
 
     /**
-     * Gets the numbers of dice that apply to the current bid
+     * Gets the numbers of dice that apply to the current bid.
      * 
      * @return the quantity of valid dice that count for this bid
      */

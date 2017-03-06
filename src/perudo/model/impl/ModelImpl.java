@@ -11,12 +11,18 @@ import perudo.model.Lobby;
 import perudo.model.Model;
 import perudo.model.User;
 
+/**
+ * The implementation of Model interface.
+ */
 public class ModelImpl implements Model {
 
     private final Set<User> users;
     private final Set<Game> games;
     private final Set<Lobby> lobbies;
 
+    /**
+     * Create a empty Model.
+     */
     public ModelImpl() {
         this.users = Collections.synchronizedSet(new HashSet<>());
         this.games = Collections.synchronizedSet(new HashSet<>());
@@ -29,7 +35,7 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public synchronized void addUser(final User user) throws ErrorTypeException {
+    public void addUser(final User user) throws ErrorTypeException {
         if (!this.users.add(user)) {
             throw new ErrorTypeException(ErrorType.USER_ALREADY_EXISTS);
         }

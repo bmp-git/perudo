@@ -27,7 +27,7 @@ public class GameTest {
         } catch (ErrorTypeException e2) {
 
         }
-        GameSettings setts = new GameSettingsImpl(3, 6, 5, Duration.ofMinutes(10));
+        GameSettings setts = new GameSettingsImpl(3, 6, 5, Duration.ofMinutes(10), "");
         Game game = null;
         try {
             Lobby l = new LobbyImpl(setts, u1);

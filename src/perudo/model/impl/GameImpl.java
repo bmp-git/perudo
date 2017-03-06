@@ -21,6 +21,9 @@ import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 import perudo.utility.IdDispenser;
 
+/**
+ * An implementation of Game interface following the rule of the classic game.
+ */
 public class GameImpl implements Game {
 
     private static final long serialVersionUID = 462313460628002640L;
@@ -36,6 +39,15 @@ public class GameImpl implements Game {
     private User bidUser;
     private boolean palifico;
 
+    /**
+     * Create a standard GameImpl.
+     * 
+     * @param settings
+     *            the settings for the game
+     * 
+     * @param users
+     *            the users who plays
+     */
     public GameImpl(final GameSettings settings, final Set<User> users) {
         if (settings == null || users == null || users.size() > settings.getMaxPlayer()) {
             throw new IllegalArgumentException();
@@ -104,19 +116,19 @@ public class GameImpl implements Game {
                 this.usersStatus.get(user).setRemainingDice(this.usersStatus.get(user).getRemainingDice() + quantity));
     }
 
-    private void checkUserExistence(User user) throws ErrorTypeException {
+    private void checkUserExistence(final User user) throws ErrorTypeException {
         if (!this.userList.contains(user)) {
             throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
     }
 
-    private void checkUserNotLose(User user) throws ErrorTypeException {
+    private void checkUserNotLose(final User user) throws ErrorTypeException {
         if (this.getUserStatus(user).getRemainingDice() <= 0) {
             throw new ErrorTypeException(ErrorType.GAME_YOU_ALREADY_LOSE);
         }
     }
 
-    private void checkUserTurn(User user) throws ErrorTypeException {
+    private void checkUserTurn(final User user) throws ErrorTypeException {
         if (!getTurn().equals(user)) {
             throw new ErrorTypeException(ErrorType.GAME_NOT_YOUR_TURN);
         }
@@ -128,7 +140,7 @@ public class GameImpl implements Game {
         }
     }
 
-    private void checkUserCanUrge(User user) throws ErrorTypeException {
+    private void checkUserCanUrge(final User user) throws ErrorTypeException {
         // no one had bid yet, the one who bid can't urge, the one who is turn
         // can't urge
         if ((!this.getCurrentBid().isPresent()) || this.getBidUser().get().equals(user)
@@ -185,7 +197,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public synchronized void play(Bid bid, User user) throws ErrorTypeException {
+    public synchronized void play(final Bid bid, final User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
         this.checkUserNotLose(user);
@@ -205,7 +217,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public synchronized Boolean doubt(User user) throws ErrorTypeException {
+    public synchronized Boolean doubt(final User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
         this.checkUserNotLose(user);
@@ -229,7 +241,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public synchronized Boolean urge(User user) throws ErrorTypeException {
+    public synchronized Boolean urge(final User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
         this.checkUserNotLose(user);
@@ -253,7 +265,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public synchronized void callPalifico(User user) throws ErrorTypeException {
+    public synchronized void callPalifico(final User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
 
@@ -285,7 +297,7 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public synchronized PlayerStatus getUserStatus(User user) {
+    public synchronized PlayerStatus getUserStatus(final User user) {
         return this.usersStatus.get(user);
     }
 
@@ -304,26 +316,32 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         GameImpl other = (GameImpl) obj;
-        if (id != other.id)
+        if (id != other.id) {
             return false;
+        }
         if (settings == null) {
-            if (other.settings != null)
+            if (other.settings != null) {
                 return false;
-        } else if (!settings.equals(other.settings))
+            }
+        } else if (!settings.equals(other.settings)) {
             return false;
+        }
         return true;
     }
 
     @Override
-    public synchronized void removeUser(User user) throws ErrorTypeException {
+    public synchronized void removeUser(final User user) throws ErrorTypeException {
         this.checkUserExistence(user);
         PlayerStatus status = this.getUserStatus(user);
         this.userList.remove(user);

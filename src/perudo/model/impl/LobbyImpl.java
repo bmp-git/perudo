@@ -12,6 +12,9 @@ import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 import perudo.utility.IdDispenser;
 
+/**
+ * The implementation of Lobby interface.
+ */
 public class LobbyImpl implements Lobby {
 
     private static final long serialVersionUID = -2649977195965292303L;
@@ -22,7 +25,17 @@ public class LobbyImpl implements Lobby {
     private User owner;
     private boolean started;
 
-    public LobbyImpl(final GameSettings settings, final User owner) throws ErrorTypeException {
+    /**
+     * Create a lobby from settings.
+     * 
+     * @param settings
+     *            the settings for this lobby
+     * 
+     * @param owner
+     *            the creator of this lobby, notice that this user will be added
+     *            to this lobby after the creation
+     */
+    public LobbyImpl(final GameSettings settings, final User owner) {
         if (settings == null || owner == null) {
             throw new IllegalArgumentException();
         }
@@ -32,7 +45,13 @@ public class LobbyImpl implements Lobby {
         this.owner = owner;
         this.settings = settings;
 
-        this.addUser(owner);
+        try {
+            this.addUser(owner);
+        } catch (ErrorTypeException e) {
+            e.printStackTrace();
+            // can't be possible
+            throw new IllegalStateException();
+        }
     }
 
     @Override
@@ -116,21 +135,27 @@ public class LobbyImpl implements Lobby {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         LobbyImpl other = (LobbyImpl) obj;
-        if (id != other.id)
+        if (id != other.id) {
             return false;
+        }
         if (settings == null) {
-            if (other.settings != null)
+            if (other.settings != null) {
                 return false;
-        } else if (!settings.equals(other.settings))
+            }
+        } else if (!settings.equals(other.settings)) {
             return false;
+        }
         return true;
     }
 

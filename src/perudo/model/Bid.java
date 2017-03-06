@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import perudo.utility.ErrorTypeException;
 
+/**
+ * Represent a bid of the game. (example: 2 dice of 4)
+ */
 public interface Bid extends Serializable {
     /**
      * Gets the value of the dice face.
@@ -24,10 +27,13 @@ public interface Bid extends Serializable {
      * 
      * @param nextBid
      *            indicates the bid to check
+     * 
      * @param turnIsPalifico
      *            indicates if the current turn is palifico
+     * 
      * @param gameSettings
      *            indicates the settings of the game
+     * 
      * @return true if the bid is valid, false otherwise
      */
     boolean isNextBidValid(Bid nextBid, boolean turnIsPalifico, GameSettings gameSettings);
@@ -37,6 +43,9 @@ public interface Bid extends Serializable {
      * 
      * @param diceValue
      *            the desired dice value
+     * 
+     * @throws ErrorTypeException
+     *             if diceValue is invalid
      * 
      * @return the new bid increased
      */

@@ -76,7 +76,7 @@ public class RemoteApp {
     }
 
     private static void runGUI() throws IOException {
-        ControllerClientImpl controller = (ControllerClientImpl) ControllerClientImpl.createFromIPv4(arguments[0],
+        ControllerClientImpl controller = (ControllerClientImpl) ControllerClientImpl.createFromServerName(arguments[0],
                 Integer.parseInt(arguments[1]));
 
         Terminal terminal = new DefaultTerminalFactory().createTerminal();
