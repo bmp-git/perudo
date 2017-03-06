@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-public class CircolarTimeBar extends JPanel {
+public class CircolarTimeBarPanel extends JPanel {
 
     private static final long serialVersionUID = 4826280349188429462L;
     private Duration totalTime, remainingTime;
@@ -26,31 +26,21 @@ public class CircolarTimeBar extends JPanel {
     private static final Color LABEL_COLOR = Color.BLACK;
     private static final String LABEL_END_TEXT = "!";
 
-    public CircolarTimeBar(final Duration totalTime) {
+    public CircolarTimeBarPanel(final Duration totalTime) {
         this.totalTime = totalTime;
         this.remainingTime = totalTime;
         this.label = new JLabel(Integer.toString((int) totalTime.getSeconds()), SwingConstants.CENTER);
-        this.label.setFont(new Font("Consolas", Font.PLAIN, 50));
+        this.label.setFont(new Font("Consolas", Font.PLAIN, 40));
         this.label.setForeground(LABEL_COLOR);
-        setLayout(new BorderLayout());
-
+        this.setLayout(new BorderLayout());
         this.add(this.label);
-
-        class ResizeListener extends ComponentAdapter {
-            public void componentResized(ComponentEvent e) {
-                label.setFont(new Font("Consolas", Font.PLAIN, (int)(Math.sqrt(e.getComponent().getWidth() * e.getComponent().getWidth()
-                        + e.getComponent().getHeight() * e.getComponent().getHeight()) / 4)));
-                repaint();
-            }
-        }
-        this.addComponentListener(new ResizeListener());
 
     }
 
     public void setRemainingTime(final Duration remainingTime) {
         this.remainingTime = remainingTime;
-        this.revalidate();
         this.repaint();
+        this.revalidate();
     }
 
     @Override
