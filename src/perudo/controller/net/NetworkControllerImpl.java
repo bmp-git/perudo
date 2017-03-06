@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
@@ -24,7 +22,6 @@ import perudo.view.View;
 public final class NetworkControllerImpl implements Controller {
     private final Controller controller;
     private final MethodInvoker methodInvoker;
-    private final List<DatagramStream> streams;
     private final BiConsumer<InputStream, OutputStream> datagramStreamCreator;
     private final BiConsumer<Datagram, DatagramStream> invoker;
     private final BiConsumer<IOException, DatagramStream> ioExcHandler;
@@ -40,14 +37,14 @@ public final class NetworkControllerImpl implements Controller {
      *            the listener of new connections from the network.
      * @return the created NetworkController.
      */
-    public static Controller newNetworkController(final Controller controller, final NetworkServerListener serverListener) {
+    public static Controller newNetworkController(final Controller controller,
+            final NetworkServerListener serverListener) {
         return new NetworkControllerImpl(controller, serverListener);
     }
 
     private NetworkControllerImpl(final Controller controller, final NetworkServerListener serverListener) {
         this.controller = controller;
         this.methodInvoker = new MethodInvoker(Controller.class);
-        this.streams = new CopyOnWriteArrayList<>();
         this.executor = Executors.newSingleThreadExecutor();
 
         this.ioExcHandler = (ex, dgs) -> {
@@ -55,6 +52,12 @@ public final class NetworkControllerImpl implements Controller {
             this.executor.execute(() -> {
                 if (dgs.getUser().isPresent()) {
                     this.closeNow(dgs.getUser().get());
+                } else {
+                    try {
+                        dgs.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 
@@ -78,9 +81,8 @@ public final class NetworkControllerImpl implements Controller {
         this.datagramStreamCreator = (is, os) -> {
             this.executor.execute(() -> {
                 try {
-                    final DatagramStream datagramStream = DatagramStreamImpl.initializeNewDatagramStream(is, os,
-                            Arrays.asList(this.invoker), Arrays.asList(this.ioExcHandler));
-                    this.streams.add(datagramStream);
+                    DatagramStreamImpl.initializeNewDatagramStream(is, os, Arrays.asList(this.invoker),
+                            Arrays.asList(this.ioExcHandler));
                 } catch (IOException e) {
                     // in case of exception the client who has requested a
                     // connection is ignored

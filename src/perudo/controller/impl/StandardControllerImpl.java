@@ -416,7 +416,6 @@ public class StandardControllerImpl implements Controller {
                     this.views.remove(user);
                     // TODO for debug
                     System.out.println("StandardController: view of user" + user.getName() + " closed and removed.");
-                    this.views.forEach((u, v) -> v.userExitNotify(user));
                 }
                 if (this.userIsInLobby(user)) {
                     final Lobby lobby = this.getLobbyFromModel(user);
@@ -442,6 +441,7 @@ public class StandardControllerImpl implements Controller {
                 }
                 if (this.model.getUsers().contains(user)) {
                     this.model.removeUser(user);
+                    this.views.forEach((u, v) -> v.userExitNotify(user));
                 }
 
             } catch (ErrorTypeException e) {
@@ -493,7 +493,7 @@ public class StandardControllerImpl implements Controller {
 
     private Lobby getLobbyFromModel(final Lobby lobby) throws ErrorTypeException {
         List<Lobby> result = this.model.getLobbies().stream().filter(lobby::equals).collect(Collectors.toList());
-        checkSize(result, ErrorType.LOBBY_NOT_EXISTS);
+        this.checkSize(result, ErrorType.LOBBY_NOT_EXISTS);
         return result.get(0);
     }
 
@@ -503,7 +503,7 @@ public class StandardControllerImpl implements Controller {
         }
         List<Lobby> result = this.model.getLobbies().stream().filter(l -> l.getUsers().contains(user))
                 .collect(Collectors.toList());
-        checkSize(result, ErrorType.USER_IS_NOT_IN_A_LOBBY);
+        this.checkSize(result, ErrorType.USER_IS_NOT_IN_A_LOBBY);
         return result.get(0);
     }
 
@@ -513,7 +513,7 @@ public class StandardControllerImpl implements Controller {
         }
         List<Game> result = this.model.getGames().stream().filter(g -> g.getUsers().contains(user))
                 .collect(Collectors.toList());
-        checkSize(result, ErrorType.USER_IS_NOT_IN_A_GAME);
+        this.checkSize(result, ErrorType.USER_IS_NOT_IN_A_GAME);
         return result.get(0);
     }
 
