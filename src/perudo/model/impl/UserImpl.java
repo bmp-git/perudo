@@ -6,11 +6,24 @@ import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 import perudo.utility.IdDispenser;
 
+/**
+ * The implementation of User interface.
+ */
 public class UserImpl implements User {
 
     private static final long serialVersionUID = 3324295008073807947L;
+
+    /**
+     * Maximum characters count allowed for user name.
+     */
     public static final int MAX_USER_NAME_LENGTH = 12;
+    /**
+     * Minimum characters count allowed for user name.
+     */
     public static final int MIN_USER_NAME_LENGTH = 2;
+    /**
+     * The set of allowed characters for user name.
+     */
     public static final String PERMITTED_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
     /**
@@ -19,6 +32,9 @@ public class UserImpl implements User {
      * 
      * @param prefix
      *            the prefix
+     * 
+     * @param type
+     *            the user's type
      * 
      * @return an initialized new user
      */
@@ -39,10 +55,35 @@ public class UserImpl implements User {
         }
     }
 
+    /**
+     * Create a standard user.
+     * 
+     * @param name
+     *            the name of the user
+     * 
+     * @throws ErrorTypeException
+     *             if the name is not following the rules
+     * 
+     * @return an instance of the User
+     */
     public static User createPlayer(final String name) throws ErrorTypeException {
         return new UserImpl(IdDispenser.getUserIdDispenser().getNextId(), name, UserType.PLAYER);
     }
 
+    /**
+     * Create a bot user type.
+     * 
+     * @param name
+     *            the name of the bot
+     * 
+     * @param type
+     *            the bot's type
+     * 
+     * @throws ErrorTypeException
+     *             if the name is not following the rules
+     * 
+     * @return an instance of the User
+     */
     public static User createBot(final String name, final UserType type) throws ErrorTypeException {
         if (!type.isBot()) {
             throw new IllegalArgumentException();
@@ -83,7 +124,7 @@ public class UserImpl implements User {
     }
 
     @Override
-    public User changeName(String newName) throws ErrorTypeException {
+    public User changeName(final String newName) throws ErrorTypeException {
         return new UserImpl(this.getId(), newName, this.type);
     }
 
@@ -101,16 +142,20 @@ public class UserImpl implements User {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         UserImpl other = (UserImpl) obj;
-        if (id != other.id)
+        if (id != other.id) {
             return false;
+        }
         return true;
     }
 }

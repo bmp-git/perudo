@@ -11,10 +11,22 @@ import perudo.model.PlayerStatus;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 
+/**
+ * The implementation of PlayerStatus interface.
+ */
 public class PlayerStatusImpl implements PlayerStatus {
 
     private static final long serialVersionUID = -9211044365486847226L;
 
+    /**
+     * Create a PlayerStatus from GameSettings. It is the state o a user when a
+     * game starts.
+     * 
+     * @param settings
+     *            the settings of the game
+     * 
+     * @return an instance of PlayerStatus
+     */
     public static PlayerStatus fromGameSettings(final GameSettings settings) {
         return new PlayerStatusImpl(settings.getInitialDiceNumber(), settings.getMaxDiceValue(), false);
     }
@@ -33,6 +45,17 @@ public class PlayerStatusImpl implements PlayerStatus {
         this.diceValues = diceValues.entrySet().stream().collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
+    /**
+     * Create a PlayerStatus with the specified arguments.
+     * 
+     * @param remainingDice
+     *            the remaining dice number
+     * @param maxDiceValue
+     *            the maximum dice value (number of dice's faces)
+     * @param hasCalledPalifico
+     *            Indicate if the palifico was already called
+     * 
+     */
     public PlayerStatusImpl(final int remainingDice, final int maxDiceValue, final boolean hasCalledPalifico) {
         if (remainingDice < 0) {
             throw new IllegalArgumentException("remainingDice should be positive");
@@ -109,25 +132,33 @@ public class PlayerStatusImpl implements PlayerStatus {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         PlayerStatusImpl other = (PlayerStatusImpl) obj;
         if (diceValues == null) {
-            if (other.diceValues != null)
+            if (other.diceValues != null) {
                 return false;
-        } else if (!diceValues.equals(other.diceValues))
+            }
+        } else if (!diceValues.equals(other.diceValues)) {
             return false;
-        if (hasCalledPalifico != other.hasCalledPalifico)
+        }
+        if (hasCalledPalifico != other.hasCalledPalifico) {
             return false;
-        if (maxDiceValue != other.maxDiceValue)
+        }
+        if (maxDiceValue != other.maxDiceValue) {
             return false;
-        if (remainingDice != other.remainingDice)
+        }
+        if (remainingDice != other.remainingDice) {
             return false;
+        }
         return true;
     }
 

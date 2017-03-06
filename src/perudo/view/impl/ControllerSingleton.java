@@ -21,7 +21,7 @@ public class ControllerSingleton {
     
     public static void setMultiplayerController(String ip, int port) {
         try {
-            SINGLETON = ControllerClientImpl.createFromIPv4(ip,port);
+            SINGLETON = ControllerClientImpl.createFromServerName(ip,port);
         } catch (IOException e) {
             System.out.println("Server non raggiungibile...");
             System.exit(1);

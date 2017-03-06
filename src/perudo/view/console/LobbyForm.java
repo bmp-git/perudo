@@ -19,7 +19,6 @@ import com.googlecode.lanterna.gui2.Window;
 import perudo.controller.Controller;
 import perudo.model.Lobby;
 import perudo.model.User;
-import perudo.model.UserType;
 
 public class LobbyForm extends BaseForm {
 

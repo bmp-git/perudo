@@ -5,11 +5,14 @@ import java.util.Map;
 
 import perudo.utility.ErrorTypeException;
 
+/**
+ * Represent the status of a player in game.
+ */
 public interface PlayerStatus extends Serializable {
     /**
-     * Gets a map of <face value, face value count> of the current player's
+     * Gets a map of {face value, face value count} of the current player's
      * status. Ex. if the hand is 1,1,3,3,4 with dice of six faces the map would
-     * be: [1 -> 2] [2 -> 0] [3 -> 2] [4 -> 1] [5 -> 0] [6 -> 0]
+     * be: [1 - 2] [2 - 0] [3 - 2] [4 - 1] [5 - 0] [6 - 0] (key - value)
      * 
      * @return the count of the dice
      */
@@ -53,7 +56,10 @@ public interface PlayerStatus extends Serializable {
     PlayerStatus setRemainingDice(int remainingDice);
 
     /**
-     * Calls palifico, can be called only once
+     * Calls palifico, can be called only once.
+     * 
+     * @throws ErrorTypeException
+     *             if an error occurs during invocation
      * 
      * @return the PlayerStatus with palifico called
      */

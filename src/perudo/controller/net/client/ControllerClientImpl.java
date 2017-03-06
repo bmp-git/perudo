@@ -24,9 +24,26 @@ import perudo.utility.DiffTime;
 import perudo.utility.ErrorTypeException;
 import perudo.view.View;
 
+/**
+ * A Network implementation of Controller.
+ */
 public class ControllerClientImpl implements Controller {
 
-    public static Controller createFromIPv4(String host, int port) throws IOException {
+    /**
+     * Create a network controller from host and port.
+     * 
+     * @param host
+     *            the server name
+     * 
+     * @param port
+     *            the server port
+     * 
+     * @throws IOException
+     *             if the connection is impossible
+     * 
+     * @return the instance of initialized Controller
+     */
+    public static Controller createFromServerName(final String host, final int port) throws IOException {
         Socket socket = new Socket(host, port);
         return new ControllerClientImpl(socket);
     }
@@ -36,6 +53,15 @@ public class ControllerClientImpl implements Controller {
     private final ExecutorService executor;
     private final MethodInvoker invoker;
 
+    /**
+     * Create a network controller from socket.
+     * 
+     * @param socket
+     *            the connection to the server
+     * 
+     * @throws IOException
+     *             if the connection is impossible
+     */
     public ControllerClientImpl(final Socket socket) throws IOException {
 
         this.view = null;

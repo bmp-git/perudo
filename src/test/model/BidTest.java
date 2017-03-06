@@ -15,7 +15,7 @@ public class BidTest {
     @org.junit.Test
     public void main() {
         Bid bid = null;
-        GameSettings setts = new GameSettingsImpl(5, 6, 5, Duration.ofMinutes(2));
+        GameSettings setts = new GameSettingsImpl(5, 6, 5, Duration.ofMinutes(2), "");
         try {
             bid = new BidImpl(-1, 1);
             throw new IllegalStateException("Under limit");
@@ -65,7 +65,7 @@ public class BidTest {
             assertFalse(bid.isNextBidValid(new BidImpl(1, 1), false, setts));
 
             assertFalse(bid.isNextBidValid(new BidImpl(10, 7), false, setts));
-            
+
             assertEquals(bid.nextBid(), new BidImpl(5, 5));
             assertEquals(bid.nextBid(6), new BidImpl(4, 6));
             assertEquals(bid.nextBid(4), new BidImpl(5, 4));

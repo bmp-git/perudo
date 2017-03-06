@@ -11,18 +11,30 @@ import perudo.utility.ErrorType;
 import perudo.utility.Response;
 import perudo.view.View;
 
+/**
+ * A view that intercepts calls to a deeper view. This class is used to set the
+ * correct user to the DatagramStream given.
+ */
 public class ViewClientImpl implements View {
 
     private final DatagramStream stream;
     private final View view;
 
-    public ViewClientImpl(View view, DatagramStream stream) {
+    /**
+     * Create a ViewClientImpl from another View and a DatagramStream.
+     * 
+     * @param view
+     *            the final view
+     * @param stream
+     *            the stream to set the user
+     */
+    public ViewClientImpl(final View view, final DatagramStream stream) {
         this.view = view;
         this.stream = stream;
     }
 
     @Override
-    public void initializeNewUserRespond(Response<User> user) {
+    public void initializeNewUserRespond(final Response<User> user) {
         if (user.isOk()) {
             this.stream.setUser(user.getValue());
         }
@@ -30,97 +42,97 @@ public class ViewClientImpl implements View {
     }
 
     @Override
-    public void initializeNewUserNotify(User user) {
+    public void initializeNewUserNotify(final User user) {
         this.view.initializeNewUserNotify(user);
     }
 
     @Override
-    public void userExitNotify(User user) {
+    public void userExitNotify(final User user) {
         this.view.userExitNotify(user);
     }
 
     @Override
-    public void changeNameNotify(User oldUser, User newUser) {
+    public void changeNameNotify(final User oldUser, final User newUser) {
         this.view.changeNameNotify(oldUser, newUser);
     }
 
     @Override
-    public void getUsersRespond(Response<Set<User>> users) {
+    public void getUsersRespond(final Response<Set<User>> users) {
         this.view.getUsersRespond(users);
     }
 
     @Override
-    public void createLobbyNotify(Lobby lobby) {
+    public void createLobbyNotify(final Lobby lobby) {
         this.view.createLobbyNotify(lobby);
     }
 
     @Override
-    public void removeLobbyNotify(Lobby lobby) {
+    public void removeLobbyNotify(final Lobby lobby) {
         this.view.removeLobbyNotify(lobby);
     }
 
     @Override
-    public void getLobbiesRespond(Response<Set<Lobby>> lobbies) {
+    public void getLobbiesRespond(final Response<Set<Lobby>> lobbies) {
         this.view.getLobbiesRespond(lobbies);
     }
 
     @Override
-    public void joinLobbyNotify(Lobby lobby, User user) {
+    public void joinLobbyNotify(final Lobby lobby, final User user) {
         this.view.joinLobbyNotify(lobby, user);
     }
 
     @Override
-    public void exitLobbyNotify(Lobby lobby, User user) {
+    public void exitLobbyNotify(final Lobby lobby, final User user) {
         this.view.exitLobbyNotify(lobby, user);
     }
 
     @Override
-    public void startLobbyNotify(Lobby lobby, Game game) {
+    public void startLobbyNotify(final Lobby lobby, final Game game) {
         this.view.startLobbyNotify(lobby, game);
     }
 
     @Override
-    public void removeGameNotify(Game game) {
+    public void removeGameNotify(final Game game) {
         this.view.removeGameNotify(game);
     }
 
     @Override
-    public void getGamesRespond(Response<Set<Game>> games) {
+    public void getGamesRespond(final Response<Set<Game>> games) {
         this.view.getGamesRespond(games);
     }
 
     @Override
-    public void playNotify(Game game, User user) {
+    public void playNotify(final Game game, final User user) {
         this.view.playNotify(game, user);
     }
 
     @Override
-    public void doubtNotify(Game game, User user, boolean win) {
+    public void doubtNotify(final Game game, final User user, final boolean win) {
         this.view.doubtNotify(game, user, win);
     }
 
     @Override
-    public void urgeNotify(Game game, User user, boolean win) {
+    public void urgeNotify(final Game game, final User user, final boolean win) {
         this.view.urgeNotify(game, user, win);
     }
 
     @Override
-    public void callPalificoNotify(Game game, User user) {
+    public void callPalificoNotify(final Game game, final User user) {
         this.view.callPalificoNotify(game, user);
     }
 
     @Override
-    public void exitGameNotify(Game game, User user) {
+    public void exitGameNotify(final Game game, final User user) {
         this.view.exitGameNotify(game, user);
     }
 
     @Override
-    public void gameEndedNotify(Game game) {
+    public void gameEndedNotify(final Game game) {
         this.view.gameEndedNotify(game);
     }
 
     @Override
-    public void showError(ErrorType errorType) {
+    public void showError(final ErrorType errorType) {
         this.view.showError(errorType);
     }
 

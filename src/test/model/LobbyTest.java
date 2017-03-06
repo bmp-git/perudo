@@ -23,8 +23,8 @@ public class LobbyTest {
         }
         Lobby l, l1;
         try {
-            l = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1)), owner);
-            l1 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1)), owner);
+            l = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), ""), owner);
+            l1 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), ""), owner);
         } catch (Exception ex) {
             throw new IllegalStateException("Should be ok");
         }

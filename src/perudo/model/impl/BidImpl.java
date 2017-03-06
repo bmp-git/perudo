@@ -5,12 +5,27 @@ import perudo.model.GameSettings;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 
+/**
+ * The implementation of Bid interface following the rule of the classic game.
+ */
 public class BidImpl implements Bid {
 
     private static final long serialVersionUID = -50636686196288999L;
 
     private final int diceValue, quantity;
 
+    /**
+     * Creates a Bid.
+     * 
+     * @param quantity
+     *            dice quantity
+     * 
+     * @param diceValue
+     *            dice value (the face)
+     * 
+     * @throws ErrorTypeException
+     *             if the arguments are invalid
+     */
     public BidImpl(final int quantity, final int diceValue) throws ErrorTypeException {
         if (quantity < 0 || diceValue < 1) {
             throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
@@ -19,6 +34,7 @@ public class BidImpl implements Bid {
         this.quantity = quantity;
     }
 
+    @Override
     public boolean isNextBidValid(final Bid nextBid, final boolean turnIsPalifico, final GameSettings gameSettings) {
         if (nextBid.getDiceValue() > gameSettings.getMaxDiceValue()) {
             return false;
@@ -63,10 +79,12 @@ public class BidImpl implements Bid {
         }
     }
 
+    @Override
     public int getDiceValue() {
         return diceValue;
     }
 
+    @Override
     public int getQuantity() {
         return quantity;
     }
@@ -81,23 +99,28 @@ public class BidImpl implements Bid {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         BidImpl other = (BidImpl) obj;
-        if (diceValue != other.diceValue)
+        if (diceValue != other.diceValue) {
             return false;
-        if (quantity != other.quantity)
+        }
+        if (quantity != other.quantity) {
             return false;
+        }
         return true;
     }
 
     @Override
-    public Bid nextBid(int diceValue) throws ErrorTypeException {
+    public Bid nextBid(final int diceValue) throws ErrorTypeException {
         int quantity = 0;
         if (diceValue == 1 && this.diceValue == 1) {
             quantity = this.quantity + 1;

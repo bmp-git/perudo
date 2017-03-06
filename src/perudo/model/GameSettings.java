@@ -3,6 +3,9 @@ package perudo.model;
 import java.io.Serializable;
 import java.time.Duration;
 
+/**
+ * Represent a set of settings for a game.
+ */
 public interface GameSettings extends Serializable {
 
     /**
@@ -27,7 +30,7 @@ public interface GameSettings extends Serializable {
     int getInitialDiceNumber();
 
     /**
-     * Gets the amount of time available for one turn
+     * Gets the amount of time available for one turn.
      * 
      * @return amount of time
      */

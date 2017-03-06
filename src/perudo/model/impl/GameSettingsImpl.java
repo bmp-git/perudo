@@ -4,31 +4,74 @@ import java.time.Duration;
 
 import perudo.model.GameSettings;
 
+/**
+ * The implementation of GameSettings interface.
+ */
 public class GameSettingsImpl implements GameSettings {
 
     private static final long serialVersionUID = 2049188859139952036L;
 
+    /**
+     * Minimum players number.
+     */
     public static final int MIN_PLAYER_NUMBERS = 2;
+    /**
+     * Maximum players number.
+     */
     public static final int MAX_PLAYER_NUMBERS = 10;
 
+    /**
+     * Minimum dice value (number of faces).
+     */
     public static final int MIN_DICE_FACES = 3;
+    /**
+     * Maximum dice value (number of faces).
+     */
     public static final int MAX_DICE_FACES = 20;
 
+    /**
+     * Minimum starting dice number.
+     */
     public static final int MIN_INITIAL_DICE_NUMBERS = 1;
+    /**
+     * Maximum starting dice number.
+     */
     public static final int MAX_INITIAL_DICE_NUMBERS = 10;
 
+    /**
+     * Minimum turn duration time.
+     */
     public static final Duration MIN_TURN_TIME = Duration.ofSeconds(15);
+    /**
+     * Maximum turn duration time.
+     */
     public static final Duration MAX_TURN_TIME = Duration.ofSeconds(600);
 
     private final int maxPlayer, initialDiceNumber, maxDiceValue;
     private final Duration maxTurnTime;
     private final String name;
 
-    public GameSettingsImpl(final int playerNumbers, final int diceFaces, final int initialDiceNumbers,
-            final Duration turnTime) {
-        this(playerNumbers, diceFaces, initialDiceNumbers, turnTime, "");
-    }
-
+    /**
+     * Create a GameSettings with the specified parameters.
+     * 
+     * @param playerNumbers
+     *            the maximum number of player allowed to join
+     * 
+     * @param diceFaces
+     *            the maximum value for the dice
+     * 
+     * @param initialDiceNumbers
+     *            the initial dice number
+     * 
+     * @param turnTime
+     *            the maximum turn time
+     * 
+     * @param name
+     *            the name of this set of settings
+     * 
+     * @throws IllegalArgumentException
+     *             if some of the arguments are not inside the allowed range
+     */
     public GameSettingsImpl(final int playerNumbers, final int diceFaces, final int initialDiceNumbers,
             final Duration turnTime, final String name) {
         if (playerNumbers < MIN_PLAYER_NUMBERS) {
@@ -102,30 +145,40 @@ public class GameSettingsImpl implements GameSettings {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         GameSettingsImpl other = (GameSettingsImpl) obj;
-        if (initialDiceNumber != other.initialDiceNumber)
+        if (initialDiceNumber != other.initialDiceNumber) {
             return false;
-        if (maxDiceValue != other.maxDiceValue)
+        }
+        if (maxDiceValue != other.maxDiceValue) {
             return false;
-        if (maxPlayer != other.maxPlayer)
+        }
+        if (maxPlayer != other.maxPlayer) {
             return false;
+        }
         if (maxTurnTime == null) {
-            if (other.maxTurnTime != null)
+            if (other.maxTurnTime != null) {
                 return false;
-        } else if (!maxTurnTime.equals(other.maxTurnTime))
+            }
+        } else if (!maxTurnTime.equals(other.maxTurnTime)) {
             return false;
+        }
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         return true;
     }
 

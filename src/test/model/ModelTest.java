@@ -34,9 +34,9 @@ public class ModelTest {
         Lobby l1 = null, l2 = null, l3 = null;
         Game g1 = null, g2 = null, g3 = null;
         try {
-            l1 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1)), u1);
-            l2 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1)), u2);
-            l3 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1)), u3);
+            l1 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), ""), u1);
+            l2 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), ""), u2);
+            l3 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), ""), u3);
             l1.addUser(u4);
             l2.addUser(u5);
             l3.addUser(u6);
