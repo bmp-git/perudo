@@ -136,7 +136,7 @@ public class GameForm extends BaseForm {
         Bid bid = null;
         try {
             bid = new BidImpl(Integer.parseInt(txbDiceQuantity.getText()), Integer.parseInt(txbDiceValue.getText()));
-        } catch (NumberFormatException | ErrorTypeException e) {
+        } catch (IllegalArgumentException e) {
             Utils.showMessageBox("Error", "Invalid bid", this.textGUI);
         }
         if (bid != null) {

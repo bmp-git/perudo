@@ -44,12 +44,9 @@ public interface Bid extends Serializable {
      * @param diceValue
      *            the desired dice value
      * 
-     * @throws ErrorTypeException
-     *             if diceValue is invalid
-     * 
      * @return the new bid increased
      */
-    Bid nextBid(int diceValue) throws ErrorTypeException;
+    Bid nextBid(int diceValue);
 
     /**
      * Gets a new bid with a minimum increase of this bid.
@@ -57,10 +54,6 @@ public interface Bid extends Serializable {
      * @return the new bid increased
      */
     default Bid nextBid() {
-        try {
-            return this.nextBid(this.getDiceValue());
-        } catch (ErrorTypeException e) {
-            throw new IllegalStateException();
-        }
+        return this.nextBid(this.getDiceValue());
     }
 }

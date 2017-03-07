@@ -19,14 +19,14 @@ public class BidTest {
         try {
             bid = new BidImpl(-1, 1);
             throw new IllegalStateException("Under limit");
-        } catch (ErrorTypeException ex) {
-            assertEquals(ex.getErrorType(), ErrorType.GAME_INVALID_BID);
+        } catch (IllegalArgumentException ex) {
+            //ok
         }
         try {
             bid = new BidImpl(0, 0);
             throw new IllegalStateException("Under limit");
-        } catch (ErrorTypeException ex) {
-            assertEquals(ex.getErrorType(), ErrorType.GAME_INVALID_BID);
+        } catch (IllegalArgumentException ex) {
+           //ok
         }
 
         try {
@@ -75,7 +75,7 @@ public class BidTest {
             bid = new BidImpl(3, 1);
             assertEquals(bid.nextBid(), new BidImpl(4, 1));
             assertEquals(bid.nextBid(2), new BidImpl(7, 2));
-        } catch (ErrorTypeException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Should be ok");
         }
     }

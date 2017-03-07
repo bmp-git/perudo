@@ -170,13 +170,6 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public synchronized boolean canCallPalifico(final User user) {
-        return this.getUsers().contains(user) && this.getUserStatus(user).getRemainingDice() == 1
-                && !this.getUserStatus(user).hasCalledPalifico() && !this.turnIsPalifico()
-                && !this.getCurrentBid().isPresent();
-    }
-
-    @Override
     public int getId() {
         return this.id;
     }

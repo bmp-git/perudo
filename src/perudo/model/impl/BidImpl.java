@@ -26,9 +26,12 @@ public class BidImpl implements Bid {
      * @throws ErrorTypeException
      *             if the arguments are invalid
      */
-    public BidImpl(final int quantity, final int diceValue) throws ErrorTypeException {
-        if (quantity < 0 || diceValue < 1) {
-            throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
+    public BidImpl(final int quantity, final int diceValue) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Quantity should be at least 0");
+        }
+        if (diceValue < 1) {
+            throw new IllegalArgumentException("Dice value should be at least 1");
         }
         this.diceValue = diceValue;
         this.quantity = quantity;
@@ -120,7 +123,7 @@ public class BidImpl implements Bid {
     }
 
     @Override
-    public Bid nextBid(final int diceValue) throws ErrorTypeException {
+    public Bid nextBid(final int diceValue){
         int quantity = 0;
         if (diceValue == 1 && this.diceValue == 1) {
             quantity = this.quantity + 1;

@@ -7,7 +7,6 @@ import perudo.model.Game;
 import perudo.model.User;
 import perudo.model.impl.BidImpl;
 import perudo.utility.ErrorType;
-import perudo.utility.ErrorTypeException;
 
 public class EasyBot extends AbstractBot {
     private final Random random;
@@ -23,17 +22,17 @@ public class EasyBot extends AbstractBot {
             return;
         }
 
-        if (!this.game.getTurn().equals(this.user) && !this.game.canCallPalifico(this.user)) {
+        if (!this.game.getTurn().equals(this.user) && !this.game.canPalifico(this.user)) {
             return;
         }
 
         this.sleep(3000, 3000);
 
-        if (this.game.canCallPalifico(this.user)) {
+        if (this.game.canPalifico(this.user)) {
             this.controller.callPalifico(this.user);
             return;
         }
-        
+
         this.sleep(2000, 2000);
 
         // my turn
@@ -56,13 +55,8 @@ public class EasyBot extends AbstractBot {
                 if (this.game.turnIsPalifico() || this.random.nextBoolean()) {
                     this.controller.play(this.user, this.game.getCurrentBid().get().nextBid());
                 } else {
-                    try {
-                        this.controller.play(this.user,
-                                this.game.getCurrentBid().get().nextBid(this.getMostPresentDiceValue(this.game)));
-                    } catch (ErrorTypeException e) {
-                        e.printStackTrace();
-                        this.controller.play(this.user, this.game.getCurrentBid().get().nextBid());
-                    }
+                    this.controller.play(this.user,
+                            this.game.getCurrentBid().get().nextBid(this.getMostPresentDiceValue(this.game)));
                 }
                 return;
 
@@ -73,17 +67,12 @@ public class EasyBot extends AbstractBot {
                 if (value != 1) {
                     quantity += this.game.getUserStatus(this.user).getDiceCount().get(1);
                 }
-                try {
-                    this.controller.play(this.user, new BidImpl(quantity, value));
-                    return;
-                } catch (ErrorTypeException e) {
-                    e.printStackTrace();
-                    this.controller.closeNow(this.user);
-                }
+                this.controller.play(this.user, new BidImpl(quantity, value));
+                return;
             }
         }
     }
-    
+
     private void sleep(final int min_ms, final int rnd_ms) {
         try {
             // sleep from min_ms to min_ms + rnd_ms seconds
