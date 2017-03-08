@@ -132,11 +132,7 @@ public enum ErrorType {
     /**
      * Network error or application not updated.
      */
-    METHOD_INVALID(5002, "Network error or application not updated."),
-    /**
-     * No error.
-     */
-    NONE(0, "No error.");
+    METHOD_INVALID(5002, "Network error or application not updated.");
 
     private final int id;
     private final String message;
