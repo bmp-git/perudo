@@ -2,9 +2,18 @@ package perudo.utility;
 
 import java.time.Duration;
 
-public class DiffTime {
+/**
+ * This static class represent the difference in terms of time with the server.
+ * This class should be used only by client when using a controller over
+ * network.
+ */
+public final class DiffTime {
 
-    private static Duration diffTime = Duration.ZERO;
+    private static Duration deltaTime = Duration.ZERO;
+
+    private DiffTime() {
+
+    }
 
     /**
      * Gets the time difference from server and client. This Duration represent
@@ -13,7 +22,7 @@ public class DiffTime {
      * @return the difference between client and server time
      */
     public static Duration getServerDiffTime() {
-        return diffTime;
+        return deltaTime;
     }
 
     /**
@@ -24,6 +33,6 @@ public class DiffTime {
      *            the difference between client and server time
      */
     public static void setServerDiffTime(final Duration diff) {
-        diffTime = diff;
+        deltaTime = diff;
     }
 }

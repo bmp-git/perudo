@@ -3,44 +3,74 @@ package perudo.utility;
 import java.util.LinkedList;
 import java.util.List;
 
-public class IdDispenser {
+/**
+ * This class contains the dispenser for the model's id.
+ */
+public final class IdDispenser {
+
     private static final int MAX_UNUSED_ID = 128;
+    private static final IdDispenser LOBBIES = new IdDispenser();
+    private static final IdDispenser GAMES = new IdDispenser();
+    private static final IdDispenser USER = new IdDispenser();
 
     private int nextId;
-    private List<Integer> unusedId;
+    private final List<Integer> unusedId;
 
     private IdDispenser() {
         this.nextId = 1;
         this.unusedId = new LinkedList<>();
     }
 
+    /**
+     * Gets the next generated id.
+     * 
+     * @return the id
+     */
     public synchronized int getNextId() {
-        return (unusedId.size() > MAX_UNUSED_ID || (nextId == Integer.MAX_VALUE && unusedId.size() > 0))
+        return (unusedId.size() > MAX_UNUSED_ID || (nextId == Integer.MAX_VALUE && !unusedId.isEmpty()))
                 ? unusedId.remove(0) : nextId++;
     }
 
-    public synchronized void freeId(int id) {
+    /**
+     * Frees an id generated in the past.
+     * 
+     * @param id
+     *            the id to free
+     */
+    public synchronized void freeId(final int id) {
+        if (id >= nextId) {
+            throw new IllegalArgumentException("Can't free a non-generated id.");
+        }
         if (!unusedId.contains(id)) {
             unusedId.add(id);
         }
     }
 
-    private static final IdDispenser lobbies = new IdDispenser();
-
+    /**
+     * Gets the IdDispenser for the lobbies.
+     * 
+     * @return the IdDispenser required
+     */
     public static IdDispenser getLobbyIdDispenser() {
-        return lobbies;
+        return LOBBIES;
     }
 
-    private static final IdDispenser games = new IdDispenser();
-
+    /**
+     * Gets the IdDispenser for the games.
+     * 
+     * @return the IdDispenser required
+     */
     public static IdDispenser getGameIdDispenser() {
-        return games;
+        return GAMES;
     }
 
-    private static final IdDispenser users = new IdDispenser();
-
+    /**
+     * Gets the IdDispenser for the users.
+     * 
+     * @return the IdDispenser required
+     */
     public static IdDispenser getUserIdDispenser() {
-        return users;
+        return USER;
     }
 
 }
