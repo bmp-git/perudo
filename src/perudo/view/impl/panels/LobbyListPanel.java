@@ -1,6 +1,5 @@
 package perudo.view.impl.panels;
 
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -24,73 +23,92 @@ import perudo.view.impl.ControllerSingleton;
 import perudo.view.impl.GUIUtility;
 import perudo.view.impl.StandardGUIFactory;
 
+/**
+ * Panel rappresenting a list of lobby panels.
+ */
 public class LobbyListPanel extends JPanel {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final GUIFactory factory;
-    private final JPanel pnlExtern;
-    private final JPanel pnlLobbyList;
-    private final CreateLobbyPanel pnlCreateLobby;
-    private final ChangeNamePanel pnlChangeName;
+    private static final int TOP_BOT_INSETS = 5;
 
+    private final JPanel pnlLobbyList;
     private final GridBagConstraints cnst;
-    private final JButton btnCreateLobby;
-    private final JButton btnChangeUsername;
     private Optional<User> user;
 
-    
+    /**
+     * Initialize the list panel.
+     */
     public LobbyListPanel() {
         this.setLayout(new BorderLayout());
-        this.factory = new StandardGUIFactory();
+        final GUIFactory factory = new StandardGUIFactory();
         this.user = Optional.empty();
-        this.pnlCreateLobby = (CreateLobbyPanel) this.factory.createCreateLobbyPanel();
-        this.pnlChangeName = (ChangeNamePanel) this.factory.createChangeNamePanel();
+        final CreateLobbyPanel pnlCreateLobby = new CreateLobbyPanel();
+        final ChangeNamePanel pnlChangeName = new ChangeNamePanel();
 
-        this.pnlLobbyList = this.factory.createPanel();
+        this.pnlLobbyList = factory.createPanel();
         this.pnlLobbyList.setLayout(new GridBagLayout());
-        pnlExtern = this.factory.createPanel();
+        final JPanel pnlExtern = factory.createPanel();
         pnlExtern.setLayout(new FlowLayout());
         pnlExtern.add(this.pnlLobbyList);
-        this.pnlExtern.setBorder(new TitledBorder("Lobbies list"));
+        pnlExtern.setBorder(new TitledBorder("Lobbies list"));
         this.cnst = new GridBagConstraints();
         this.cnst.gridy = 0;
-        this.cnst.insets = new Insets(5,0,5,0);
-        
-        JPanel paneldown = this.factory.createPanel();
-        paneldown.setLayout(new GridLayout(2,1));
-        this.btnCreateLobby = (JButton) this.factory.createButton("Create new lobby");
-        this.btnCreateLobby.addActionListener(e -> {
-            int n = JOptionPane.showConfirmDialog(this, this.pnlCreateLobby, CreateLobbyPanel.TITLE, JOptionPane.OK_CANCEL_OPTION,0,GUIUtility.getIcon(CreateLobbyPanel.ICON_RESPATH));
-            if(n == JOptionPane.YES_OPTION && this.user.isPresent() && this.pnlCreateLobby.getName().trim().length() > 0) {
-                    ControllerSingleton.getController().createLobby(this.user.get(), this.pnlCreateLobby.getGameSettings());
+        this.cnst.insets = new Insets(TOP_BOT_INSETS, 0, TOP_BOT_INSETS, 0);
+
+        final JPanel paneldown = factory.createPanel();
+        paneldown.setLayout(new GridLayout(2, 1));
+        final JButton btnCreateLobby = (JButton) factory.createButton("Create new lobby");
+        btnCreateLobby.addActionListener(e -> {
+            final int n = JOptionPane.showConfirmDialog(this, pnlCreateLobby, CreateLobbyPanel.TITLE,
+                    JOptionPane.OK_CANCEL_OPTION, 0, GUIUtility.getIcon(CreateLobbyPanel.ICON_RESPATH));
+            if (n == JOptionPane.YES_OPTION && this.user.isPresent() && pnlCreateLobby.getName().trim().length() > 0) {
+                ControllerSingleton.getController().createLobby(this.user.get(), pnlCreateLobby.getGameSettings());
             }
         });
-        paneldown.add(this.btnCreateLobby);
-        this.btnChangeUsername = (JButton) this.factory.createButton("Change username");
-        this.btnChangeUsername.addActionListener(e -> {
-            int n = JOptionPane.showConfirmDialog(this, this.pnlChangeName, ChangeNamePanel.TITLE, JOptionPane.OK_CANCEL_OPTION);
-            if(n == JOptionPane.YES_OPTION && this.user.isPresent() && this.pnlChangeName.getName().trim().length() > 0) {
-                ControllerSingleton.getController().changeUserName(this.user.get(), this.pnlChangeName.getName());
+        paneldown.add(btnCreateLobby);
+        final JButton btnChangeUsername = (JButton) factory.createButton("Change username");
+        btnChangeUsername.addActionListener(e -> {
+            final int n = JOptionPane.showConfirmDialog(this, pnlChangeName, ChangeNamePanel.TITLE, JOptionPane.OK_CANCEL_OPTION);
+            if (n == JOptionPane.YES_OPTION && this.user.isPresent() && pnlChangeName.getName().trim().length() > 0) {
+                ControllerSingleton.getController().changeUserName(this.user.get(), pnlChangeName.getName());
             }
         });
-        paneldown.add(this.btnChangeUsername);
+        paneldown.add(btnChangeUsername);
         this.add(new JScrollPane(pnlExtern), BorderLayout.CENTER);
-        this.add(paneldown,BorderLayout.SOUTH);
-        
+        this.add(paneldown, BorderLayout.SOUTH);
+
     }
-    
+
+    /**
+     * Set the user using panel.
+     * 
+     * @param user
+     *            the user usign panel
+     */
     public void setUser(final User user) {
         this.user = Optional.of(user);
     }
 
-    public void addLobby(final LobbyPanel lobby) {    
-        this.pnlLobbyList.add(lobby,cnst);
+    /**
+     * Add lobby to list.
+     * 
+     * @param lobby
+     *            the lobby to list
+     */
+    public void addLobby(final LobbyPanel lobby) {
+        this.pnlLobbyList.add(lobby, cnst);
         this.cnst.gridy++;
     }
-    
+
+    /**
+     * Update the gived lobby.
+     * 
+     * @param lobby
+     *            the lobby to update
+     */
     public void updateLobby(final Lobby lobby) {
         for (int i = 0; i < this.pnlLobbyList.getComponentCount(); i++) {
             if (((LobbyPanel) this.pnlLobbyList.getComponent(i)).getLobby().equals(lobby)) {
@@ -98,7 +116,13 @@ public class LobbyListPanel extends JPanel {
             }
         }
     }
-    
+
+    /**
+     * Remove the lobby.
+     * 
+     * @param lobby
+     *            the lobby to remove
+     */
     public void removeLobby(final Lobby lobby) {
         for (int i = 0; i < this.pnlLobbyList.getComponentCount(); i++) {
             if (((LobbyPanel) this.pnlLobbyList.getComponent(i)).getLobby().equals(lobby)) {
@@ -107,11 +131,16 @@ public class LobbyListPanel extends JPanel {
             }
         }
     }
-    
+
+    /**
+     * Get the list of lobbies.
+     * 
+     * @return the list of lobbies
+     */
     public List<Lobby> getLobbies() {
-        List<Lobby> l = new ArrayList<>();
+        final List<Lobby> l = new ArrayList<>();
         for (int i = 0; i < this.pnlLobbyList.getComponentCount(); i++) {
-            l.add(((LobbyPanel)this.pnlLobbyList.getComponent(i)).getLobby());
+            l.add(((LobbyPanel) this.pnlLobbyList.getComponent(i)).getLobby());
         }
         return l;
     }

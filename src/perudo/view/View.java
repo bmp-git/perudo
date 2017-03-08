@@ -2,10 +2,15 @@ package perudo.view;
 
 import java.io.Closeable;
 import java.util.Set;
-import perudo.model.*;
+import perudo.model.Game;
+import perudo.model.Lobby;
+import perudo.model.User;
 import perudo.utility.ErrorType;
 import perudo.utility.Response;
 
+/**
+ * Defines a View that can operate with a controller.
+ */
 public interface View extends Closeable {
 
     /**

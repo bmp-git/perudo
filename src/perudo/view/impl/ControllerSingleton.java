@@ -6,32 +6,70 @@ import perudo.controller.Controller;
 import perudo.controller.impl.StandardControllerImpl;
 import perudo.controller.net.client.ControllerClientImpl;
 
-public class ControllerSingleton {
+/**
+ * Class containing a controller with Singleton pattern.
+ */
+public final class ControllerSingleton {
     private static Controller SINGLETON = null;
     private static ControllerType CONTROLLER_TYPE = null;
 
     private ControllerSingleton() {
     };
 
+    /**
+     * Enumeration that define the type of controller.
+     *
+     */
     public enum ControllerType {
-        SINGLEPLAYER, MULTIPLAYER;
+        /**
+         * Define a singleplayer controller.
+         */
+        SINGLEPLAYER,
+        /**
+         * Define a multiplayer controller.
+         */
+        MULTIPLAYER;
     }
 
+    /**
+     * Get the controller initialized.
+     * 
+     * @return the controller istance
+     */
     public static Controller getController() {
         return SINGLETON;
     }
 
+    /**
+     * Get the controller initialized type.
+     * 
+     * @return the controller type
+     */
+    public static ControllerType getControllerType() {
+        return CONTROLLER_TYPE;
+    }
+
+    /**
+     * Set the controller with a StandardController.
+     */
     public static void setSingleplayerController() {
         SINGLETON = new StandardControllerImpl();
         CONTROLLER_TYPE = ControllerType.SINGLEPLAYER;
     }
 
-    public static void setMultiplayerController(String ip, int port) throws IOException {
+    /**
+     * Set the controller with a NetworkController.
+     * 
+     * @param ip
+     *            server ip
+     * @param port
+     *            server executing port
+     * @throws IOException
+     *             if the connection is not possible
+     * 
+     */
+    public static void setMultiplayerController(final String ip, final int port) throws IOException {
         SINGLETON = ControllerClientImpl.createFromServerName(ip, port);
         CONTROLLER_TYPE = ControllerType.MULTIPLAYER;
-    }
-
-    public static ControllerType getControllerType() {
-        return CONTROLLER_TYPE;
     }
 }

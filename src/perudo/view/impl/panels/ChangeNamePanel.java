@@ -10,29 +10,42 @@ import javax.swing.JTextField;
 import perudo.view.GUIFactory;
 import perudo.view.impl.StandardGUIFactory;
 
+/**
+ * Panel rappresenting a form to change name.
+ */
 public class ChangeNamePanel extends JPanel {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    public final static String TITLE = "Change username...";
+    /**
+     * Panel title.
+     */
+    public static final String TITLE = "Change username...";
     private static final String LABEL_NAME = "New name";
-    private final GUIFactory factory;
-    private JTextField txfName;
-    
+    private final JTextField txfName;
+
+    /**
+     * Initialize panel.
+     */
     public ChangeNamePanel() {
         super();
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.factory = new StandardGUIFactory();
-        this.txfName = (JTextField) this.factory.createTextField();
-        
+        final GUIFactory factory = new StandardGUIFactory();
+        this.txfName = (JTextField) factory.createTextField();
+
         this.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(this.factory.createLabel(LABEL_NAME));
+        this.add(factory.createLabel(LABEL_NAME));
         this.add(this.txfName);
         this.add(Box.createRigidArea(new Dimension(0, 10)));
     }
-    
+
+    /**
+     * Get new name from panel.
+     * 
+     * @return the new name
+     */
     public String getName() {
         return this.txfName.getText();
     }

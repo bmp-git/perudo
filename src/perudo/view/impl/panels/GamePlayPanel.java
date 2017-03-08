@@ -1,6 +1,10 @@
 package perudo.view.impl.panels;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -11,6 +15,9 @@ import perudo.view.GUIFactory;
 import perudo.view.impl.ControllerSingleton;
 import perudo.view.impl.StandardGUIFactory;
 
+/**
+ * Panel rappresenting elements to play the game.
+ */
 public class GamePlayPanel extends JPanel {
 
     /**
@@ -21,40 +28,76 @@ public class GamePlayPanel extends JPanel {
     private static final String DUBIT_BUTTON = "Dubit";
     private static final String URGE_BUTTON = "Urge";
     private static final String PALIFICO_BUTTON = "Palific";
+    private static final int TOP_BOT_INSETS = 5;
+    private static final int BORDER_SIZE = 7;
 
-    private final GUIFactory factory;
+    private Game game;
+    private User user;
+
     private final BidPanel pnlBid;
     private final JButton btnPlay;
     private final JButton btnDubit;
     private final JButton btnUrge;
     private final JButton btnPalifico;
 
-    public GamePlayPanel(final Game game, final User user) {
+    /**
+     * Initialize and create the gameplay panel.
+     */
+    public GamePlayPanel() {
         super();
-        this.setLayout(new FlowLayout());
-        this.pnlBid = new BidPanel(game);
-        this.factory = new StandardGUIFactory();
-        this.btnPlay = (JButton) this.factory.createButton(PLAY_BUTTON);
+        this.setLayout(new GridBagLayout());
+        final GridBagConstraints cnst = new GridBagConstraints();
+        cnst.gridy = 0;
+        cnst.insets = new Insets(TOP_BOT_INSETS, 0, TOP_BOT_INSETS, 0);
+        final GUIFactory factory = new StandardGUIFactory();
+        final JPanel pnlInner = factory.createPanel(new FlowLayout());
+        pnlInner.setBorder(factory.createBorder(Color.BLACK, BORDER_SIZE));
+        this.pnlBid = new BidPanel();
+        this.btnPlay = (JButton) factory.createButton(PLAY_BUTTON);
         this.btnPlay.addActionListener(l -> {
-            ControllerSingleton.getController().play(user, this.pnlBid.getBid());
+            ControllerSingleton.getController().play(this.user, this.pnlBid.getBid());
         });
-        this.btnDubit = (JButton) this.factory.createButton(DUBIT_BUTTON);
+        this.btnDubit = (JButton) factory.createButton(DUBIT_BUTTON);
         this.btnDubit.addActionListener(l -> {
-            ControllerSingleton.getController().doubt(user);
+            ControllerSingleton.getController().doubt(this.user);
         });
-        this.btnUrge = (JButton) this.factory.createButton(URGE_BUTTON);
+        this.btnUrge = (JButton) factory.createButton(URGE_BUTTON);
         this.btnUrge.addActionListener(l -> {
-            ControllerSingleton.getController().urge(user);
+            ControllerSingleton.getController().urge(this.user);
         });
-        this.btnPalifico = (JButton) this.factory.createButton(PALIFICO_BUTTON);
+        this.btnPalifico = (JButton) factory.createButton(PALIFICO_BUTTON);
         this.btnPalifico.addActionListener(l -> {
-            ControllerSingleton.getController().callPalifico(user);
+            ControllerSingleton.getController().callPalifico(this.user);
         });
-        this.add(this.pnlBid);
-        this.add(this.btnPlay);
-        this.add(this.btnDubit);
-        this.add(this.btnUrge);
-        this.add(this.btnPalifico);
+
+        pnlInner.add(this.pnlBid);
+        pnlInner.add(this.btnPlay);
+        pnlInner.add(this.btnDubit);
+        pnlInner.add(this.btnUrge);
+        pnlInner.add(this.btnPalifico);
+        this.add(pnlInner);
     }
 
+    /**
+     * Set game and user who is using the panel.
+     * 
+     * @param game
+     *            the game updated
+     * @param user
+     *            the user using panel
+     */
+    public void setGame(final Game game, final User user) {
+        this.game = game;
+        this.user = user;
+        this.pnlBid.setGame(this.game);
+        this.pnlBid.setBidEnabled(this.game.getTurn().equals(this.user));
+        updateButtons();
+    }
+
+    private void updateButtons() {
+        this.btnPlay.setEnabled(this.game.canPlay(this.user) ? true : false);
+        this.btnDubit.setEnabled(this.game.canDoubt(this.user) ? true : false);
+        this.btnUrge.setEnabled(this.game.canUrge(this.user) ? true : false);
+        this.btnPalifico.setEnabled(this.game.canPalifico(this.user) ? true : false);
+    }
 }

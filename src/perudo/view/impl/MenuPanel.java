@@ -18,12 +18,17 @@ import perudo.view.impl.panels.LobbyPanel;
 import perudo.view.impl.panels.MenuBottomPanel;
 import perudo.view.impl.panels.UserListPanel;
 
+/**
+ * Models a JPanel made for manage lobbies and users.
+ *
+ */
 public class MenuPanel extends JPanel {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
+    private static final int LOBBIES_LIST_ELEMENTS_BORDER_SIZE = 7;
     private final GUIFactory factory;
 
     private final TopMenu pnlTopMenu;
@@ -35,18 +40,20 @@ public class MenuPanel extends JPanel {
     private Optional<LobbyInfoPanel> pnlLobbyInfoActive;
     private Optional<User> user;
 
+    /**
+     * Create all menu sub panels.
+     */
     public MenuPanel() {
         super();
         this.factory = new StandardGUIFactory();
         this.setLayout(new BorderLayout());
         this.user = Optional.empty();
         this.pnlLobbyInfoActive = Optional.empty();
-        this.pnlTopMenu = (TopMenu) this.factory.createTopMenu();
-        this.pnlBottomMenu = (MenuBottomPanel) this.factory.createMenuBottomPanel();
+        this.pnlTopMenu = new TopMenu();
+        this.pnlBottomMenu = new MenuBottomPanel();
         this.pnlLobbyList = new LobbyListPanel();
         this.pnlUserList = new UserListPanel();
-        this.pnlCenter = this.factory.createPanel();
-        this.pnlCenter.setLayout(new BorderLayout());
+        this.pnlCenter = this.factory.createPanel(new BorderLayout());
         this.pnlCenter.setBorder(new TitledBorder("Lobby Info"));
 
         this.add(pnlLobbyList, BorderLayout.WEST);
@@ -56,15 +63,23 @@ public class MenuPanel extends JPanel {
         this.add(pnlBottomMenu, BorderLayout.SOUTH);
     }
 
+    /**
+     * Set the user using the panel.
+     * 
+     * @param user
+     *            the user to set
+     */
     public void setUser(final User user) {
         this.user = Optional.of(user);
         this.pnlTopMenu.setUser(user);
         this.pnlBottomMenu.setUser(user);
         this.pnlLobbyList.setUser(user);
         this.pnlUserList.setUser(user);
-        // this.updateUsers(user);
     }
 
+    /**
+     * Update all list in panel: lobbies, games and users.
+     */
     public void updateAll() {
         if (this.user.isPresent()) {
             ControllerSingleton.getController().getUsers(this.user.get());
@@ -80,42 +95,48 @@ public class MenuPanel extends JPanel {
         this.pnlCenter.revalidate();
     }
 
+    /**
+     * Add a lobby to the panel.
+     * 
+     * @param lobby
+     *            the lobby to add
+     */
     public void addLobby(final Lobby lobby) {
-        LobbyPanel p = (LobbyPanel) this.factory.createLobbyPanel(lobby);
+        final LobbyPanel p = new LobbyPanel(lobby);
         class ML implements MouseListener {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(final MouseEvent event) {
                 pnlCenter.removeAll();
                 pnlLobbyInfoActive = Optional
-                        .of(new LobbyInfoPanel(((LobbyPanel) e.getSource()).getLobby(), MenuPanel.this.user.get()));
+                        .of(new LobbyInfoPanel(((LobbyPanel) event.getSource()).getLobby(), MenuPanel.this.user.get()));
                 pnlCenter.add(pnlLobbyInfoActive.get(), BorderLayout.CENTER);
                 pnlCenter.repaint();
                 pnlCenter.revalidate();
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {
+            public void mousePressed(final MouseEvent event) {
                 pnlCenter.removeAll();
                 pnlLobbyInfoActive = Optional
-                        .of(new LobbyInfoPanel(((LobbyPanel) e.getSource()).getLobby(), MenuPanel.this.user.get()));
+                        .of(new LobbyInfoPanel(((LobbyPanel) event.getSource()).getLobby(), MenuPanel.this.user.get()));
                 pnlCenter.add(pnlLobbyInfoActive.get(), BorderLayout.CENTER);
                 pnlCenter.repaint();
                 pnlCenter.revalidate();
             }
 
             @Override
-            public void mouseReleased(MouseEvent e) {
+            public void mouseReleased(final MouseEvent event) {
             }
 
             @Override
-            public void mouseEntered(MouseEvent e) {
-                ((LobbyPanel) e.getSource()).setBorder(factory.createBorder(Color.GRAY, 7));
+            public void mouseEntered(final MouseEvent event) {
+                ((LobbyPanel) event.getSource()).setBorder(factory.createBorder(Color.GRAY, LOBBIES_LIST_ELEMENTS_BORDER_SIZE));
                 setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
 
             @Override
-            public void mouseExited(MouseEvent e) {
-                ((LobbyPanel) e.getSource()).setBorder(factory.createBorder(Color.BLACK, 7));
+            public void mouseExited(final MouseEvent event) {
+                ((LobbyPanel) event.getSource()).setBorder(factory.createBorder(Color.BLACK, LOBBIES_LIST_ELEMENTS_BORDER_SIZE));
                 setCursor(Cursor.getDefaultCursor());
             }
 
@@ -128,6 +149,12 @@ public class MenuPanel extends JPanel {
         }
     }
 
+    /**
+     * Remove a lobby from the panel.
+     * 
+     * @param lobby
+     *            the lobby to remove
+     */
     public void removeLobby(final Lobby lobby) {
         if (this.pnlLobbyInfoActive.isPresent() && this.pnlLobbyInfoActive.get().getLobby().equals(lobby)) {
             this.pnlLobbyInfoActive = Optional.empty();
@@ -138,6 +165,12 @@ public class MenuPanel extends JPanel {
         this.pnlLobbyList.removeLobby(lobby);
     }
 
+    /**
+     * Update lobby in the panel, if not present get added.
+     * 
+     * @param lobby
+     *            the lobby to update
+     */
     public void updateLobby(final Lobby lobby) {
         if (this.pnlLobbyInfoActive.isPresent() && this.pnlLobbyInfoActive.get().getLobby().equals(lobby)) {
             this.pnlLobbyInfoActive = Optional.of(new LobbyInfoPanel(lobby, this.user.get()));
@@ -150,14 +183,32 @@ public class MenuPanel extends JPanel {
         }
     }
 
+    /**
+     * Add a user to the panel.
+     * 
+     * @param user
+     *            the user to add
+     */
     public void addUser(final User user) {
         this.pnlUserList.addUser(user);
     }
 
+    /**
+     * Remove a user from the panel.
+     * 
+     * @param user
+     *            the user to remove
+     */
     public void removeUser(final User user) {
         this.pnlUserList.removeUser(user);
     }
 
+    /**
+     * Update user in the panel, if not present get added.
+     * 
+     * @param user
+     *            the user to update
+     */
     public void updateUsers(final User user) {
         this.pnlUserList.updateUser(user);
     }

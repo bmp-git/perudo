@@ -18,9 +18,18 @@ import javax.swing.WindowConstants;
 
 import perudo.view.GUIFactory;
 
-public class Startpage extends JFrame {
+/**
+ * Frame modelling a simple menu for choosing playing type.
+ */
+public class StartFrame extends JFrame {
 
+    /**
+     * Enumeration listing possible choices in menu.
+     */
     public enum StartingFrameResult {
+        /**
+         * Results.
+         */
         MULTIPLAYER, SINGLEPLAYER, EXIT;
     }
 
@@ -28,24 +37,25 @@ public class Startpage extends JFrame {
      * 
      */
     private static final long serialVersionUID = -3727819554802551366L;
-
     private static final String TITLE = "Perudo";
     private static final String EXIT_NAME = "Quitting..";
     private static final String EXIT_TEXT = "Do you really want to quit?";
     private static final String LOGO_RESPATH = "/images/perudo-logo.png";
     private static final String ICON_RESPATH = "/images/perudo-logo.png";
+    private static final int BUTTONS_PADD = 25;
 
-    private final GUIFactory factory;
-    private JPanel main;
-    private JPanel top;
-    private JButton multiplayer;
-    private JButton singleplayer;
-    private JButton exit;
+    private final JButton multiplayer;
+    private final JButton singleplayer;
+    private final JButton exit;
     private JLabel logo;
     private Optional<StartingFrameResult> result;
 
-    public Startpage() {
-        this.factory = new StandardGUIFactory();
+    /**
+     * Initialize and create the menu frame.
+     */
+    public StartFrame() {
+        super();
+        final GUIFactory factory = new StandardGUIFactory();
         this.result = Optional.empty();
 
         this.setTitle(TITLE);
@@ -57,43 +67,33 @@ public class Startpage extends JFrame {
         this.setResizable(false);
 
         this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                int n = JOptionPane.showConfirmDialog(Startpage.this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
+            public void windowClosing(final WindowEvent event) {
+                final int n = JOptionPane.showConfirmDialog(StartFrame.this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
                 if (n == JOptionPane.YES_OPTION) {
-                    Startpage.this.result = Optional.of(StartingFrameResult.EXIT);
-                    Startpage.this.setVisible(false);
-                    Startpage.this.dispose();
+                    StartFrame.this.result = Optional.of(StartingFrameResult.EXIT);
+                    StartFrame.this.setVisible(false);
+                    StartFrame.this.dispose();
                 }
             }
         });
 
-        createMainPanel();
-        createTopPanel();
+        final JPanel main = factory.createPanel(new GridBagLayout());
 
-        this.getContentPane().add(top, BorderLayout.NORTH);
-        this.getContentPane().add(main, BorderLayout.CENTER);
-
-    }
-
-    private void createMainPanel() {
-        main = this.factory.createPanel();
-        main.setLayout(new GridBagLayout());
-
-        multiplayer = (JButton) factory.createButton("Multiplayer");
-        multiplayer.addActionListener(e -> {
+        this.multiplayer = (JButton) factory.createButton("Multiplayer");
+        this.multiplayer.addActionListener(e -> {
             this.result = Optional.of(StartingFrameResult.MULTIPLAYER);
             this.setVisible(false);
             this.dispose();
         });
-        singleplayer = (JButton) factory.createButton("Singleplayer");
-        singleplayer.addActionListener(e -> {
+        this.singleplayer = (JButton) factory.createButton("Singleplayer");
+        this.singleplayer.addActionListener(e -> {
             this.result = Optional.of(StartingFrameResult.SINGLEPLAYER);
             this.setVisible(false);
             this.dispose();
         });
-        exit = (JButton) factory.createButton("Exit");
-        exit.addActionListener(a -> {
-            int n = JOptionPane.showConfirmDialog(this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
+        this.exit = (JButton) factory.createButton("Exit");
+        this.exit.addActionListener(a -> {
+            final int n = JOptionPane.showConfirmDialog(this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
             if (n == JOptionPane.YES_OPTION) {
                 this.result = Optional.of(StartingFrameResult.EXIT);
                 this.setVisible(false);
@@ -103,29 +103,39 @@ public class Startpage extends JFrame {
 
         final GridBagConstraints cnst = new GridBagConstraints();
         cnst.gridy = 0;
-        cnst.insets = new Insets(25, 25, 25, 25);
-        main.add(multiplayer, cnst);
+        cnst.insets = new Insets(BUTTONS_PADD, BUTTONS_PADD, BUTTONS_PADD, BUTTONS_PADD);
+        main.add(this.multiplayer, cnst);
         cnst.gridy++;
-        main.add(singleplayer, cnst);
+        main.add(this.singleplayer, cnst);
         cnst.gridy++;
-        main.add(exit, cnst);
+        main.add(this.exit, cnst);
         cnst.gridy++;
-    }
 
-    private void createTopPanel() {
-        top = this.factory.createPanel();
+        final JPanel top = factory.createPanel();
         try {
             this.logo = (JLabel) factory.createPicLabel(LOGO_RESPATH);
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
-        top.add(logo);
+        top.add(this.logo);
+
+        this.getContentPane().add(top, BorderLayout.NORTH);
+        this.getContentPane().add(main, BorderLayout.CENTER);
+
     }
 
+    /**
+     * Get the result of the start menu user choice.
+     * 
+     * @return the result
+     */
     public Optional<StartingFrameResult> getResult() {
         return this.result;
     }
 
+    /**
+     * Show the frame.
+     */
     public void showFrame() {
         GUIUtility.fitFramePacked(this);
     }

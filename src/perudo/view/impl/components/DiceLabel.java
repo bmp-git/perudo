@@ -8,6 +8,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+/**
+ * Label rappresenting a dice.
+ */
 public class DiceLabel extends JLabel {
 
     /**
@@ -15,29 +18,29 @@ public class DiceLabel extends JLabel {
      */
     private static final long serialVersionUID = 1L;
     private int value;
-    
 
-    public DiceLabel(int value, int size) {
-        super();
-        this.value = value;
-        try {
-            this.setIcon(
-                    new ImageIcon(ImageIO.read(new File(DiceLabel.class.getResource("/images/d" + this.value + ".jpg").getPath()))
-                            .getScaledInstance(size, size, Image.SCALE_DEFAULT)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Get the dice value.
+     * 
+     * @return the dice value
+     */
     public int getValue() {
         return this.value;
     }
 
-    public void setValue(int value, int size) {
+    /**
+     * Set the dice value.
+     * 
+     * @param value
+     *            the dice value
+     * @param size
+     *            the size of height and width of dice image
+     */
+    public void setValue(final int value, final int size) {
         this.value = value;
         try {
-            this.setIcon(
-                    new ImageIcon(ImageIO.read(new File(DiceLabel.class.getResource("/images/d" + this.value + ".jpg").getPath()))
+            this.setIcon(new ImageIcon(
+                    ImageIO.read(new File(DiceLabel.class.getResource("/images/dices/d" + this.value + ".jpg").getPath()))
                             .getScaledInstance(size, size, Image.SCALE_DEFAULT)));
         } catch (IOException e) {
             e.printStackTrace();

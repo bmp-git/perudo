@@ -5,13 +5,11 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import perudo.controller.Controller;
 import perudo.model.Game;
 import perudo.model.Lobby;
 import perudo.model.User;
@@ -20,6 +18,9 @@ import perudo.utility.Response;
 import perudo.view.GUIFactory;
 import perudo.view.View;
 
+/**
+ * Class implementing the View interface.
+ */
 public class ViewImpl implements View {
 
     private static final String TITLE = "Perudo";
@@ -27,36 +28,34 @@ public class ViewImpl implements View {
     private static final String EXIT_NAME = "Quitting..";
     private static final String EXIT_TEXT = "Do you really want to quit?";
 
-    private final Controller controller;
-    private final GUIFactory factory;
     private User user;
     private final JFrame mainFrame;
     private final CountDownLatch latch;
 
-    // to remove
-    private Lobby lbl;
     /* Application panels */
     private final MenuPanel menuPanel;
     private final GamePanel gamePanel;
 
+    /**
+     * Initialize the application view and show the menu panel in frame.
+     */
     public ViewImpl() {
-        this.controller = ControllerSingleton.getController();
-        this.factory = new StandardGUIFactory();
+        final GUIFactory factory = new StandardGUIFactory();
         this.latch = new CountDownLatch(1);
-        this.mainFrame = this.factory.createFrame(TITLE);
+        this.mainFrame = factory.createFrame(TITLE);
         this.mainFrame.setIconImage(GUIUtility.getIcon(ICON_RESPATH).getImage());
         this.mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.mainFrame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                int n = JOptionPane.showConfirmDialog(mainFrame, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
+            public void windowClosing(final WindowEvent event) {
+                final int n = JOptionPane.showConfirmDialog(mainFrame, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
                 if (n == JOptionPane.YES_OPTION) {
                     ControllerSingleton.getController().closeNow(user);
                 }
             }
         });
-        this.menuPanel = (MenuPanel) this.factory.createMenuPanel();
-        this.gamePanel = (GamePanel) this.factory.createGamePanel();
-        this.controller.initializeNewUser(this);
+        this.menuPanel = new MenuPanel();
+        this.gamePanel = new GamePanel();
+        ControllerSingleton.getController().initializeNewUser(this);
         this.mainFrame.setLocationByPlatform(true);
         this.showFrame();
         this.showPanel(menuPanel);
@@ -72,6 +71,9 @@ public class ViewImpl implements View {
         this.mainFrame.getContentPane().revalidate();
     }
 
+    /**
+     * Wait for the View closing.
+     */
     public void await() {
         try {
             this.latch.await();
@@ -177,8 +179,6 @@ public class ViewImpl implements View {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 menuPanel.updateLobby(lobby);
-                // to remove
-                lbl = lobby;
                 mainFrame.getContentPane().revalidate();
             }
         });
@@ -287,8 +287,12 @@ public class ViewImpl implements View {
 
     @Override
     public void gameEndedNotify(final Game game) {
-        // TODO Auto-generated method stub
-
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                gamePanel.gameEndedNotify(game);
+                mainFrame.getContentPane().revalidate();
+            }
+        });
     }
 
     @Override
@@ -304,15 +308,4 @@ public class ViewImpl implements View {
         this.mainFrame.dispose();
         latch.countDown();
     }
-
-    public User getUser() {
-        // TODO to remove
-        return this.user;
-    }
-    
-    public Lobby getLobby() {
-        // TODO to remove
-        return this.lbl;
-    }
-
 }
