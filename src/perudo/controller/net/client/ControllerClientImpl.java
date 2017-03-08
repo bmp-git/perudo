@@ -27,7 +27,11 @@ import perudo.view.View;
 /**
  * A Network implementation of Controller.
  */
-public class ControllerClientImpl implements Controller {
+public final class ControllerClientImpl implements Controller {
+    private final DatagramStream stream;
+    private View view;
+    private final ExecutorService executor;
+    private final MethodInvoker invoker;
 
     /**
      * Create a network controller from host and port.
@@ -44,14 +48,9 @@ public class ControllerClientImpl implements Controller {
      * @return the instance of initialized Controller
      */
     public static Controller createFromServerName(final String host, final int port) throws IOException {
-        Socket socket = new Socket(host, port);
+        final Socket socket = new Socket(host, port);
         return new ControllerClientImpl(socket);
     }
-
-    private final DatagramStream stream;
-    private View view;
-    private final ExecutorService executor;
-    private final MethodInvoker invoker;
 
     /**
      * Create a network controller from socket.
@@ -68,7 +67,7 @@ public class ControllerClientImpl implements Controller {
         this.executor = Executors.newSingleThreadExecutor();
         this.invoker = new MethodInvoker(View.class);
 
-        BiConsumer<Datagram, DatagramStream> receiver = (datagram, dgStream) -> {
+        final BiConsumer<Datagram, DatagramStream> receiver = (datagram, dgStream) -> {
             this.executor.execute(() -> {
                 try {
                     DiffTime.setServerDiffTime(Duration.between(Instant.now(), datagram.getCreationTime()));
@@ -78,14 +77,14 @@ public class ControllerClientImpl implements Controller {
                 }
             });
         };
-        BiConsumer<IOException, DatagramStream> ioExcHandler = (exception, dgStream) -> {
+        final BiConsumer<IOException, DatagramStream> ioExcHandler = (exception, dgStream) -> {
             try {
                 if (this.view != null) {
                     this.view.close();
                 }
                 this.close();
             } catch (IOException ex) {
-
+                System.out.println("ControllerClient: exception during closing.");
             }
         };
         this.stream = DatagramStreamImpl.initializeNewDatagramStream(socket.getInputStream(), socket.getOutputStream(),
