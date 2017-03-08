@@ -28,10 +28,10 @@ import perudo.view.View;
  * A Network implementation of Controller.
  */
 public final class ControllerClientImpl implements Controller {
+
     private final DatagramStream stream;
     private View view;
     private final ExecutorService executor;
-    private final MethodInvoker invoker;
 
     /**
      * Create a network controller from host and port.
@@ -65,13 +65,13 @@ public final class ControllerClientImpl implements Controller {
 
         this.view = null;
         this.executor = Executors.newSingleThreadExecutor();
-        this.invoker = new MethodInvoker(View.class);
+        final MethodInvoker invoker = new MethodInvoker(View.class);
 
         final BiConsumer<Datagram, DatagramStream> receiver = (datagram, dgStream) -> {
             this.executor.execute(() -> {
                 try {
                     DiffTime.setServerDiffTime(Duration.between(Instant.now(), datagram.getCreationTime()));
-                    this.invoker.execute(view, datagram);
+                    invoker.execute(view, datagram);
                 } catch (final ErrorTypeException e) {
                     this.view.showError(e.getErrorType());
                 }

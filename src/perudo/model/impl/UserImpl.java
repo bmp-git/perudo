@@ -9,7 +9,7 @@ import perudo.utility.IdDispenser;
 /**
  * The implementation of User interface.
  */
-public class UserImpl implements User {
+public final class UserImpl implements User {
 
     private static final long serialVersionUID = 3324295008073807947L;
 
@@ -25,6 +25,10 @@ public class UserImpl implements User {
      * The set of allowed characters for user name.
      */
     public static final String PERMITTED_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+    private final int id;
+    private final String name;
+    private final UserType type;
 
     /**
      * Gets a new user with a default prefix name. If the prefix generate
@@ -47,11 +51,9 @@ public class UserImpl implements User {
             try {
                 return new UserImpl(id, Integer.toString(id), type);
             } catch (ErrorTypeException e1) {
-
+                IdDispenser.getUserIdDispenser().freeId(id);
+                throw new IllegalStateException("Can't generate an anonymous user correctly");
             }
-            IdDispenser.getUserIdDispenser().freeId(id);
-            // can't generate an anonymous user correctly
-            throw new IllegalStateException();
         }
     }
 
@@ -90,10 +92,6 @@ public class UserImpl implements User {
         }
         return new UserImpl(IdDispenser.getUserIdDispenser().getNextId(), name, type);
     }
-
-    private final int id;
-    private final String name;
-    private final UserType type;
 
     private UserImpl(final int id, final String name, final UserType type) throws ErrorTypeException {
         this.id = id;
@@ -152,10 +150,7 @@ public class UserImpl implements User {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        UserImpl other = (UserImpl) obj;
-        if (id != other.id) {
-            return false;
-        }
-        return true;
+        final UserImpl other = (UserImpl) obj;
+        return id == other.id;
     }
 }

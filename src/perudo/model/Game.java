@@ -198,6 +198,14 @@ public interface Game extends Serializable {
         return this.getTurn().equals(user) && this.getCurrentBid().isPresent();
     }
 
+    /**
+     * Checks if a given user can urge.
+     * 
+     * @param user
+     *            the user to check
+     * 
+     * @return true if the user can urge, false otherwise
+     */
     default boolean canUrge(final User user) {
         return !hasLost(user) && !this.getTurn().equals(user) && this.getBidUser().isPresent()
                 && !this.getBidUser().get().equals(user);
@@ -255,10 +263,10 @@ public interface Game extends Serializable {
      * @return the maximum dice quantity
      */
     default int getMaxDiceQuantity(final int diceValue) {
-        int minDiceQuantity = this.getMinDiceQuantity(diceValue);
         if (!this.getCurrentBid().isPresent()) {
             return getTotalRemainingDice();
         }
+        final int minDiceQuantity = this.getMinDiceQuantity(diceValue);
         if (minDiceQuantity >= this.getTotalRemainingDice()) {
             return minDiceQuantity + 1;
         }

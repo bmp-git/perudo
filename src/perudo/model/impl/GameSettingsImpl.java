@@ -155,7 +155,7 @@ public class GameSettingsImpl implements GameSettings {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        GameSettingsImpl other = (GameSettingsImpl) obj;
+        final GameSettingsImpl other = (GameSettingsImpl) obj;
         if (initialDiceNumber != other.initialDiceNumber) {
             return false;
         }
@@ -184,7 +184,7 @@ public class GameSettingsImpl implements GameSettings {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(79);
         sb.append("Game settings[MAX PLAYER(");
         sb.append(this.getMaxPlayer());
         sb.append("), DICE FACES(");

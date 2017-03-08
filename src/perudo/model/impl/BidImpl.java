@@ -111,18 +111,15 @@ public class BidImpl implements Bid {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        BidImpl other = (BidImpl) obj;
+        final BidImpl other = (BidImpl) obj;
         if (diceValue != other.diceValue) {
             return false;
         }
-        if (quantity != other.quantity) {
-            return false;
-        }
-        return true;
+        return quantity == other.quantity;
     }
 
     @Override
-    public Bid nextBid(final int diceValue){
+    public Bid nextBid(final int diceValue) {
         int quantity = 1;
         if (diceValue == 1 && this.diceValue == 1) {
             quantity = this.quantity + 1;

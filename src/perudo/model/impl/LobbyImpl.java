@@ -1,5 +1,6 @@
 package perudo.model.impl;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,17 +42,9 @@ public class LobbyImpl implements Lobby {
         }
         this.started = false;
         this.id = IdDispenser.getLobbyIdDispenser().getNextId();
-        this.userSet = new HashSet<>();
+        this.userSet = new HashSet<>(Arrays.asList(owner));
         this.owner = owner;
         this.settings = settings;
-
-        try {
-            this.addUser(owner);
-        } catch (ErrorTypeException e) {
-            e.printStackTrace();
-            // can't be possible
-            throw new IllegalStateException();
-        }
     }
 
     @Override
@@ -105,7 +98,7 @@ public class LobbyImpl implements Lobby {
             throw new ErrorTypeException(ErrorType.LOBBY_USER_NOT_OWNER);
         }
 
-        Game game = new GameImpl(this.getInfo(), this.getUsers());
+        final Game game = new GameImpl(this.getInfo(), this.getUsers());
         this.started = true;
         return game;
     }
@@ -145,7 +138,7 @@ public class LobbyImpl implements Lobby {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        LobbyImpl other = (LobbyImpl) obj;
+        final LobbyImpl other = (LobbyImpl) obj;
         if (id != other.id) {
             return false;
         }
