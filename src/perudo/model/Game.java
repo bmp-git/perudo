@@ -195,9 +195,17 @@ public interface Game extends Serializable {
      * @return true if the user can doubt, false otherwise
      */
     default boolean canDoubt(final User user) {
-        return this.getTurn().equals(user);
+        return this.getTurn().equals(user) && this.getCurrentBid().isPresent();
     }
 
+    /**
+     * Checks if a given user can urge.
+     * 
+     * @param user
+     *            the user to check
+     * 
+     * @return true if the user can urge, false otherwise
+     */
     default boolean canUrge(final User user) {
         return !hasLost(user) && !this.getTurn().equals(user) && this.getBidUser().isPresent()
                 && !this.getBidUser().get().equals(user);
@@ -237,7 +245,7 @@ public interface Game extends Serializable {
      */
     default int getMinDiceQuantity(final int diceValue) {
         if (!this.getCurrentBid().isPresent()) {
-            return 0;
+            return 1;
         }
         if (this.turnIsPalifico() && diceValue != this.getCurrentBid().get().getDiceValue()) {
             throw new IllegalStateException("You can't play different dice value if the turn is palifico!");
@@ -255,10 +263,10 @@ public interface Game extends Serializable {
      * @return the maximum dice quantity
      */
     default int getMaxDiceQuantity(final int diceValue) {
-        int minDiceQuantity = this.getMinDiceQuantity(diceValue);
         if (!this.getCurrentBid().isPresent()) {
             return getTotalRemainingDice();
         }
+        final int minDiceQuantity = this.getMinDiceQuantity(diceValue);
         if (minDiceQuantity >= this.getTotalRemainingDice()) {
             return minDiceQuantity + 1;
         }

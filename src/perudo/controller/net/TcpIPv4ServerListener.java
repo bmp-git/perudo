@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
+import perudo.utility.impl.LoggerSingleton;
+
 /**
  * Listens to new connections over a TCP/IP network.
  *
@@ -58,6 +60,8 @@ public final class TcpIPv4ServerListener implements NetworkServerListener {
             try {
                 while (run) {
                     final Socket clientSocket = serverSocket.accept();
+                    LoggerSingleton.get().add(this.getClass(), "new connection from "
+                            + clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort());
                     final InputStream inStream = clientSocket.getInputStream();
                     final OutputStream outStream = clientSocket.getOutputStream();
                     this.notifier.execute(() -> {
@@ -65,7 +69,7 @@ public final class TcpIPv4ServerListener implements NetworkServerListener {
                     });
                 }
             } catch (IOException e) {
-                System.out.println("Server listener closed...");
+                LoggerSingleton.get().add(this.getClass(), "Server listener closed...");
             }
         });
     }

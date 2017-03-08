@@ -25,6 +25,7 @@ import perudo.model.impl.ModelImpl;
 import perudo.model.impl.UserImpl;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
+import perudo.utility.impl.LoggerSingleton;
 import perudo.utility.impl.ResponseImpl;
 import perudo.view.View;
 
@@ -395,8 +396,8 @@ public class StandardControllerImpl implements Controller {
                     this.views.forEach((u, v) -> v.userExitNotify(user));
                     view.userExitNotify(user);
                     view.close();
-                    // TODO for debug
-                    System.out.println("StandardController: view of user" + user.getName() + " closed and removed.");
+                    LoggerSingleton.get().add(this.getClass(),
+                            "StandardController: view of user" + user.getName() + " closed and removed.");
                 }
             } catch (ErrorTypeException e) {
                 view.showError(e.getErrorType());
@@ -414,8 +415,8 @@ public class StandardControllerImpl implements Controller {
                 if (this.views.containsKey(user)) {
                     this.views.get(user).close();
                     this.views.remove(user);
-                    // TODO for debug
-                    System.out.println("StandardController: view of user" + user.getName() + " closed and removed.");
+                    LoggerSingleton.get().add(this.getClass(),
+                            "StandardController: view of user" + user.getName() + " closed and removed.");
                 }
                 if (this.userIsInLobby(user)) {
                     final Lobby lobby = this.getLobbyFromModel(user);
@@ -472,19 +473,20 @@ public class StandardControllerImpl implements Controller {
                         final Map<User, View> gameViews = this.getViewsfromGame(game);
                         gameViews.forEach((u, v) -> v.playNotify(game, user));
                     } catch (ErrorTypeException e) {
+                        e.printStackTrace();
                     }
                 }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-
+                    e.printStackTrace();
                 }
             }
         });
     }
 
     private void checkSize(final Collection<?> collection, final ErrorType error) throws ErrorTypeException {
-        if (collection.size() == 0) {
+        if (collection.isEmpty()) {
             throw new ErrorTypeException(error);
         } else if (collection.size() > 1) {
             throw new IllegalStateException();
@@ -492,7 +494,7 @@ public class StandardControllerImpl implements Controller {
     }
 
     private Lobby getLobbyFromModel(final Lobby lobby) throws ErrorTypeException {
-        List<Lobby> result = this.model.getLobbies().stream().filter(lobby::equals).collect(Collectors.toList());
+        final List<Lobby> result = this.model.getLobbies().stream().filter(lobby::equals).collect(Collectors.toList());
         this.checkSize(result, ErrorType.LOBBY_NOT_EXISTS);
         return result.get(0);
     }
@@ -501,7 +503,7 @@ public class StandardControllerImpl implements Controller {
         if (!this.model.getUsers().contains(user)) {
             throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
-        List<Lobby> result = this.model.getLobbies().stream().filter(l -> l.getUsers().contains(user))
+        final List<Lobby> result = this.model.getLobbies().stream().filter(l -> l.getUsers().contains(user))
                 .collect(Collectors.toList());
         this.checkSize(result, ErrorType.USER_IS_NOT_IN_A_LOBBY);
         return result.get(0);
@@ -511,7 +513,7 @@ public class StandardControllerImpl implements Controller {
         if (!this.model.getUsers().contains(user)) {
             throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
-        List<Game> result = this.model.getGames().stream().filter(g -> g.getUsers().contains(user))
+        final List<Game> result = this.model.getGames().stream().filter(g -> g.getUsers().contains(user))
                 .collect(Collectors.toList());
         this.checkSize(result, ErrorType.USER_IS_NOT_IN_A_GAME);
         return result.get(0);

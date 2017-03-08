@@ -2,8 +2,6 @@ package perudo.model;
 
 import java.io.Serializable;
 
-import perudo.utility.ErrorTypeException;
-
 /**
  * Represent a bid of the game. (example: 2 dice of 4)
  */

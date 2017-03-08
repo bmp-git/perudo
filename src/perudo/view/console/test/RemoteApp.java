@@ -14,6 +14,7 @@ import perudo.controller.net.NetworkControllerImpl;
 import perudo.controller.net.NetworkServerListener;
 import perudo.controller.net.TcpIPv4ServerListener;
 import perudo.controller.net.client.ControllerClientImpl;
+import perudo.utility.impl.LoggerSingleton;
 import perudo.view.console.ViewImpl;
 
 public class RemoteApp {
@@ -21,6 +22,7 @@ public class RemoteApp {
     private static String[] arguments;
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        LoggerSingleton.get().enable();
         NetworkServerListener listener = null;
         Controller controller = null;
         args = new String[] { "2.224.173.8", "45555" };

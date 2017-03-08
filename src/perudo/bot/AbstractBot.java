@@ -13,62 +13,115 @@ import perudo.utility.ErrorType;
 import perudo.utility.Response;
 import perudo.view.View;
 
+/**
+ * An abstract bot implementation. If you extend this class you should implement
+ * only play() method.
+ */
 public abstract class AbstractBot implements View {
-    protected final Controller controller;
-    protected final User user;
-    protected final ExecutorService executor;
-    protected Game game;
-    protected Lobby lobby;
 
+    private final Controller controller;
+    private final User user;
+    private final ExecutorService executor;
+    private Game game;
+    private Lobby lobby;
+
+    /**
+     * Create the AbstractBot from controller and user.
+     * 
+     * @param controller
+     *            The controller to use
+     * 
+     * @param user
+     *            The user to use.
+     */
     public AbstractBot(final Controller controller, final User user) {
         this.controller = controller;
         this.user = user;
         this.executor = Executors.newSingleThreadExecutor();
     }
 
-    protected abstract void play(final Game game);
+    /**
+     * This is called when the bot should evaluate what to do.
+     */
+    protected abstract void play();
 
-    @Override
-    public void initializeNewUserRespond(Response<User> user) {
+    /**
+     * The controller where call the actions.
+     * 
+     * @return the controller instance
+     */
+    protected Controller getController() {
+        return controller;
+    }
+
+    /**
+     * The user to utilize in the calls to controller.
+     * 
+     * @return the user instance
+     */
+    protected User getUser() {
+        return user;
+    }
+
+    /**
+     * The actual game to evaluate.
+     * 
+     * @return the game instance
+     */
+    protected Game getGame() {
+        return game;
+    }
+
+    /**
+     * The lobby where the bot is.
+     * 
+     * @return the lobby instance
+     */
+    protected Lobby getLobby() {
+        return lobby;
     }
 
     @Override
-    public void initializeNewUserNotify(User user) {
+    public void initializeNewUserRespond(final Response<User> user) {
     }
 
     @Override
-    public void userExitNotify(User user) {
+    public void initializeNewUserNotify(final User user) {
     }
 
     @Override
-    public void changeNameNotify(User oldUser, User newUser) {
+    public void userExitNotify(final User user) {
     }
 
     @Override
-    public void getUsersRespond(Response<Set<User>> users) {
+    public void changeNameNotify(final User oldUser, final User newUser) {
     }
 
     @Override
-    public void createLobbyNotify(Lobby lobby) {
+    public void getUsersRespond(final Response<Set<User>> users) {
     }
 
     @Override
-    public void removeLobbyNotify(Lobby lobby) {
+    public void createLobbyNotify(final Lobby lobby) {
     }
 
     @Override
-    public void getLobbiesRespond(Response<Set<Lobby>> lobbies) {
+    public void removeLobbyNotify(final Lobby lobby) {
     }
 
     @Override
-    public void joinLobbyNotify(Lobby lobby, User user) {
+    public void getLobbiesRespond(final Response<Set<Lobby>> lobbies) {
+    }
+
+    @Override
+    public void joinLobbyNotify(final Lobby lobby, final User user) {
         if (this.user.equals(user)) {
             this.lobby = lobby;
         }
     }
 
     @Override
-    public void exitLobbyNotify(Lobby lobby, User user) {
+    public void exitLobbyNotify(final Lobby lobby, final User user) {
         this.executor.execute(() -> {
             if (this.user.equals(lobby.getOwner())) {
                 this.controller.closeNow(this.user);
@@ -77,61 +130,65 @@ public abstract class AbstractBot implements View {
     }
 
     @Override
-    public void startLobbyNotify(Lobby lobby, Game game) {
+    public void startLobbyNotify(final Lobby lobby, final Game game) {
         this.executor.execute(() -> {
             if (lobby.equals(this.lobby)) {
                 this.game = game;
-                this.play(game);
+                this.play();
             }
         });
     }
 
     @Override
-    public void removeGameNotify(Game game) {
+    public void removeGameNotify(final Game game) {
     }
 
     @Override
-    public void getGamesRespond(Response<Set<Game>> games) {
+    public void getGamesRespond(final Response<Set<Game>> games) {
     }
 
     @Override
-    public void playNotify(Game game, User user) {
+    public void playNotify(final Game game, final User user) {
         this.executor.execute(() -> {
             if (game.equals(this.game)) {
-                this.play(game);
+                this.game = game;
+                this.play();
             }
         });
     }
 
     @Override
-    public void doubtNotify(Game game, User user, boolean win) {
+    public void doubtNotify(final Game game, final User user, final boolean win) {
         this.executor.execute(() -> {
             if (game.equals(this.game)) {
-                this.play(game);
+                this.game = game;
+                this.play();
             }
         });
     }
 
     @Override
-    public void urgeNotify(Game game, User user, boolean win) {
+    public void urgeNotify(final Game game, final User user, final boolean win) {
         this.executor.execute(() -> {
             if (game.equals(this.game)) {
-                this.play(game);
+                this.game = game;
+                this.play();
             }
         });
     }
 
     @Override
-    public void callPalificoNotify(Game game, User user) {
+    public void callPalificoNotify(final Game game, final User user) {
         this.executor.execute(() -> {
             if (game.equals(this.game)) {
-                this.play(game);
+                this.game = game;
+                this.play();
             }
         });
     }
 
     @Override
-    public void exitGameNotify(Game game, User user) {
+    public void exitGameNotify(final Game game, final User user) {
         this.executor.execute(() -> {
             if (this.user.equals(user)) {
                 this.controller.closeNow(this.user);
@@ -139,10 +196,11 @@ public abstract class AbstractBot implements View {
 
             if (game.equals(this.game)) {
                 if (game.getUsers().stream().allMatch(u -> u.getType().isBot())) {
-                    //all bots
+                    // all bots
                     this.controller.closeNow(this.user);
                 } else {
-                    this.play(game);
+                    this.game = game;
+                    this.play();
                 }
             }
 
@@ -151,14 +209,19 @@ public abstract class AbstractBot implements View {
     }
 
     @Override
-    public void gameEndedNotify(Game game) {
+    public void gameEndedNotify(final Game game) {
     }
 
     @Override
-    public void showError(ErrorType errorType) {
+    public void showError(final ErrorType errorType) {
         System.out.println(this.getClass().getName() + " -> showError -> " + errorType);
+
+        this.executor.execute(() -> {
+            this.play();
+        });
     }
 
+    @Override
     public void close() throws IOException {
         this.executor.shutdown();
     }

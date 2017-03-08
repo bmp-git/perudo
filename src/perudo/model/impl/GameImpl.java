@@ -57,7 +57,7 @@ public class GameImpl implements Game {
         this.settings = settings;
         this.userList = new ArrayList<>(users);
         this.usersStatus = new HashMap<>();
-        this.userList.forEach(u -> this.usersStatus.put(u, PlayerStatusImpl.fromGameSettings(this.getSettings())));
+        this.userList.forEach(u -> this.usersStatus.put(u, PlayerStatusImpl.fromGameSettings(this.settings)));
 
         // random start player
         this.resetGame(this.getUsers().get(new Random().nextInt(this.getUsers().size())));
@@ -154,9 +154,9 @@ public class GameImpl implements Game {
         if (!this.getCurrentBid().isPresent()) {
             return Optional.empty();
         }
-        int bidUserJollyCount = this.userList.stream().filter(u -> this.getBidUser().get().equals(u))
+        final int bidUserJollyCount = this.userList.stream().filter(u -> this.getBidUser().get().equals(u))
                 .mapToInt(u -> this.usersStatus.get(u).getDiceCount().get(1)).sum();
-        int usersDiceCount = this.userList.stream()
+        final int usersDiceCount = this.userList.stream()
                 .mapToInt(u -> this.usersStatus.get(u).getDiceCount().get(this.getCurrentBid().get().getDiceValue()))
                 .sum();
 
@@ -319,7 +319,7 @@ public class GameImpl implements Game {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        GameImpl other = (GameImpl) obj;
+        final GameImpl other = (GameImpl) obj;
         if (id != other.id) {
             return false;
         }
@@ -336,7 +336,7 @@ public class GameImpl implements Game {
     @Override
     public synchronized void removeUser(final User user) throws ErrorTypeException {
         this.checkUserExistence(user);
-        PlayerStatus status = this.getUserStatus(user);
+        final PlayerStatus status = this.getUserStatus(user);
         this.userList.remove(user);
         this.usersStatus.remove(user);
 

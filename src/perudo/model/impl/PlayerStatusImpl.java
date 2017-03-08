@@ -18,6 +18,11 @@ public class PlayerStatusImpl implements PlayerStatus {
 
     private static final long serialVersionUID = -9211044365486847226L;
 
+    private static Random random = new Random();
+    private final Map<Integer, Integer> diceValues;
+    private final int remainingDice, maxDiceValue;
+    private final boolean palificoCalled;
+
     /**
      * Create a PlayerStatus from GameSettings. It is the state o a user when a
      * game starts.
@@ -31,16 +36,10 @@ public class PlayerStatusImpl implements PlayerStatus {
         return new PlayerStatusImpl(settings.getInitialDiceNumber(), settings.getMaxDiceValue(), false);
     }
 
-    private static Random random = new Random();
-
-    private final Map<Integer, Integer> diceValues;
-    private final int remainingDice, maxDiceValue;
-    private final boolean hasCalledPalifico;
-
     private PlayerStatusImpl(final int remainingDice, final int maxDiceValue, final boolean hasCalledPalifico,
             final Map<Integer, Integer> diceValues) {
         this.remainingDice = remainingDice;
-        this.hasCalledPalifico = hasCalledPalifico;
+        this.palificoCalled = hasCalledPalifico;
         this.maxDiceValue = maxDiceValue;
         this.diceValues = diceValues.entrySet().stream().collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
@@ -64,16 +63,16 @@ public class PlayerStatusImpl implements PlayerStatus {
             throw new IllegalArgumentException("dice faces should be at least 1");
         }
         this.remainingDice = remainingDice;
-        this.hasCalledPalifico = hasCalledPalifico;
+        this.palificoCalled = hasCalledPalifico;
         this.maxDiceValue = maxDiceValue;
 
         this.diceValues = new HashMap<>();
-        for (Integer i = 1; i <= this.getMaxDiceValue(); i++) {
+        for (Integer i = 1; i <= this.maxDiceValue; i++) {
             this.diceValues.put(i, 0);
         }
         // roll dice
-        for (Integer i = 0; i < this.getRemainingDice(); i++) {
-            Integer diceV = random.nextInt(this.getMaxDiceValue()) + 1;
+        for (Integer i = 0; i < this.remainingDice; i++) {
+            final Integer diceV = random.nextInt(this.maxDiceValue) + 1;
             this.diceValues.put(diceV, this.diceValues.get(diceV) + 1);
         }
 
@@ -91,7 +90,7 @@ public class PlayerStatusImpl implements PlayerStatus {
 
     @Override
     public PlayerStatus callPalifico() throws ErrorTypeException {
-        if (this.hasCalledPalifico) {
+        if (this.palificoCalled) {
             throw new ErrorTypeException(ErrorType.GAME_PALIFICO_ALREADY_USED);
         }
         if (this.getRemainingDice() != 1) {
@@ -117,15 +116,16 @@ public class PlayerStatusImpl implements PlayerStatus {
 
     @Override
     public boolean hasCalledPalifico() {
-        return this.hasCalledPalifico;
+        return this.palificoCalled;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
+        final int h1 = 1231, h2 = 1237;
         int result = 1;
         result = prime * result + ((diceValues == null) ? 0 : diceValues.hashCode());
-        result = prime * result + (hasCalledPalifico ? 1231 : 1237);
+        result = prime * result + (palificoCalled ? h1 : h2);
         result = prime * result + maxDiceValue;
         result = prime * result + remainingDice;
         return result;
@@ -142,7 +142,7 @@ public class PlayerStatusImpl implements PlayerStatus {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        PlayerStatusImpl other = (PlayerStatusImpl) obj;
+        final PlayerStatusImpl other = (PlayerStatusImpl) obj;
         if (diceValues == null) {
             if (other.diceValues != null) {
                 return false;
@@ -150,16 +150,13 @@ public class PlayerStatusImpl implements PlayerStatus {
         } else if (!diceValues.equals(other.diceValues)) {
             return false;
         }
-        if (hasCalledPalifico != other.hasCalledPalifico) {
+        if (palificoCalled != other.palificoCalled) {
             return false;
         }
         if (maxDiceValue != other.maxDiceValue) {
             return false;
         }
-        if (remainingDice != other.remainingDice) {
-            return false;
-        }
-        return true;
+        return remainingDice == other.remainingDice;
     }
 
 }
