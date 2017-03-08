@@ -195,7 +195,7 @@ public interface Game extends Serializable {
      * @return true if the user can doubt, false otherwise
      */
     default boolean canDoubt(final User user) {
-        return this.getTurn().equals(user);
+        return this.getTurn().equals(user) && this.getCurrentBid().isPresent();
     }
 
     default boolean canUrge(final User user) {
@@ -237,7 +237,7 @@ public interface Game extends Serializable {
      */
     default int getMinDiceQuantity(final int diceValue) {
         if (!this.getCurrentBid().isPresent()) {
-            return 0;
+            return 1;
         }
         if (this.turnIsPalifico() && diceValue != this.getCurrentBid().get().getDiceValue()) {
             throw new IllegalStateException("You can't play different dice value if the turn is palifico!");
