@@ -43,7 +43,8 @@ public class Datagram implements Serializable {
      *            the instances of the method parameters.
      */
     public Datagram(final String methodName, final List<Class<?>> paramsType, final List<Serializable> params) {
-        final Optional<String> paramsName = paramsType.stream().map(t -> t.getName()).reduce((t1, t2) -> t1 + ", " + t2);
+        final Optional<String> paramsName = paramsType.stream().map(t -> t.getName())
+                .reduce((t1, t2) -> t1 + ", " + t2);
         this.methodName = methodName + "(" + paramsName.orElse("") + ")";
         this.params = params;
         this.creationTime = Instant.now();

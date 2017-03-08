@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 import perudo.controller.Controller;
 import perudo.utility.ErrorTypeException;
+import perudo.utility.impl.LoggerSingleton;
 
 /**
  * A ControllerDecorator that adds a NetworkServerListener to a given
@@ -37,7 +38,7 @@ public final class NetworkControllerImpl extends ControllerDecorator {
         this.executor = Executors.newSingleThreadExecutor();
 
         final BiConsumer<IOException, DatagramStream> ioExcHandler = (ex, dgs) -> {
-            System.out.println("NetworkController: handling exception (calling CloseNow())");
+            LoggerSingleton.get().add(this.getClass(), "handling exception (calling CloseNow())");
             this.executor.execute(() -> {
                 if (dgs.getUser().isPresent()) {
                     this.closeNow(dgs.getUser().get());

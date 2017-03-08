@@ -25,6 +25,7 @@ import perudo.model.impl.ModelImpl;
 import perudo.model.impl.UserImpl;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
+import perudo.utility.impl.LoggerSingleton;
 import perudo.utility.impl.ResponseImpl;
 import perudo.view.View;
 
@@ -395,8 +396,8 @@ public class StandardControllerImpl implements Controller {
                     this.views.forEach((u, v) -> v.userExitNotify(user));
                     view.userExitNotify(user);
                     view.close();
-                    // TODO for debug
-                    System.out.println("StandardController: view of user" + user.getName() + " closed and removed.");
+                    LoggerSingleton.get().add(this.getClass(),
+                            "StandardController: view of user" + user.getName() + " closed and removed.");
                 }
             } catch (ErrorTypeException e) {
                 view.showError(e.getErrorType());
@@ -414,8 +415,8 @@ public class StandardControllerImpl implements Controller {
                 if (this.views.containsKey(user)) {
                     this.views.get(user).close();
                     this.views.remove(user);
-                    // TODO for debug
-                    System.out.println("StandardController: view of user" + user.getName() + " closed and removed.");
+                    LoggerSingleton.get().add(this.getClass(),
+                            "StandardController: view of user" + user.getName() + " closed and removed.");
                 }
                 if (this.userIsInLobby(user)) {
                     final Lobby lobby = this.getLobbyFromModel(user);
