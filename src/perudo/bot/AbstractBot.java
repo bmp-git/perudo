@@ -159,6 +159,7 @@ public abstract class AbstractBot implements View {
         System.out.println(this.getClass().getName() + " -> showError -> " + errorType);
     }
 
+    @Override
     public void close() throws IOException {
         this.executor.shutdown();
     }
