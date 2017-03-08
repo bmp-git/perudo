@@ -25,8 +25,8 @@ public class MethodInvoker {
      */
     public MethodInvoker(final Class<?> classType) {
         indexer = new ConcurrentHashMap<>();
-        for (Method m : classType.getMethods()) {
-            Optional<String> paramsName = Arrays.asList(m.getParameterTypes()).stream().map(t -> t.getName())
+        for (final Method m : classType.getMethods()) {
+            final Optional<String> paramsName = Arrays.asList(m.getParameterTypes()).stream().map(t -> t.getName())
                     .reduce((t1, t2) -> t1 + ", " + t2);
             indexer.put(m.getName() + "(" + paramsName.orElse("") + ")", m);
         }

@@ -472,19 +472,20 @@ public class StandardControllerImpl implements Controller {
                         final Map<User, View> gameViews = this.getViewsfromGame(game);
                         gameViews.forEach((u, v) -> v.playNotify(game, user));
                     } catch (ErrorTypeException e) {
+                        e.printStackTrace();
                     }
                 }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-
+                    e.printStackTrace();
                 }
             }
         });
     }
 
     private void checkSize(final Collection<?> collection, final ErrorType error) throws ErrorTypeException {
-        if (collection.size() == 0) {
+        if (collection.isEmpty()) {
             throw new ErrorTypeException(error);
         } else if (collection.size() > 1) {
             throw new IllegalStateException();
@@ -492,7 +493,7 @@ public class StandardControllerImpl implements Controller {
     }
 
     private Lobby getLobbyFromModel(final Lobby lobby) throws ErrorTypeException {
-        List<Lobby> result = this.model.getLobbies().stream().filter(lobby::equals).collect(Collectors.toList());
+        final List<Lobby> result = this.model.getLobbies().stream().filter(lobby::equals).collect(Collectors.toList());
         this.checkSize(result, ErrorType.LOBBY_NOT_EXISTS);
         return result.get(0);
     }
@@ -501,7 +502,7 @@ public class StandardControllerImpl implements Controller {
         if (!this.model.getUsers().contains(user)) {
             throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
-        List<Lobby> result = this.model.getLobbies().stream().filter(l -> l.getUsers().contains(user))
+        final List<Lobby> result = this.model.getLobbies().stream().filter(l -> l.getUsers().contains(user))
                 .collect(Collectors.toList());
         this.checkSize(result, ErrorType.USER_IS_NOT_IN_A_LOBBY);
         return result.get(0);
@@ -511,7 +512,7 @@ public class StandardControllerImpl implements Controller {
         if (!this.model.getUsers().contains(user)) {
             throw new ErrorTypeException(ErrorType.USER_DOES_NOT_EXISTS);
         }
-        List<Game> result = this.model.getGames().stream().filter(g -> g.getUsers().contains(user))
+        final List<Game> result = this.model.getGames().stream().filter(g -> g.getUsers().contains(user))
                 .collect(Collectors.toList());
         this.checkSize(result, ErrorType.USER_IS_NOT_IN_A_GAME);
         return result.get(0);

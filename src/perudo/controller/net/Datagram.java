@@ -12,6 +12,9 @@ import java.util.Optional;
 public class Datagram implements Serializable {
 
     private static final long serialVersionUID = -1108468855651132362L;
+    private final String methodName;
+    private final List<Serializable> params;
+    private final Instant creationTime;
 
     /**
      * Creates a Datagram with the method name of that calls this function.
@@ -29,10 +32,6 @@ public class Datagram implements Serializable {
         return new Datagram(Thread.currentThread().getStackTrace()[2].getMethodName(), paramsType, params);
     }
 
-    private final String methodName;
-    private final List<Serializable> params;
-    private final Instant creationTime;
-
     /**
      * Create a new datagram.
      * 
@@ -44,7 +43,7 @@ public class Datagram implements Serializable {
      *            the instances of the method parameters.
      */
     public Datagram(final String methodName, final List<Class<?>> paramsType, final List<Serializable> params) {
-        Optional<String> paramsName = paramsType.stream().map(t -> t.getName()).reduce((t1, t2) -> t1 + ", " + t2);
+        final Optional<String> paramsName = paramsType.stream().map(t -> t.getName()).reduce((t1, t2) -> t1 + ", " + t2);
         this.methodName = methodName + "(" + paramsName.orElse("") + ")";
         this.params = params;
         this.creationTime = Instant.now();

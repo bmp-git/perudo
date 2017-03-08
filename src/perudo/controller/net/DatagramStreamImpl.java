@@ -126,7 +126,7 @@ public final class DatagramStreamImpl implements DatagramStream {
                 this.objInStream.close();
                 this.objOutStream.close();
             } catch (IOException e) {
-
+                System.out.println("DatagramStream: Exception closing streams.");
             }
 
             // TODO for debug
