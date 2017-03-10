@@ -10,8 +10,8 @@ import perudo.controller.net.client.ControllerClientImpl;
  * Class containing a controller with Singleton pattern.
  */
 public final class ControllerSingleton {
-    private static Controller SINGLETON = null;
-    private static ControllerType CONTROLLER_TYPE = null;
+    private static Controller singleton;
+    private static ControllerType controllerType;
 
     private ControllerSingleton() {
     };
@@ -37,7 +37,7 @@ public final class ControllerSingleton {
      * @return the controller istance
      */
     public static Controller getController() {
-        return SINGLETON;
+        return singleton;
     }
 
     /**
@@ -46,15 +46,15 @@ public final class ControllerSingleton {
      * @return the controller type
      */
     public static ControllerType getControllerType() {
-        return CONTROLLER_TYPE;
+        return controllerType;
     }
 
     /**
      * Set the controller with a StandardController.
      */
     public static void setSingleplayerController() {
-        SINGLETON = new StandardControllerImpl();
-        CONTROLLER_TYPE = ControllerType.SINGLEPLAYER;
+        singleton = new StandardControllerImpl();
+        controllerType = ControllerType.SINGLEPLAYER;
     }
 
     /**
@@ -69,7 +69,7 @@ public final class ControllerSingleton {
      * 
      */
     public static void setMultiplayerController(final String ip, final int port) throws IOException {
-        SINGLETON = ControllerClientImpl.createFromServerName(ip, port);
-        CONTROLLER_TYPE = ControllerType.MULTIPLAYER;
+        singleton = ControllerClientImpl.createFromServerName(ip, port);
+        controllerType = ControllerType.MULTIPLAYER;
     }
 }

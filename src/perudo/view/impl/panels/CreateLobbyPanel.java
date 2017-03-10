@@ -9,11 +9,10 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-
 import perudo.model.GameSettings;
 import perudo.model.impl.GameSettingsImpl;
 import perudo.view.GUIFactory;
-import perudo.view.impl.StandardGUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
 
 /**
  * Panel rappresenting a form for create a lobby.
@@ -64,7 +63,7 @@ public class CreateLobbyPanel extends JPanel {
      */
     public CreateLobbyPanel() {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.txfName = (JTextField) factory.createTextField();
         this.cmbPlayers = (JComboBox<Object>) factory.createComboBox(N_PLAYERS);
         this.cmbPlayers.setSelectedIndex(PLAYER_NUM_DEF);

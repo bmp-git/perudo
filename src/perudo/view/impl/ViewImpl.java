@@ -40,7 +40,7 @@ public class ViewImpl implements View {
      * Initialize the application view and show the menu panel in frame.
      */
     public ViewImpl() {
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.latch = new CountDownLatch(1);
         this.mainFrame = factory.createFrame(TITLE);
         this.mainFrame.setIconImage(GUIUtility.getIcon(ICON_RESPATH).getImage());
@@ -188,7 +188,7 @@ public class ViewImpl implements View {
     public void exitLobbyNotify(final Lobby lobby, final User user) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if (lobby.getUsers().size() < 1) {
+                if (lobby.getUsers().size() < 1 || lobby.getUsers().stream().allMatch(u -> u.getType().isBot())) {
                     menuPanel.removeLobby(lobby);
                 } else {
                     menuPanel.updateLobby(lobby);

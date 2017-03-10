@@ -55,7 +55,7 @@ public class StartFrame extends JFrame {
      */
     public StartFrame() {
         super();
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.result = Optional.empty();
 
         this.setTitle(TITLE);

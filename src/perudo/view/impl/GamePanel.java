@@ -44,10 +44,10 @@ public class GamePanel extends JPanel {
      */
     public GamePanel() {
         super();
-        GUIFactory factory = new StandardGUIFactory();
+        GUIFactory factory = GUIFactorySingleton.getFactory();
         this.game = Optional.empty();
         this.user = Optional.empty();
-        factory = new StandardGUIFactory();
+        factory = GUIFactorySingleton.getFactory();
         this.setLayout(new BorderLayout());
         this.pnlCenter = factory.createPanel(new BorderLayout());
         this.pnlBottomMenu = new MenuBottomPanel();
@@ -182,6 +182,7 @@ public class GamePanel extends JPanel {
         this.pnlHistory.addInfo("Game finished");
         this.pnlTime.stop();
         this.pnlGameTurn.youWin(!game.hasLost(this.user.get()));
+        this.pnlGamePlay.setPanelEnabled(false);
         //disabilita game play panel
     }
 

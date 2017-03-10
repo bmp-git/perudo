@@ -6,8 +6,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import perudo.model.Lobby;
 import perudo.view.GUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.Icon;
-import perudo.view.impl.StandardGUIFactory;
 
 /**
  * Panel rappresenting a lobby.
@@ -35,7 +35,7 @@ public class LobbyPanel extends JPanel {
      */
     public LobbyPanel(final Lobby lobby) {
         this.lobby = lobby;
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.setLayout(new GridLayout(ROWS, COLUMNS, 0, VERTICAL_GAP));
         this.lblLobby = (JLabel) factory.createLabel((this.lobby.getInfo().getName()));
         final int players = this.lobby.getInfo().getMaxPlayer() - this.lobby.getFreeSpace();

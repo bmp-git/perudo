@@ -9,7 +9,7 @@ import perudo.model.Bid;
 import perudo.model.Game;
 import perudo.model.impl.BidImpl;
 import perudo.view.GUIFactory;
-import perudo.view.impl.StandardGUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.components.DiceLabel;
 
 /**
@@ -38,7 +38,7 @@ public class BidPanel extends JPanel {
      */
     public BidPanel() {
         super();
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.setLayout(new BorderLayout());
         final JPanel pnlDice = factory.createPanel();
         pnlDice.setLayout(new FlowLayout());
@@ -67,13 +67,13 @@ public class BidPanel extends JPanel {
         this.btnNextNum = (JButton) factory.createButton("Next");
         this.btnNextNum.addActionListener(a -> {
             this.lblNum.setText(String.valueOf(Integer.parseInt(lblNum.getText()) + 1));
-            updateNumButtons(Integer.parseInt(lblNum.getText()));
+            updateNumButtons(this.lblDice.getValue());
             repaintPanel(pnlNum);
         });
         this.btnPrevNum = (JButton) factory.createButton("Prev");
         this.btnPrevNum.addActionListener(a -> {
             this.lblNum.setText(String.valueOf(Integer.parseInt(this.lblNum.getText()) - 1));
-            updateNumButtons(Integer.parseInt(this.lblNum.getText()));
+            updateNumButtons(this.lblDice.getValue());
             repaintPanel(pnlNum);
         });
         pnlNum.add(this.btnPrevNum);

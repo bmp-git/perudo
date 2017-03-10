@@ -2,16 +2,14 @@ package perudo.view.impl.panels;
 
 import java.awt.Color;
 import java.awt.Dimension;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import perudo.model.User;
 import perudo.view.GUIFactory;
-import perudo.view.impl.StandardGUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
 
 /**
  * Panel rappresenting a user.
@@ -39,7 +37,7 @@ public class UserPanel extends JPanel {
     public UserPanel(final User user, final boolean myUser) {
         super();
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.user = user;
         this.lblUser = myUser ? (JLabel) factory.createLabel(this.user.getName(), Color.GREEN)
                 : (JLabel) factory.createLabel(this.user.getName());

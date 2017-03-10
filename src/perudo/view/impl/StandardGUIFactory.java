@@ -15,6 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -98,6 +99,11 @@ public class StandardGUIFactory implements GUIFactory {
     }
 
     @Override
+    public JComponent createTextArea() {
+        return new JTextArea();
+    }
+
+    @Override
     public JComboBox<Object> createComboBox(final Object[] values) {
         return new JComboBox<>(values);
     }
@@ -106,4 +112,5 @@ public class StandardGUIFactory implements GUIFactory {
     public JComponent createSliderHorizontal(final int minvalue, final int maxvalue, final int defaultvalue) {
         return new JSlider(JSlider.HORIZONTAL, minvalue, maxvalue, defaultvalue);
     }
+
 }

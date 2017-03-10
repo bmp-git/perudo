@@ -123,6 +123,13 @@ public interface GUIFactory {
     JComponent createTextField();
 
     /**
+     * Create a textarea.
+     * 
+     * @return the text area
+     */
+    JComponent createTextArea();
+
+    /**
      * Create an empty menu.
      * 
      * @param name

@@ -45,7 +45,7 @@ public class MenuPanel extends JPanel {
      */
     public MenuPanel() {
         super();
-        this.factory = new StandardGUIFactory();
+        this.factory = GUIFactorySingleton.getFactory();
         this.setLayout(new BorderLayout());
         this.user = Optional.empty();
         this.pnlLobbyInfoActive = Optional.empty();

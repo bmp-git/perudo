@@ -3,6 +3,9 @@ package perudo.view.impl.panels;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import perudo.view.GUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
+
 /**
  * Panel rappresenting the play's history in a game.
  */
@@ -19,7 +22,8 @@ public class HistoryPanel extends JPanel {
      */
     public HistoryPanel() {
         super();
-        this.textArea = new JTextArea();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
+        this.textArea = (JTextArea) factory.createTextArea();
         this.textArea.setLineWrap(false);
         this.textArea.setEditable(false);
         this.textArea.setText("Match begin");

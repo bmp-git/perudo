@@ -1,14 +1,12 @@
 package perudo.view.impl.panels;
 
 import java.awt.Dimension;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import perudo.view.GUIFactory;
-import perudo.view.impl.StandardGUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
 
 /**
  * Panel rappresenting a form to change name.
@@ -32,7 +30,7 @@ public class ChangeNamePanel extends JPanel {
     public ChangeNamePanel() {
         super();
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.txfName = (JTextField) factory.createTextField();
 
         this.add(Box.createRigidArea(new Dimension(0, 10)));

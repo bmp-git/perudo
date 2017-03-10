@@ -6,7 +6,6 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -14,7 +13,7 @@ import javax.swing.JPanel;
 import perudo.model.Game;
 import perudo.model.User;
 import perudo.view.GUIFactory;
-import perudo.view.impl.StandardGUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.components.DiceLabel;
 
 /**
@@ -46,7 +45,7 @@ public class PlayerHandPanel extends JPanel {
      */
     public PlayerHandPanel(final Game game, final User user, final boolean myUser) {
         super();
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.game = game;
         this.user = user;
         this.myUser = myUser;

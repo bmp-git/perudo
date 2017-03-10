@@ -9,7 +9,8 @@ import java.awt.geom.Arc2D;
 import java.time.Duration;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import perudo.view.GUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
 
 /**
  * Panel rappresenting a circolar timer.
@@ -37,11 +38,11 @@ public class CircolarTimeBarPanel extends JPanel {
      *            the total time of timer
      */
     public CircolarTimeBarPanel(final Duration totalTime) {
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.totalTime = totalTime;
         this.remainingTime = totalTime;
-        this.label = new JLabel(Integer.toString((int) totalTime.getSeconds()), SwingConstants.CENTER);
+        this.label = (JLabel) factory.createLabel(Integer.toString((int) totalTime.getSeconds()), LABEL_COLOR);
         this.label.setFont(new Font("Consolas", Font.PLAIN, FONT_SIZE));
-        this.label.setForeground(LABEL_COLOR);
         this.setLayout(new BorderLayout());
         this.add(this.label);
 

@@ -5,15 +5,13 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
-
 import perudo.model.Game;
 import perudo.model.User;
 import perudo.view.GUIFactory;
 import perudo.view.impl.ControllerSingleton;
-import perudo.view.impl.StandardGUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
 
 /**
  * Panel rappresenting elements to play the game.
@@ -49,7 +47,7 @@ public class GamePlayPanel extends JPanel {
         final GridBagConstraints cnst = new GridBagConstraints();
         cnst.gridy = 0;
         cnst.insets = new Insets(TOP_BOT_INSETS, 0, TOP_BOT_INSETS, 0);
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         final JPanel pnlInner = factory.createPanel(new FlowLayout());
         pnlInner.setBorder(factory.createBorder(Color.BLACK, BORDER_SIZE));
         this.pnlBid = new BidPanel();
@@ -99,5 +97,19 @@ public class GamePlayPanel extends JPanel {
         this.btnDubit.setEnabled(this.game.canDoubt(this.user) ? true : false);
         this.btnUrge.setEnabled(this.game.canUrge(this.user) ? true : false);
         this.btnPalifico.setEnabled(this.game.canPalifico(this.user) ? true : false);
+    }
+
+    /**
+     * Set the panel and subpanels components enabled or disabled.
+     * 
+     * @param enabled
+     *            true enable, false disable
+     */
+    public void setPanelEnabled(final boolean enabled) {
+        this.btnPlay.setEnabled(enabled);
+        this.btnDubit.setEnabled(enabled);
+        this.btnUrge.setEnabled(enabled);
+        this.btnPalifico.setEnabled(enabled);
+        this.pnlBid.setBidEnabled(enabled);
     }
 }

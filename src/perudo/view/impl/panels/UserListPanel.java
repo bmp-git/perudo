@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import perudo.model.User;
 import perudo.view.GUIFactory;
-import perudo.view.impl.StandardGUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
 
 /**
  * Panel rappresenting a user list.
@@ -29,7 +29,7 @@ public class UserListPanel extends JPanel {
      */
     public UserListPanel() {
         this.setLayout(new FlowLayout());
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.pnlUserList = factory.createPanel(new GridBagLayout());
         this.setBorder(new TitledBorder("Users list"));
         this.cnst = new GridBagConstraints();

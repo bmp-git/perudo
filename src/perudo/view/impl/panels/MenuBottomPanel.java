@@ -2,16 +2,14 @@ package perudo.view.impl.panels;
 
 import java.awt.BorderLayout;
 import java.util.Optional;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import perudo.model.User;
 import perudo.view.GUIFactory;
 import perudo.view.impl.ControllerSingleton;
+import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.ControllerSingleton.ControllerType;
-import perudo.view.impl.StandardGUIFactory;
 
 /**
  * Panel rappresenting the user and the game modality.
@@ -38,7 +36,7 @@ public class MenuBottomPanel extends JPanel {
         this.setBorder(new EmptyBorder(TOP_BOT_BORDER, LEFT_RIGHT_BORDER, TOP_BOT_BORDER, LEFT_RIGHT_BORDER));
         this.user = Optional.empty();
 
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         if (this.user.isPresent()) {
             this.lblname = (JLabel) factory.createLabel("Logged as " + this.user.get().getName());
             if (ControllerSingleton.getControllerType() == ControllerType.MULTIPLAYER) {

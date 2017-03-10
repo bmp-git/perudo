@@ -9,8 +9,8 @@ import javax.swing.JOptionPane;
 import perudo.model.User;
 import perudo.view.GUIFactory;
 import perudo.view.impl.ControllerSingleton;
+import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.GUIUtility;
-import perudo.view.impl.StandardGUIFactory;
 import perudo.view.impl.panels.ChangeNamePanel;
 import perudo.view.impl.panels.CreateLobbyPanel;
 
@@ -39,7 +39,7 @@ public class TopMenu extends JMenuBar {
     public TopMenu() {
         super();
         this.user = Optional.empty();
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         final CreateLobbyPanel pnlcreatelobby = new CreateLobbyPanel();
         final ChangeNamePanel pnlchangename = new ChangeNamePanel();
 

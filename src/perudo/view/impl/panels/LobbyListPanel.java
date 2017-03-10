@@ -9,19 +9,17 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
-
 import perudo.model.Lobby;
 import perudo.model.User;
 import perudo.view.GUIFactory;
 import perudo.view.impl.ControllerSingleton;
+import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.GUIUtility;
-import perudo.view.impl.StandardGUIFactory;
 
 /**
  * Panel rappresenting a list of lobby panels.
@@ -43,7 +41,7 @@ public class LobbyListPanel extends JPanel {
      */
     public LobbyListPanel() {
         this.setLayout(new BorderLayout());
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.user = Optional.empty();
         final CreateLobbyPanel pnlCreateLobby = new CreateLobbyPanel();
         final ChangeNamePanel pnlChangeName = new ChangeNamePanel();

@@ -49,7 +49,7 @@ public final class GUIUtility {
      * @return the icon
      */
     public static ImageIcon getIcon(final String respath) {
-        return new ImageIcon(StandardGUIFactory.class.getResource(respath));
+        return new ImageIcon(GUIUtility.class.getResource(respath));
     }
 
 }

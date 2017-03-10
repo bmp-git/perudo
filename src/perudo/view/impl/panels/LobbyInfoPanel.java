@@ -21,8 +21,8 @@ import perudo.model.User;
 import perudo.model.UserType;
 import perudo.view.GUIFactory;
 import perudo.view.impl.ControllerSingleton;
+import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.Icon;
-import perudo.view.impl.StandardGUIFactory;
 
 /**
  * Panel rappresenting the information of a lobby.
@@ -58,7 +58,7 @@ public class LobbyInfoPanel extends JPanel {
     public LobbyInfoPanel(final Lobby lobby, final User user) {
         super();
         this.setLayout(new BorderLayout());
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.lobby = lobby;
         final JPanel pnlCenter = factory.createPanel(new BorderLayout());
         final JPanel pnlButtons = factory.createPanel(new FlowLayout());
@@ -68,7 +68,7 @@ public class LobbyInfoPanel extends JPanel {
         final JPanel pnlPlayers = factory.createPanel();
         pnlPlayers.setLayout(new BoxLayout(pnlPlayers, BoxLayout.Y_AXIS));
         pnlPlayers.setBorder(BorderFactory.createEmptyBorder(0, LEFT_RIGHT_PADDING, 0, LEFT_RIGHT_PADDING));
-        final JLabel name = (JLabel) factory.createLabel(this.lobby.getInfo().getName(), Color.GREEN);
+        final JLabel name = (JLabel) factory.createLabel(this.lobby.getInfo().getName(), Color.BLUE);
         name.setFont(new Font("Consolas", Font.PLAIN, TITLE_SIZE));
         final JLabel owner = (JLabel) factory.createLabel(this.lobby.getOwner().getName(), Icon.OWNER.getIcon(), JLabel.RIGHT);
         owner.setBorder(factory.createBorder(Color.BLACK, PLAYER_BOX_PADDING));
@@ -77,10 +77,50 @@ public class LobbyInfoPanel extends JPanel {
 
         this.lobby.getUsers().forEach(u -> {
             if (!u.equals(this.lobby.getOwner())) {
-                final JLabel player = (JLabel) factory.createLabel(u.getName());
-                player.setBorder(factory.createBorder(Color.BLACK, PLAYER_BOX_PADDING));
-                pnlPlayers.add(player);
-                pnlPlayers.add(Box.createRigidArea(new Dimension(0, VERTICAL_PADDING)));
+                if (user.equals(this.lobby.getOwner()) && u.getType().isBot()) {
+                    final JLabel playerbot = (JLabel) factory.createLabel(u.getName(), Icon.MINUS.getIcon(), JLabel.RIGHT);
+                    class ML implements MouseListener {
+                        @Override
+                        public void mouseClicked(final MouseEvent event) {
+                            ControllerSingleton.getController().closeNow(u);
+                        }
+
+                        @Override
+                        public void mousePressed(final MouseEvent event) {
+                            ControllerSingleton.getController().closeNow(u);
+                        }
+
+                        @Override
+                        public void mouseReleased(final MouseEvent event) {
+                        }
+
+                        @Override
+                        public void mouseEntered(final MouseEvent event) {
+                            ((JLabel) event.getSource()).setBorder(BorderFactory.createCompoundBorder(
+                                    BorderFactory.createLineBorder(Color.GRAY), new EmptyBorder(PLAYER_BOX_PADDING,
+                                            PLAYER_BOX_PADDING, PLAYER_BOX_PADDING, PLAYER_BOX_PADDING)));
+                            setCursor(new Cursor(Cursor.HAND_CURSOR));
+                        }
+
+                        @Override
+                        public void mouseExited(final MouseEvent event) {
+                            ((JLabel) event.getSource()).setBorder(BorderFactory.createCompoundBorder(
+                                    BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(PLAYER_BOX_PADDING,
+                                            PLAYER_BOX_PADDING, PLAYER_BOX_PADDING, PLAYER_BOX_PADDING)));
+                            setCursor(Cursor.getDefaultCursor());
+                        }
+
+                    }
+                    playerbot.addMouseListener(new ML());
+                    playerbot.setBorder(factory.createBorder(Color.BLACK, PLAYER_BOX_PADDING));
+                    pnlPlayers.add(playerbot);
+                    pnlPlayers.add(Box.createRigidArea(new Dimension(0, VERTICAL_PADDING)));
+                } else {
+                    final JLabel player = (JLabel) factory.createLabel(u.getName());
+                    player.setBorder(factory.createBorder(Color.BLACK, PLAYER_BOX_PADDING));
+                    pnlPlayers.add(player);
+                    pnlPlayers.add(Box.createRigidArea(new Dimension(0, VERTICAL_PADDING)));
+                }
             }
         });
         for (int i = 0; i < this.lobby.getFreeSpace(); i++) {
@@ -141,7 +181,7 @@ public class LobbyInfoPanel extends JPanel {
                 JLabel.RIGHT));
         pnlInfo.add(Box.createRigidArea(new Dimension(0, VERTICAL_PADDING)));
 
-        final JButton btnEnterLobby = (JButton) factory.createButton(ENTER_LOBBY);
+        final JButton btnEnterLobby = (JButton) factory.createButton(ENTER_LOBBY, Icon.ENTER.getIcon());
         btnEnterLobby.addActionListener(e -> {
             ControllerSingleton.getController().joinLobby(user, this.lobby);
         });
@@ -151,7 +191,7 @@ public class LobbyInfoPanel extends JPanel {
             ControllerSingleton.getController().exitLobby(user);
         });
         pnlButtons.add(btnExitLobby);
-        final JButton btnStartLobby = (JButton) factory.createButton(START_LOBBY);
+        final JButton btnStartLobby = (JButton) factory.createButton(START_LOBBY, Icon.START.getIcon());
         btnStartLobby.addActionListener(e -> {
             ControllerSingleton.getController().startLobby(user);
         });

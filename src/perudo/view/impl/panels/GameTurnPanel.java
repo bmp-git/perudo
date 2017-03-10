@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import perudo.model.Game;
 import perudo.model.User;
 import perudo.view.GUIFactory;
-import perudo.view.impl.StandardGUIFactory;
+import perudo.view.impl.GUIFactorySingleton;
 
 /**
  * Panel rappresenting the current turn in game.
@@ -28,7 +28,7 @@ public class GameTurnPanel extends JPanel {
     public GameTurnPanel() {
         super();
         this.setLayout(new GridBagLayout());
-        final GUIFactory factory = new StandardGUIFactory();
+        final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.lblTurn = (JLabel) factory.createLabel("");
         this.lblTurn.setFont(new Font("Consolas", Font.PLAIN, FONT_SIZE));
 
