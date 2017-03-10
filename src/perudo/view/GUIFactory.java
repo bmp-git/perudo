@@ -8,6 +8,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 
 /**
@@ -172,5 +173,14 @@ public interface GUIFactory {
      * @return the slider
      */
     JComponent createSliderHorizontal(final int minvalue, final int maxvalue, final int defaultvalue);
+
+    /**
+     * Create a JScrollPane without black border.
+     * 
+     * @param panel
+     *            panel to add into scroll panel
+     * @return the scroll panel without border
+     */
+    JScrollPane createScrollPaneWithoutBorder(final JPanel panel);
 
 }

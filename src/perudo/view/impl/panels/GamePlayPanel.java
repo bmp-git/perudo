@@ -1,6 +1,5 @@
 package perudo.view.impl.panels;
 
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -27,7 +26,6 @@ public class GamePlayPanel extends JPanel {
     private static final String URGE_BUTTON = "Urge";
     private static final String PALIFICO_BUTTON = "Palific";
     private static final int TOP_BOT_INSETS = 5;
-    private static final int BORDER_SIZE = 7;
 
     private Game game;
     private User user;
@@ -49,7 +47,6 @@ public class GamePlayPanel extends JPanel {
         cnst.insets = new Insets(TOP_BOT_INSETS, 0, TOP_BOT_INSETS, 0);
         final GUIFactory factory = GUIFactorySingleton.getFactory();
         final JPanel pnlInner = factory.createPanel(new FlowLayout());
-        pnlInner.setBorder(factory.createBorder(Color.BLACK, BORDER_SIZE));
         this.pnlBid = new BidPanel();
         this.btnPlay = (JButton) factory.createButton(PLAY_BUTTON);
         this.btnPlay.addActionListener(l -> {

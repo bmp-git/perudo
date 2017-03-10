@@ -80,7 +80,7 @@ public class TopMenu extends JMenuBar {
         miCreateLobby.addActionListener(e -> {
             final int n = JOptionPane.showConfirmDialog(TopMenu.this, pnlcreatelobby, CreateLobbyPanel.TITLE,
                     JOptionPane.OK_CANCEL_OPTION, 0, GUIUtility.getIcon(CreateLobbyPanel.ICON_RESPATH));
-            if (n == JOptionPane.YES_OPTION && this.user.isPresent() && pnlcreatelobby.getName().trim().length() > 0) {
+            if (n == JOptionPane.YES_OPTION && this.user.isPresent()) {
                 ControllerSingleton.getController().createLobby(this.user.get(), pnlcreatelobby.getGameSettings());
             }
         });

@@ -31,6 +31,7 @@ public class CreateLobbyPanel extends JPanel {
      * Panel icon respath.
      */
     public static final String ICON_RESPATH = "/images/perudo-logo.png";
+    private static final String DEFAULT_NAME = "Default lobby";
     private static final String LABEL_NAME = "Name";
     private static final String LABEL_PLAYERS_NUM = "Max players";
     private static final String LABEL_DICES_NUM = "Max dices";
@@ -99,7 +100,7 @@ public class CreateLobbyPanel extends JPanel {
      * @return the lobby name
      */
     public String getName() {
-        return this.txfName.getText();
+        return this.txfName.getText().trim().length() > 0 ? this.txfName.getText() : DEFAULT_NAME;
     }
 
     /**

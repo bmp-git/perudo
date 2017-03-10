@@ -28,6 +28,7 @@ public class GamePanel extends JPanel {
     private static final String TURN_NAME = "It's your turn.";
     private static final String TURN_TEXT = "It's your turn, make a play!";
 
+    private final GUIFactory factory;
     private Optional<Game> game;
     private Optional<User> user;
 
@@ -44,12 +45,11 @@ public class GamePanel extends JPanel {
      */
     public GamePanel() {
         super();
-        GUIFactory factory = GUIFactorySingleton.getFactory();
+        this.factory = GUIFactorySingleton.getFactory();
         this.game = Optional.empty();
         this.user = Optional.empty();
-        factory = GUIFactorySingleton.getFactory();
         this.setLayout(new BorderLayout());
-        this.pnlCenter = factory.createPanel(new BorderLayout());
+        this.pnlCenter = this.factory.createPanel(new BorderLayout());
         this.pnlBottomMenu = new MenuBottomPanel();
         this.pnlTime = new TimePanel();
         this.pnlHistory = new HistoryPanel();
@@ -57,11 +57,12 @@ public class GamePanel extends JPanel {
         this.pnlGameTurn = new GameTurnPanel();
         this.pnlHand = new PlayersHandsListPanel();
 
-        this.add(new JScrollPane(this.pnlCenter), BorderLayout.CENTER);
+        this.add(this.pnlCenter, BorderLayout.CENTER);
         this.add(this.pnlBottomMenu, BorderLayout.SOUTH);
         this.add(this.pnlTime, BorderLayout.EAST);
-        final JScrollPane scroll = new JScrollPane(this.pnlHistory, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        final JScrollPane scroll = this.factory.createScrollPaneWithoutBorder(this.pnlHistory);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         this.add(scroll, BorderLayout.WEST);
     }
 
@@ -77,8 +78,9 @@ public class GamePanel extends JPanel {
         this.pnlGamePlay.setGame(this.game.get(), this.user.get());
         this.pnlHand.setGame(this.game.get(), this.user.get());
         this.pnlGameTurn.setTurnPanel(this.game.get(), this.user.get());
+        this.pnlCenter.removeAll();
         this.pnlCenter.add(this.pnlGameTurn, BorderLayout.NORTH);
-        this.pnlCenter.add(this.pnlHand, BorderLayout.CENTER);
+        this.pnlCenter.add(this.factory.createScrollPaneWithoutBorder(this.pnlHand), BorderLayout.CENTER);
         this.pnlCenter.add(this.pnlGamePlay, BorderLayout.SOUTH);
         this.pnlCenter.revalidate();
         this.repaint();
@@ -183,7 +185,6 @@ public class GamePanel extends JPanel {
         this.pnlTime.stop();
         this.pnlGameTurn.youWin(!game.hasLost(this.user.get()));
         this.pnlGamePlay.setPanelEnabled(false);
-        //disabilita game play panel
     }
 
 }

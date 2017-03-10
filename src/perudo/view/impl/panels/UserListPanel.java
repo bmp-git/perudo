@@ -35,7 +35,7 @@ public class UserListPanel extends JPanel {
         this.cnst = new GridBagConstraints();
         this.cnst.gridy = 0;
         this.cnst.insets = new Insets(0, 0, 0, 0);
-        this.add(this.pnlUserList);
+        this.add(factory.createScrollPaneWithoutBorder(this.pnlUserList));
     }
 
     /**

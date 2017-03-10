@@ -14,7 +14,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import perudo.model.Lobby;
 import perudo.model.User;
@@ -214,7 +213,7 @@ public class LobbyInfoPanel extends JPanel {
         pnlCenter.add(ptop, BorderLayout.PAGE_START);
         pnlCenter.add(pnlPlayers, BorderLayout.CENTER);
         pnlCenter.add(pnlInfo, BorderLayout.EAST);
-        this.add(new JScrollPane(pnlCenter), BorderLayout.CENTER);
+        this.add(factory.createScrollPaneWithoutBorder(pnlCenter), BorderLayout.CENTER);
         this.add(pnlButtons, BorderLayout.SOUTH);
     }
 

@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -111,6 +112,13 @@ public class StandardGUIFactory implements GUIFactory {
     @Override
     public JComponent createSliderHorizontal(final int minvalue, final int maxvalue, final int defaultvalue) {
         return new JSlider(JSlider.HORIZONTAL, minvalue, maxvalue, defaultvalue);
+    }
+
+    @Override
+    public JScrollPane createScrollPaneWithoutBorder(final JPanel panel) {
+        final JScrollPane sp = new JScrollPane(panel);
+        sp.setBorder(BorderFactory.createEmptyBorder());
+        return sp;
     }
 
 }

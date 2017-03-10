@@ -12,7 +12,6 @@ import java.util.Optional;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 import perudo.model.Lobby;
 import perudo.model.User;
@@ -75,7 +74,7 @@ public class LobbyListPanel extends JPanel {
             }
         });
         paneldown.add(btnChangeUsername);
-        this.add(new JScrollPane(pnlExtern), BorderLayout.CENTER);
+        this.add(factory.createScrollPaneWithoutBorder(pnlExtern), BorderLayout.CENTER);
         this.add(paneldown, BorderLayout.SOUTH);
 
     }

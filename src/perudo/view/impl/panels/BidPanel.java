@@ -149,7 +149,7 @@ public class BidPanel extends JPanel {
      */
     public Bid getBid() {
         try {
-            return new BidImpl(Integer.valueOf(this.lblNum.getText()), this.lblDice.getValue());
+            return new BidImpl(Integer.parseInt(this.lblNum.getText()), this.lblDice.getValue());
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             throw new IllegalStateException();

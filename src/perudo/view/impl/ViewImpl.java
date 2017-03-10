@@ -85,7 +85,11 @@ public class ViewImpl implements View {
     @Override
     public void initializeNewUserRespond(final Response<User> user) {
         if (!user.isOk()) {
-            System.exit(1);
+            try {
+                this.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         this.user = user.getValue();
         this.menuPanel.setUser(this.user);
