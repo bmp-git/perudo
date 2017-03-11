@@ -10,6 +10,7 @@ import perudo.model.Game;
 import perudo.model.impl.BidImpl;
 import perudo.view.GUIFactory;
 import perudo.view.impl.GUIFactorySingleton;
+import perudo.view.impl.Icon;
 import perudo.view.impl.components.DiceLabel;
 
 /**
@@ -44,17 +45,19 @@ public class BidPanel extends JPanel {
         pnlDice.setLayout(new FlowLayout());
 
         this.lblDice = new DiceLabel();
-        this.btnNextDice = (JButton) factory.createButton("Next");
+        this.btnNextDice = (JButton) factory.createButton("", Icon.RIGHT.getIcon());
         this.btnNextDice.addActionListener(a -> {
             this.lblDice.setValue(this.lblDice.getValue() + 1, DICE_SIZE);
             updateDiceButtons();
+            changeDice(this.lblDice.getValue());
             repaintPanel(pnlDice);
 
         });
-        this.btnPrevDice = (JButton) factory.createButton("Prev");
+        this.btnPrevDice = (JButton) factory.createButton("", Icon.LEFT.getIcon());
         this.btnPrevDice.addActionListener(a -> {
             lblDice.setValue(lblDice.getValue() - 1, DICE_SIZE);
             updateDiceButtons();
+            changeDice(this.lblDice.getValue());
             repaintPanel(pnlDice);
         });
         pnlDice.add(this.btnPrevDice);
@@ -64,13 +67,13 @@ public class BidPanel extends JPanel {
         final JPanel pnlNum = factory.createPanel();
         pnlNum.setLayout(new FlowLayout());
         this.lblNum = (JLabel) factory.createLabel(String.valueOf(1));
-        this.btnNextNum = (JButton) factory.createButton("Next");
+        this.btnNextNum = (JButton) factory.createButton("", Icon.RIGHT.getIcon());
         this.btnNextNum.addActionListener(a -> {
             this.lblNum.setText(String.valueOf(Integer.parseInt(lblNum.getText()) + 1));
             updateNumButtons(this.lblDice.getValue());
             repaintPanel(pnlNum);
         });
-        this.btnPrevNum = (JButton) factory.createButton("Prev");
+        this.btnPrevNum = (JButton) factory.createButton("", Icon.LEFT.getIcon());
         this.btnPrevNum.addActionListener(a -> {
             this.lblNum.setText(String.valueOf(Integer.parseInt(this.lblNum.getText()) - 1));
             updateNumButtons(this.lblDice.getValue());
@@ -91,10 +94,18 @@ public class BidPanel extends JPanel {
         } else if (this.lblDice.getValue() <= 1) {
             btnPrevDice.setEnabled(false);
             btnNextDice.setEnabled(true);
+        } else if (this.game.turnIsPalifico() && this.game.getCurrentBid().isPresent()) {
+            btnNextDice.setEnabled(false);
+            btnPrevDice.setEnabled(false);
         } else {
             btnNextDice.setEnabled(true);
             btnPrevDice.setEnabled(true);
         }
+    }
+
+    private void changeDice(final int diceValue) {
+        this.lblNum.setText(String.valueOf(this.game.getMinDiceQuantity(diceValue)));
+        this.updateNumButtons(diceValue);
     }
 
     private void updateNumButtons(final int diceValue) {
@@ -123,10 +134,14 @@ public class BidPanel extends JPanel {
      */
     public void setGame(final Game game) {
         this.game = game;
-        this.lblDice.setValue(Math.round(game.getSettings().getMaxDiceValue() / 2), DICE_SIZE);
-        this.lblNum.setText(String.valueOf(this.game.getMinDiceQuantity(Math.round(game.getSettings().getMaxDiceValue() / 2))));
+        if (this.game.getCurrentBid().isPresent()) {
+            this.lblDice.setValue(this.game.getCurrentBid().get().getDiceValue(), DICE_SIZE);
+        } else {
+            this.lblDice.setValue(Math.round(game.getSettings().getMaxDiceValue() / 2), DICE_SIZE);
+        }
+        this.lblNum.setText(String.valueOf(this.game.getMinDiceQuantity(this.lblDice.getValue())));
         this.updateDiceButtons();
-        this.updateNumButtons(Math.round(game.getSettings().getMaxDiceValue() / 2));
+        this.updateNumButtons(Integer.valueOf(this.lblDice.getValue()));
     }
 
     /**

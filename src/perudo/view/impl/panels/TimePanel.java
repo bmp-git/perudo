@@ -37,6 +37,7 @@ public class TimePanel extends JPanel {
      */
     public void setGame(final Game game) {
         this.pnlTime = new CircolarTimeBarPanel(game.getSettings().getMaxTurnTime());
+        this.removeAll();
         this.add(this.pnlTime);
 
         this.executor.scheduleAtFixedRate(() -> {

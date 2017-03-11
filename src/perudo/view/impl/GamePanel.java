@@ -13,6 +13,7 @@ import perudo.view.impl.panels.GameTurnPanel;
 import perudo.view.impl.panels.HistoryPanel;
 import perudo.view.impl.panels.MenuBottomPanel;
 import perudo.view.impl.panels.PlayersHandsListPanel;
+import perudo.view.impl.panels.PlayersListPanel;
 import perudo.view.impl.panels.TimePanel;
 
 /**
@@ -33,6 +34,8 @@ public class GamePanel extends JPanel {
     private Optional<User> user;
 
     private final JPanel pnlCenter;
+    private final JPanel pnlRight;
+    private final PlayersListPanel pnlPlayers;
     private final MenuBottomPanel pnlBottomMenu;
     private final TimePanel pnlTime;
     private final HistoryPanel pnlHistory;
@@ -50,16 +53,20 @@ public class GamePanel extends JPanel {
         this.user = Optional.empty();
         this.setLayout(new BorderLayout());
         this.pnlCenter = this.factory.createPanel(new BorderLayout());
+        this.pnlRight = this.factory.createPanel(new BorderLayout());
         this.pnlBottomMenu = new MenuBottomPanel();
         this.pnlTime = new TimePanel();
         this.pnlHistory = new HistoryPanel();
         this.pnlGamePlay = new GamePlayPanel();
         this.pnlGameTurn = new GameTurnPanel();
         this.pnlHand = new PlayersHandsListPanel();
+        this.pnlPlayers = new PlayersListPanel();
 
+        this.pnlRight.add(this.pnlTime, BorderLayout.NORTH);
+        this.pnlRight.add(this.pnlPlayers, BorderLayout.CENTER);
         this.add(this.pnlCenter, BorderLayout.CENTER);
         this.add(this.pnlBottomMenu, BorderLayout.SOUTH);
-        this.add(this.pnlTime, BorderLayout.EAST);
+        this.add(this.pnlRight, BorderLayout.EAST);
         final JScrollPane scroll = this.factory.createScrollPaneWithoutBorder(this.pnlHistory);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -75,6 +82,7 @@ public class GamePanel extends JPanel {
     public void setGame(final Game game) {
         this.game = Optional.ofNullable(game);
         this.pnlTime.setGame(game);
+        this.pnlPlayers.setGame(game);
         this.pnlGamePlay.setGame(this.game.get(), this.user.get());
         this.pnlHand.setGame(this.game.get(), this.user.get());
         this.pnlGameTurn.setTurnPanel(this.game.get(), this.user.get());
@@ -83,6 +91,7 @@ public class GamePanel extends JPanel {
         this.pnlCenter.add(this.factory.createScrollPaneWithoutBorder(this.pnlHand), BorderLayout.CENTER);
         this.pnlCenter.add(this.pnlGamePlay, BorderLayout.SOUTH);
         this.pnlCenter.revalidate();
+
         this.repaint();
         if (this.checkTurn() && this.game.get().getUsers().stream().filter(u -> !u.equals(this.user)).findAny().isPresent()) {
             JOptionPane.showConfirmDialog(GamePanel.this, TURN_TEXT, TURN_NAME, JOptionPane.DEFAULT_OPTION);
@@ -171,6 +180,7 @@ public class GamePanel extends JPanel {
      */
     public void exitGameNotify(final Game game, final User user) {
         this.pnlHistory.addInfo(user.getName() + " exited");
+        this.pnlPlayers.removeUser(user);
         this.setGame(game);
     }
 
