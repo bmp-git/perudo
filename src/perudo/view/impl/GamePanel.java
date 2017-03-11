@@ -196,5 +196,4 @@ public class GamePanel extends JPanel {
         this.pnlGameTurn.youWin(!game.hasLost(this.user.get()));
         this.pnlGamePlay.setPanelEnabled(false);
     }
-
 }

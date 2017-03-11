@@ -35,15 +35,17 @@ public class TimePanel extends JPanel {
      *            the current game
      */
     public void setGame(final Game game) {
-        final CircolarTimeBarPanel pnlTime = new CircolarTimeBarPanel(game.getSettings().getMaxTurnTime());
-        this.removeAll();
-        this.add(pnlTime);
+        if (!this.executor.isShutdown()) {
+            final CircolarTimeBarPanel pnlTime = new CircolarTimeBarPanel(game.getSettings().getMaxTurnTime());
+            this.removeAll();
+            this.add(pnlTime);
 
-        this.executor.scheduleAtFixedRate(() -> {
-            SwingUtilities.invokeLater(() -> {
-                pnlTime.setRemainingTime(game.getTurnRemainingTime());
-            });
-        }, 0, game.getTurnRemainingTime().getSeconds(), TimeUnit.MILLISECONDS);
+            this.executor.scheduleAtFixedRate(() -> {
+                SwingUtilities.invokeLater(() -> {
+                    pnlTime.setRemainingTime(game.getTurnRemainingTime());
+                });
+            }, 0, game.getTurnRemainingTime().getSeconds(), TimeUnit.MILLISECONDS);
+        }
     }
 
     /**
