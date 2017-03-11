@@ -58,7 +58,7 @@ public class PlayersHandsListPanel extends JPanel {
         this.user = user;
         this.game = game;
         this.removeAll();
-        this.addHand(this.game.getUsers().stream().filter(u -> this.user.equals(u)).findAny().get());
+        this.game.getUsers().stream().filter(u -> this.user.equals(u)).filter(u -> game.getUserStatus(u).getRemainingDice() > 0).forEach(u -> this.addHand(u));
         this.game.getUsers().stream().filter(u -> !this.user.equals(u) && game.getUserStatus(u).getRemainingDice() > 0)
                 .forEach(u -> this.addHand(u));
     }

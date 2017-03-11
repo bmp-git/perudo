@@ -18,7 +18,6 @@ public class TimePanel extends JPanel {
      */
     private static final long serialVersionUID = 1L;
     private final ScheduledExecutorService executor;
-    private CircolarTimeBarPanel pnlTime;
 
     /**
      * Initialize an empty panel and the timer executor.
@@ -36,15 +35,13 @@ public class TimePanel extends JPanel {
      *            the current game
      */
     public void setGame(final Game game) {
-        this.pnlTime = new CircolarTimeBarPanel(game.getSettings().getMaxTurnTime());
+        final CircolarTimeBarPanel pnlTime = new CircolarTimeBarPanel(game.getSettings().getMaxTurnTime());
         this.removeAll();
-        this.add(this.pnlTime);
+        this.add(pnlTime);
 
         this.executor.scheduleAtFixedRate(() -> {
             SwingUtilities.invokeLater(() -> {
                 pnlTime.setRemainingTime(game.getTurnRemainingTime());
-                this.removeAll();
-                this.add(this.pnlTime);
             });
         }, 0, game.getTurnRemainingTime().getSeconds(), TimeUnit.MILLISECONDS);
     }
