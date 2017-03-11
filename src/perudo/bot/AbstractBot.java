@@ -72,15 +72,6 @@ public abstract class AbstractBot implements View {
         return game;
     }
 
-    /**
-     * The lobby where the bot is.
-     * 
-     * @return the lobby instance
-     */
-    protected Lobby getLobby() {
-        return lobby;
-    }
-
     @Override
     public void initializeNewUserRespond(final Response<User> user) {
     }

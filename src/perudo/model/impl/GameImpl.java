@@ -109,7 +109,7 @@ public class GameImpl implements Game {
         if (this.usersStatus.get(user).getRemainingDice() + quantity > this.getSettings().getInitialDiceNumber()) {
             return;
         }
-        if (this.usersStatus.get(user).getRemainingDice() + quantity < 0) {
+        if (this.usersStatus.get(user).getRemainingDice() < 0) {
             return;
         }
         this.usersStatus.put(user,
@@ -200,8 +200,6 @@ public class GameImpl implements Game {
         if (this.getCurrentBid().isPresent()
                 && !this.getCurrentBid().get().isNextBidValid(bid, this.turnIsPalifico(), this.getSettings())) {
             throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
-        } else if (!this.getCurrentBid().isPresent() && bid.getDiceValue() > this.getSettings().getMaxDiceValue()) {
-            throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
         }
 
         this.currentBid = bid;
@@ -223,7 +221,6 @@ public class GameImpl implements Game {
             // doubt is correct, bid user loss 1 dice
             this.removeDice(this.getBidUser().get(), 1);
             this.resetGame(this.getBidUser().get());
-
             return true;
         } else {
             // doubt is wrong, user loss 1 dice

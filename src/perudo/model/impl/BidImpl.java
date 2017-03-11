@@ -11,6 +11,15 @@ public class BidImpl implements Bid {
 
     private static final long serialVersionUID = -50636686196288999L;
 
+    /**
+     * The minimum playable dice quantity.
+     */
+    public static final int MIN_DICE_QUANTITY = 1;
+    /**
+     * The minimum playable dice value.
+     */
+    public static final int MIN_DICE_VALUE = 1;
+
     private final int diceValue, quantity;
 
     /**
@@ -26,11 +35,11 @@ public class BidImpl implements Bid {
      *             if the arguments are invalid
      */
     public BidImpl(final int quantity, final int diceValue) {
-        if (quantity < 1) {
-            throw new IllegalArgumentException("Quantity should be at least 1");
+        if (quantity < MIN_DICE_QUANTITY) {
+            throw new IllegalArgumentException("Quantity should be at least " + MIN_DICE_QUANTITY);
         }
-        if (diceValue < 1) {
-            throw new IllegalArgumentException("Dice value should be at least 1");
+        if (diceValue < MIN_DICE_VALUE) {
+            throw new IllegalArgumentException("Dice value should be at least " + MIN_DICE_VALUE);
         }
         this.diceValue = diceValue;
         this.quantity = quantity;

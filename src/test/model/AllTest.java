@@ -2,37 +2,37 @@ package test.model;
 
 public class AllTest {
     @org.junit.Test
-    public void UserTest() {
+    public void userTest() {
         new UserTest().main();
     }
+
     @org.junit.Test
-    public void LobbyTest() {
+    public void lobbyTest() {
         new LobbyTest().main();
     }
-    
+
     @org.junit.Test
-    public void PlayerStatusTest() {
+    public void playerStatusTest() {
         new PlayerStatusTest().main();
     }
-    
+
     @org.junit.Test
-    public void GameSettingsTest() {
+    public void gameSettingsTest() {
         new GameSettingsTest().main();
     }
-    
+
     @org.junit.Test
-    public void BidTest() {
+    public void bidTest() {
         new BidTest().main();
     }
-    
+
     @org.junit.Test
-    public void ModelTest() {
+    public void modelTest() {
         new ModelTest().main();
     }
-    
-    
+
     @org.junit.Test
-    public void GameTest() {
+    public void gameTest() {
         new GameTest().main();
     }
 }
