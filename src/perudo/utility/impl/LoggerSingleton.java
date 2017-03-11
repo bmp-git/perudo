@@ -1,5 +1,6 @@
 package perudo.utility.impl;
 
+import perudo.utility.LogSeverity;
 import perudo.utility.Logger;
 
 /**
@@ -29,9 +30,9 @@ public final class LoggerSingleton implements Logger {
     }
 
     @Override
-    public void add(final Class<?> source, final String message) {
+    public void add(final LogSeverity severity, final Class<?> source, final String message) {
         if (Holder.enabled) {
-            System.out.println(source.getSimpleName() + ": " + message);
+            System.out.println(severity.getDescriber() + ": " + source.getSimpleName() + ": " + message);
         }
     }
 

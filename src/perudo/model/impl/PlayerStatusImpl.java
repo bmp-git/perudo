@@ -24,7 +24,7 @@ public class PlayerStatusImpl implements PlayerStatus {
     private final boolean palificoCalled;
 
     /**
-     * Create a PlayerStatus from GameSettings. It is the state o a user when a
+     * Create a PlayerStatus from GameSettings. It is the state of a user when a
      * game starts.
      * 
      * @param settings
