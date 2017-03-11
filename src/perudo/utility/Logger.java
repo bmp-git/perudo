@@ -7,12 +7,14 @@ public interface Logger {
     /**
      * Adds a message to log.
      * 
+     * @param severity
+     *            the severity of the message
      * @param source
      *            the source class that generated the message
      * @param message
      *            the message to be logged
      */
-    void add(Class<?> source, String message);
+    void add(LogSeverity severity, Class<?> source, String message);
 
     /**
      * Enables the logger.

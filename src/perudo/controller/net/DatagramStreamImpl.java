@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
 import perudo.model.User;
+import perudo.utility.LogSeverity;
 import perudo.utility.impl.LoggerSingleton;
 
 /**
@@ -68,12 +69,13 @@ public final class DatagramStreamImpl implements DatagramStream {
                     final Object readObj = this.objInStream.readObject();
                     if (!this.closed) {
                         final Datagram readDatagram = (Datagram) readObj;
-                        LoggerSingleton.get().add(this.getClass(), "Received -> " + readDatagram.getMethodName());
+                        LoggerSingleton.get().add(LogSeverity.INFO, this.getClass(),
+                                "Received -> " + readDatagram.getMethodName());
                         this.observers.forEach(c -> c.accept(readDatagram, this));
                     }
                 }
             } catch (IOException e) {
-                LoggerSingleton.get().add(this.getClass(), "Exception in receive.");
+                LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), "Exception in receive.");
                 this.notifyIOException(e);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -84,13 +86,13 @@ public final class DatagramStreamImpl implements DatagramStream {
     @Override
     public void send(final Datagram datagram) {
         if (!this.closed) {
-            LoggerSingleton.get().add(this.getClass(), "Send -> " + datagram.getMethodName());
+            LoggerSingleton.get().add(LogSeverity.INFO, this.getClass(), "Send -> " + datagram.getMethodName());
             try {
                 this.objOutStream.reset();
                 this.objOutStream.writeObject(datagram);
                 this.objOutStream.flush();
             } catch (IOException e) {
-                LoggerSingleton.get().add(this.getClass(), "Exception in send.");
+                LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), "Exception in send.");
                 this.notifyIOException(e);
             }
         }
@@ -126,9 +128,9 @@ public final class DatagramStreamImpl implements DatagramStream {
                 this.objInStream.close();
                 this.objOutStream.close();
             } catch (IOException e) {
-                LoggerSingleton.get().add(this.getClass(), "Exception closing streams.");
+                LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), "Exception closing streams.");
             }
-            LoggerSingleton.get().add(this.getClass(),
+            LoggerSingleton.get().add(LogSeverity.INFO, this.getClass(),
                     "datagramStream of user " + user.get().getName() + " shutted down!");
         }
     }
