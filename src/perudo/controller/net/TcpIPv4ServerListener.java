@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
+import perudo.utility.LogSeverity;
 import perudo.utility.impl.LoggerSingleton;
 
 /**
@@ -60,7 +61,7 @@ public final class TcpIPv4ServerListener implements NetworkServerListener {
             try {
                 while (run) {
                     final Socket clientSocket = serverSocket.accept();
-                    LoggerSingleton.get().add(this.getClass(), "new connection from "
+                    LoggerSingleton.get().add(LogSeverity.INFO, this.getClass(), "new connection from "
                             + clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort());
                     final InputStream inStream = clientSocket.getInputStream();
                     final OutputStream outStream = clientSocket.getOutputStream();
@@ -69,7 +70,7 @@ public final class TcpIPv4ServerListener implements NetworkServerListener {
                     });
                 }
             } catch (IOException e) {
-                LoggerSingleton.get().add(this.getClass(), "Server listener closed...");
+                LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), "Server listener closed...");
             }
         });
     }

@@ -70,11 +70,13 @@ public class MenuPanel extends JPanel {
      *            the user to set
      */
     public void setUser(final User user) {
-        this.user = Optional.of(user);
+        this.user = Optional.ofNullable(user);
         this.pnlTopMenu.setUser(user);
         this.pnlBottomMenu.setUser(user);
         this.pnlLobbyList.setUser(user);
         this.pnlUserList.setUser(user);
+        //need to update lobbies becouse user is changed
+        ControllerSingleton.getController().getLobbies(this.user.get());
     }
 
     /**
