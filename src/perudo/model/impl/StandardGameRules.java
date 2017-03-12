@@ -171,7 +171,7 @@ public class StandardGameRules implements GameRules {
 
     @Override
     public int getMinDiceQuantity(final int diceValue, final Game game) {
-        if (game.turnIsPalifico() && diceValue != game.getCurrentBid().get().getDiceValue()) {
+        if (game.turnIsPalifico() && game.getCurrentBid().isPresent() && diceValue != game.getCurrentBid().get().getDiceValue()) {
             throw new IllegalStateException("You can't play different dice value if the turn is palifico!");
         }
         return this.nextBid(diceValue, game).getQuantity();
