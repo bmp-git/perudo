@@ -70,10 +70,10 @@ public class EasyBot extends AbstractBot {
                 // 50% play on same dice - 50% play on my most present dice (if
                 // not palifico)
                 if (this.getGame().turnIsPalifico() || this.random.nextBoolean()) {
-                    this.getController().play(this.getUser(), this.getGame().getCurrentBid().get().nextBid());
+                    this.getController().play(this.getUser(), this.getGame().nextBid());
                 } else {
                     this.getController().play(this.getUser(),
-                            this.getGame().getCurrentBid().get().nextBid(this.getMostPresentDiceValue(this.getGame())));
+                            this.getGame().nextBid(this.getMostPresentDiceValue(this.getGame())));
                 }
                 return;
 

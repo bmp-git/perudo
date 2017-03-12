@@ -13,6 +13,7 @@ import java.util.Set;
 
 import perudo.model.Bid;
 import perudo.model.Game;
+import perudo.model.GameRules;
 import perudo.model.GameSettings;
 import perudo.model.PlayerStatus;
 import perudo.model.User;
@@ -22,7 +23,7 @@ import perudo.utility.ErrorTypeException;
 import perudo.utility.IdDispenser;
 
 /**
- * An implementation of Game interface following the rule of the classic game.
+ * An implementation of Game interface.
  */
 public class GameImpl implements Game {
 
@@ -32,6 +33,7 @@ public class GameImpl implements Game {
     private final List<User> userList;
     private final Map<User, PlayerStatus> usersStatus;
     private final GameSettings settings;
+    private final GameRules rules;
 
     private User currentTurn;
     private Instant turnStartTime;
@@ -45,10 +47,14 @@ public class GameImpl implements Game {
      * @param settings
      *            the settings for the game
      * 
+     * @param rules
+     *            the rules for the game
+     * 
      * @param users
      *            the users who plays
      */
-    public GameImpl(final GameSettings settings, final Set<User> users) {
+    public GameImpl(final GameSettings settings, final GameRules rules, final Set<User> users) {
+        this.rules = rules;
         if (settings == null || users == null || users.size() > settings.getMaxPlayer()) {
             throw new IllegalArgumentException();
         }
@@ -68,7 +74,6 @@ public class GameImpl implements Game {
             return;
         }
 
-        this.resetTurnStartTime();
         this.palifico = false;
         this.currentBid = null;
         this.bidUser = null;
@@ -76,39 +81,24 @@ public class GameImpl implements Game {
         // reroll all dice
         this.userList.forEach(u -> this.usersStatus.put(u, this.usersStatus.get(u).rollDice()));
 
-        this.currentTurn = playerTurn;
-        if ((!this.userList.contains(playerTurn)) || this.getUserStatus(playerTurn).getRemainingDice() == 0) {
-            this.goNextTurn();
-        }
+        this.goNextTurn(playerTurn);
 
+        if ((!this.userList.contains(playerTurn)) || this.hasLost(playerTurn)) {
+            this.goNextTurn(this.rules.nextTurnBid(playerTurn, this));
+        }
     }
 
-    private void goNextTurn() {
-        if (this.isOver()) {
-            return;
-        }
-
-        // go next, if the next player have loss, go next, ...
-        do {
-            this.currentTurn = this.userList.get((this.userList.indexOf(this.getTurn()) + 1) % this.userList.size());
-        } while (this.getUserStatus(this.getTurn()).getRemainingDice() <= 0);
-
-        // reset turn data
-        this.resetTurnStartTime();
-    }
-
-    private void resetTurnStartTime() {
+    private void goNextTurn(final User user) {
+        this.currentTurn = user;
         this.turnStartTime = Instant.now();
     }
 
-    private void removeDice(final User user, final int quantity) {
-        this.addDice(user, -quantity);
+    private void changeDiceQuantity(final Map<User, Integer> diceVariation) {
+        diceVariation.entrySet().stream().filter(p -> this.getUsers().contains(p.getKey()))
+                .forEach(p -> this.addDice(p.getKey(), p.getValue()));
     }
 
     private void addDice(final User user, final int quantity) {
-        if (this.usersStatus.get(user).getRemainingDice() + quantity > this.getSettings().getInitialDiceNumber()) {
-            return;
-        }
         if (this.usersStatus.get(user).getRemainingDice() < 0) {
             return;
         }
@@ -122,46 +112,10 @@ public class GameImpl implements Game {
         }
     }
 
-    private void checkUserNotLose(final User user) throws ErrorTypeException {
-        if (this.getUserStatus(user).getRemainingDice() <= 0) {
-            throw new ErrorTypeException(ErrorType.GAME_YOU_ALREADY_LOSE);
-        }
-    }
-
-    private void checkUserTurn(final User user) throws ErrorTypeException {
-        if (!getTurn().equals(user)) {
-            throw new ErrorTypeException(ErrorType.GAME_NOT_YOUR_TURN);
-        }
-    }
-
     private void checkIsOver() throws ErrorTypeException {
         if (this.isOver()) {
             throw new ErrorTypeException(ErrorType.GAME_IS_OVER);
         }
-    }
-
-    private void checkUserCanUrge(final User user) throws ErrorTypeException {
-        // no one had bid yet, the one who bid can't urge, the one who is turn
-        // can't urge
-        if ((!this.getCurrentBid().isPresent()) || this.getBidUser().get().equals(user)
-                || this.getTurn().equals(user)) {
-            throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_URGE_NOW);
-        }
-    }
-
-    @Override
-    public synchronized Optional<Integer> getRealBidDiceCount() {
-        if (!this.getCurrentBid().isPresent()) {
-            return Optional.empty();
-        }
-        final int bidUserJollyCount = this.userList.stream().filter(u -> this.getBidUser().get().equals(u))
-                .mapToInt(u -> this.usersStatus.get(u).getDiceCount().get(1)).sum();
-        final int usersDiceCount = this.userList.stream()
-                .mapToInt(u -> this.usersStatus.get(u).getDiceCount().get(this.getCurrentBid().get().getDiceValue()))
-                .sum();
-
-        return Optional.of((this.getCurrentBid().get().getDiceValue() == 1 ? usersDiceCount
-                : (usersDiceCount + bidUserJollyCount)));
     }
 
     @Override
@@ -193,65 +147,44 @@ public class GameImpl implements Game {
     public synchronized void play(final Bid bid, final User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
-        this.checkUserNotLose(user);
-        this.checkUserTurn(user);
 
-        // check if bid is valid
-        if (this.getCurrentBid().isPresent()
-                && !this.getCurrentBid().get().isNextBidValid(bid, this.turnIsPalifico(), this.getSettings())) {
+        this.rules.checkCanBid(user, this);
+
+        if (!this.rules.bidValid(bid, this)) {
             throw new ErrorTypeException(ErrorType.GAME_INVALID_BID);
         }
 
         this.currentBid = bid;
         this.bidUser = user;
-        this.goNextTurn();
+
+        this.goNextTurn(this.rules.nextTurnBid(user, this));
     }
 
     @Override
     public synchronized Boolean doubt(final User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
-        this.checkUserNotLose(user);
-        this.checkUserTurn(user);
-        if (!this.getCurrentBid().isPresent()) {
-            throw new ErrorTypeException(ErrorType.GAME_CANT_DOUBT_NOW);
-        }
 
-        if (this.getRealBidDiceCount().get() < this.getCurrentBid().get().getQuantity()) {
-            // doubt is correct, bid user loss 1 dice
-            this.removeDice(this.getBidUser().get(), 1);
-            this.resetGame(this.getBidUser().get());
-            return true;
-        } else {
-            // doubt is wrong, user loss 1 dice
-            this.removeDice(user, 1);
-            this.resetGame(user);
-            return false;
-        }
+        this.rules.checkCanDoubt(user, this);
+
+        final boolean win = this.rules.doubtWin(this);
+        this.changeDiceQuantity(this.rules.changesDiceDoubt(user, this, win));
+        this.resetGame(this.rules.nextTurnDoubt(user, this, win));
+        return win;
+
     }
 
     @Override
     public synchronized Boolean urge(final User user) throws ErrorTypeException {
         this.checkIsOver();
         this.checkUserExistence(user);
-        this.checkUserNotLose(user);
-        this.checkUserCanUrge(user);
 
-        if (this.getRealBidDiceCount().get() == this.getCurrentBid().get().getQuantity()) {
-            // urge is correct, all users (user excluded) loss 1 dice
-            this.userList.stream().filter(u -> this.usersStatus.get(u).getRemainingDice() > 0)
-                    .filter(u -> !u.equals(user)).forEach(u -> this.removeDice(u, 1));
-            // user get 1 dice
-            this.addDice(user, 1);
-            this.resetGame(this.getTurn());
-            return true;
-        } else {
-            // urge is wrong, user loss 1 dice
-            this.removeDice(user, 1);
-            this.resetGame(user);
-            return false;
-        }
+        this.rules.checkCanUrge(user, this);
 
+        final boolean win = this.rules.urgeWin(this);
+        this.changeDiceQuantity(this.rules.changesDiceUrge(user, this, win));
+        this.resetGame(this.rules.nextTurnUrge(user, this, win));
+        return win;
     }
 
     @Override
@@ -259,20 +192,21 @@ public class GameImpl implements Game {
         this.checkIsOver();
         this.checkUserExistence(user);
 
-        // bid already started
-        if (this.getCurrentBid().isPresent() || this.turnIsPalifico()) {
-            throw new ErrorTypeException(ErrorType.GAME_CANT_CALL_PALIFICO_NOW);
-        }
+        this.rules.checkCanPalifico(user, this);
 
         this.usersStatus.put(user, this.getUserStatus(user).callPalifico());
-        this.resetTurnStartTime();
-        this.currentTurn = user;
+        this.resetGame(this.rules.nextTurnPalifico(user, this));
         this.palifico = true;
     }
 
     @Override
     public GameSettings getSettings() {
         return this.settings;
+    }
+
+    @Override
+    public GameRules getRules() {
+        return this.rules;
     }
 
     @Override
@@ -340,5 +274,15 @@ public class GameImpl implements Game {
         if (status.getRemainingDice() != 0) {
             this.resetGame(this.getTurn());
         }
+    }
+
+    @Override
+    public synchronized boolean hasLost(final User user) {
+        return !this.getUsers().contains(user) || this.getUserStatus(user).getRemainingDice() == 0;
+    }
+
+    @Override
+    public int getTotalRemainingDice() {
+        return this.getUsers().stream().mapToInt(u -> this.getUserStatus(u).getRemainingDice()).sum();
     }
 }

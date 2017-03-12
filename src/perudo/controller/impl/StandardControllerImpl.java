@@ -19,7 +19,6 @@ import perudo.model.Lobby;
 import perudo.model.Model;
 import perudo.model.User;
 import perudo.model.UserType;
-import perudo.model.impl.BidImpl;
 import perudo.model.impl.LobbyImpl;
 import perudo.model.impl.ModelImpl;
 import perudo.model.impl.UserImpl;
@@ -467,8 +466,7 @@ public class StandardControllerImpl implements Controller {
                 if (game.getTurnRemainingTime().isNegative()) {
 
                     try {
-                        final Bid bid = game.getCurrentBid().isPresent() ? game.getCurrentBid().get().nextBid()
-                                : new BidImpl(1, 1);
+                        final Bid bid = game.nextBid();
                         final User user = game.getTurn();
                         game.play(bid, user);
                         final Map<User, View> gameViews = this.getViewsfromGame(game);

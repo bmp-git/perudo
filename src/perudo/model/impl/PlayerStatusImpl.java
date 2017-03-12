@@ -12,7 +12,7 @@ import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 
 /**
- * The implementation of PlayerStatus interface following the rule of the classic game.
+ * The implementation of PlayerStatus interface.
  */
 public class PlayerStatusImpl implements PlayerStatus {
 

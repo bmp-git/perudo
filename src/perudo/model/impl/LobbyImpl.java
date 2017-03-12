@@ -98,7 +98,7 @@ public class LobbyImpl implements Lobby {
             throw new ErrorTypeException(ErrorType.LOBBY_USER_NOT_OWNER);
         }
 
-        final Game game = new GameImpl(this.getInfo(), this.getUsers());
+        final Game game = new GameImpl(this.getInfo(), new StandardGameRules(), this.getUsers());
         this.started = true;
         return game;
     }

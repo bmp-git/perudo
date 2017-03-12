@@ -210,7 +210,7 @@ public class GameForm extends BaseForm {
 
                 } else if (this.game.getCurrentBid().isPresent()) {
                     int value = Integer.parseInt(this.txbDiceValue.getText());
-                    quantity = Integer.toString((this.game.getCurrentBid().get().nextBid(value).getQuantity()));
+                    quantity = Integer.toString((this.game.nextBid(value).getQuantity()));
                 }
             } catch (Exception ex) {
             }
@@ -301,7 +301,7 @@ public class GameForm extends BaseForm {
             }
         }
 
-        diceCount.add("Total: " + this.game.getRealBidDiceCount().get());
+        diceCount.add("Total: " + this.game.getRules().getRealBidDiceCount(this.game).get());
         diceCount.add("Bid  : " + this.game.getCurrentBid().get().getQuantity() + " dice of "
                 + this.game.getCurrentBid().get().getDiceValue());
         diceCount.add("Bid from " + this.game.getBidUser().get().getName());

@@ -104,6 +104,13 @@ public interface Game extends Serializable {
     GameSettings getSettings();
 
     /**
+     * Gets the rules for this game.
+     * 
+     * @return the rules
+     */
+    GameRules getRules();
+
+    /**
      * Gets the user whose his turn.
      * 
      * @return the user who must play
@@ -146,20 +153,11 @@ public interface Game extends Serializable {
     void removeUser(User user) throws ErrorTypeException;
 
     /**
-     * Gets the numbers of dice that apply to the current bid.
-     * 
-     * @return the quantity of valid dice that count for this bid
-     */
-    Optional<Integer> getRealBidDiceCount();
-
-    /**
      * Checks if the game is over.
      * 
      * @return true if the game is over, false otherwise
      */
     boolean isOver();
-
-    /** UTILITY METHODS **/
 
     /**
      * Checks if a given user has lost. return true if the user isn't in the
@@ -170,9 +168,16 @@ public interface Game extends Serializable {
      * 
      * @return true if the user has lost, false otherwise
      */
-    default boolean hasLost(final User user) {
-        return !this.getUsers().contains(user) || this.getUserStatus(user).getRemainingDice() == 0;
-    }
+    boolean hasLost(final User user);
+
+    /**
+     * Gets the sum of the total dice remaining.
+     * 
+     * @return the total dice sum.
+     */
+    int getTotalRemainingDice();
+
+    /** UTILITY METHODS **/
 
     /**
      * Checks if a given user can play a bid.
@@ -183,7 +188,12 @@ public interface Game extends Serializable {
      * @return true if the user can play, false otherwise
      */
     default boolean canPlay(final User user) {
-        return this.getTurn().equals(user);
+        try {
+            this.getRules().checkCanBid(user, this);
+            return true;
+        } catch (ErrorTypeException e) {
+            return false;
+        }
     }
 
     /**
@@ -195,7 +205,12 @@ public interface Game extends Serializable {
      * @return true if the user can doubt, false otherwise
      */
     default boolean canDoubt(final User user) {
-        return this.getTurn().equals(user) && this.getCurrentBid().isPresent();
+        try {
+            this.getRules().checkCanDoubt(user, this);
+            return true;
+        } catch (ErrorTypeException e) {
+            return false;
+        }
     }
 
     /**
@@ -207,8 +222,12 @@ public interface Game extends Serializable {
      * @return true if the user can urge, false otherwise
      */
     default boolean canUrge(final User user) {
-        return !hasLost(user) && !this.getTurn().equals(user) && this.getBidUser().isPresent()
-                && !this.getBidUser().get().equals(user);
+        try {
+            this.getRules().checkCanUrge(user, this);
+            return true;
+        } catch (ErrorTypeException e) {
+            return false;
+        }
     }
 
     /**
@@ -221,18 +240,36 @@ public interface Game extends Serializable {
      * @return true if the user can call palifico, false otherwise
      */
     default boolean canPalifico(final User user) {
-        return this.getUsers().contains(user) && this.getUserStatus(user).getRemainingDice() == 1
-                && !this.getUserStatus(user).hasCalledPalifico() && !this.turnIsPalifico()
-                && !this.getCurrentBid().isPresent();
+        try {
+            this.getRules().checkCanPalifico(user, this);
+            return true;
+        } catch (ErrorTypeException e) {
+            return false;
+        }
     }
 
     /**
-     * Gets the sum of the total dice remaining.
+     * Gets default next bid based on game's rules.
      * 
-     * @return the total dice sum.
+     * @return the default bid
      */
-    default int getTotalRemainingDice() {
-        return this.getUsers().stream().mapToInt(u -> this.getUserStatus(u).getRemainingDice()).sum();
+    default Bid nextBid() {
+        if (this.getCurrentBid().isPresent()) {
+            return this.getRules().nextBid(this.getCurrentBid().get().getDiceValue(), this);
+        }
+        return this.getRules().nextBid(1, this);
+    }
+
+    /**
+     * Gets default next bid based on game's rules.
+     * 
+     * @param diceValue
+     *            the wanted dice value
+     * 
+     * @return the next bid
+     */
+    default Bid nextBid(final int diceValue) {
+        return this.getRules().nextBid(diceValue, this);
     }
 
     /**
@@ -244,13 +281,7 @@ public interface Game extends Serializable {
      * @return the minimum dice quantity
      */
     default int getMinDiceQuantity(final int diceValue) {
-        if (!this.getCurrentBid().isPresent()) {
-            return 1;
-        }
-        if (this.turnIsPalifico() && diceValue != this.getCurrentBid().get().getDiceValue()) {
-            throw new IllegalStateException("You can't play different dice value if the turn is palifico!");
-        }
-        return this.getCurrentBid().get().nextBid(diceValue).getQuantity();
+        return this.getRules().getMinDiceQuantity(diceValue, this);
     }
 
     /**
@@ -263,13 +294,6 @@ public interface Game extends Serializable {
      * @return the maximum dice quantity
      */
     default int getMaxDiceQuantity(final int diceValue) {
-        if (!this.getCurrentBid().isPresent()) {
-            return getTotalRemainingDice();
-        }
-        final int minDiceQuantity = this.getMinDiceQuantity(diceValue);
-        if (minDiceQuantity >= this.getTotalRemainingDice()) {
-            return minDiceQuantity + 1;
-        }
-        return this.getTotalRemainingDice();
+        return this.getRules().getMaxDiceQuantity(diceValue, this);
     }
 }
