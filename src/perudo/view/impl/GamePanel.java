@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import perudo.model.Game;
 import perudo.model.User;
 import perudo.view.GUIFactory;
+import perudo.view.impl.components.TopMenuGame;
 import perudo.view.impl.panels.GamePlayPanel;
 import perudo.view.impl.panels.GameTurnPanel;
 import perudo.view.impl.panels.HistoryPanel;
@@ -42,6 +43,7 @@ public class GamePanel extends JPanel {
     private final GamePlayPanel pnlGamePlay;
     private final GameTurnPanel pnlGameTurn;
     private final PlayersHandsListPanel pnlHand;
+    private final TopMenuGame pnlMenu;
 
     /**
      * Create all game sub panels.
@@ -61,9 +63,12 @@ public class GamePanel extends JPanel {
         this.pnlGameTurn = new GameTurnPanel();
         this.pnlHand = new PlayersHandsListPanel();
         this.pnlPlayers = new PlayersListPanel();
+        this.pnlMenu = new TopMenuGame();
 
         this.pnlRight.add(this.pnlTime, BorderLayout.NORTH);
         this.pnlRight.add(this.pnlPlayers, BorderLayout.CENTER);
+
+        this.add(this.pnlMenu, BorderLayout.NORTH);
         this.add(this.pnlCenter, BorderLayout.CENTER);
         this.add(this.pnlBottomMenu, BorderLayout.SOUTH);
         this.add(this.pnlRight, BorderLayout.EAST);
@@ -110,6 +115,7 @@ public class GamePanel extends JPanel {
      */
     public void setUser(final User user) {
         this.user = Optional.ofNullable(user);
+        this.pnlMenu.setUser(this.user.get());
         this.pnlBottomMenu.setUser(this.user.get());
     }
 

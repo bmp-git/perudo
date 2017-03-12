@@ -283,7 +283,12 @@ public class ViewImpl implements View {
     public void exitGameNotify(final Game game, final User user) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                gamePanel.exitGameNotify(game, user);
+                if (ViewImpl.this.user.equals(user)) {
+                    showPanel(menuPanel);
+                    menuPanel.repaint();
+                } else {
+                    gamePanel.exitGameNotify(game, user);
+                }
                 mainFrame.getContentPane().revalidate();
             }
         });
