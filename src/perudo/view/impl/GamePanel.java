@@ -93,7 +93,7 @@ public class GamePanel extends JPanel {
         this.pnlCenter.revalidate();
 
         this.repaint();
-        if (this.checkTurn() && this.game.get().getUsers().stream().filter(u -> !u.equals(this.user)).findAny().isPresent()) {
+        if (this.checkTurn() && !this.game.get().isOver()) {
             JOptionPane.showConfirmDialog(GamePanel.this, TURN_TEXT, TURN_NAME, JOptionPane.DEFAULT_OPTION);
         }
     }
@@ -180,7 +180,6 @@ public class GamePanel extends JPanel {
      */
     public void exitGameNotify(final Game game, final User user) {
         this.pnlHistory.addInfo(user.getName() + " exited");
-        this.pnlPlayers.removeUser(user);
         this.setGame(game);
     }
 

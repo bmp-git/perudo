@@ -51,7 +51,8 @@ public class PlayersListPanel extends JPanel {
      */
     public void setGame(final Game game) {
         this.game = Optional.ofNullable(game);
-        this.game.get().getUsers().forEach(u -> updateUser(u));
+        this.pnlUserList.removeAll();
+        this.game.get().getUsers().forEach(u -> addUser(u));
 
     }
 
@@ -62,42 +63,10 @@ public class PlayersListPanel extends JPanel {
      *            the user to add
      */
     public void addUser(final User user) {
-        final PlayerPanel p = new PlayerPanel(user, this.game.get().getTurn().equals(user));
-        this.pnlUserList.add(p, this.cnst);
-        this.cnst.gridy++;
-    }
-
-    /**
-     * Update a user in the list panel.
-     * 
-     * @param user
-     *            the user to update
-     */
-    public void updateUser(final User user) {
-        boolean inserted = false;
-        for (int i = 0; i < this.pnlUserList.getComponentCount() && !inserted; i++) {
-            if (((PlayerPanel) this.pnlUserList.getComponent(i)).getUser().equals(user)) {
-                inserted = true;
-                ((PlayerPanel) this.pnlUserList.getComponent(i)).setUser(user, this.game.get().getTurn().equals(user));
-            }
-        }
-        if (!inserted) {
-            this.addUser(user);
-        }
-    }
-
-    /**
-     * Remove a user to the list panel.
-     * 
-     * @param user
-     *            the user to remove
-     */
-    public void removeUser(final User user) {
-        for (int i = 0; i < this.pnlUserList.getComponentCount(); i++) {
-            if (((PlayerPanel) this.pnlUserList.getComponent(i)).getUser().equals(user)) {
-                this.pnlUserList.remove(this.pnlUserList.getComponent(i));
-                break;
-            }
+        if (this.game.isPresent() && !this.game.get().hasLost(user)) {
+            final PlayerPanel p = new PlayerPanel(user, this.game.get().getTurn().equals(user));
+            this.pnlUserList.add(p, this.cnst);
+            this.cnst.gridy++;
         }
     }
 }
