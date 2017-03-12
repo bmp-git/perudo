@@ -18,7 +18,7 @@ import perudo.view.impl.panels.PlayersListPanel;
 import perudo.view.impl.panels.TimePanel;
 
 /**
- * Models a JPanel made for playing Perudo.
+ * Models a JPanel made for playing a game of Perudo.
  * 
  */
 public class GamePanel extends JPanel {
@@ -35,7 +35,6 @@ public class GamePanel extends JPanel {
     private Optional<User> user;
 
     private final JPanel pnlCenter;
-    private final JPanel pnlRight;
     private final PlayersListPanel pnlPlayers;
     private final MenuBottomPanel pnlBottomMenu;
     private final TimePanel pnlTime;
@@ -54,8 +53,8 @@ public class GamePanel extends JPanel {
         this.game = Optional.empty();
         this.user = Optional.empty();
         this.setLayout(new BorderLayout());
+        final JPanel pnlRight = this.factory.createPanel(new BorderLayout());
         this.pnlCenter = this.factory.createPanel(new BorderLayout());
-        this.pnlRight = this.factory.createPanel(new BorderLayout());
         this.pnlBottomMenu = new MenuBottomPanel();
         this.pnlTime = new TimePanel();
         this.pnlHistory = new HistoryPanel();
@@ -65,13 +64,13 @@ public class GamePanel extends JPanel {
         this.pnlPlayers = new PlayersListPanel();
         this.pnlMenu = new TopMenuGame();
 
-        this.pnlRight.add(this.pnlTime, BorderLayout.NORTH);
-        this.pnlRight.add(this.pnlPlayers, BorderLayout.CENTER);
+        pnlRight.add(this.pnlTime, BorderLayout.NORTH);
+        pnlRight.add(this.pnlPlayers, BorderLayout.CENTER);
 
         this.add(this.pnlMenu, BorderLayout.NORTH);
         this.add(this.pnlCenter, BorderLayout.CENTER);
         this.add(this.pnlBottomMenu, BorderLayout.SOUTH);
-        this.add(this.pnlRight, BorderLayout.EAST);
+        this.add(pnlRight, BorderLayout.EAST);
         final JScrollPane scroll = this.factory.createScrollPaneWithoutBorder(this.pnlHistory);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -79,7 +78,8 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Set the game to the panel and update all subpanels.
+     * Set for first time or update the game to the panel and update all
+     * subpanels. To set a different game you must make a new GamePanel.
      * 
      * @param game
      *            the game to set
@@ -186,7 +186,9 @@ public class GamePanel extends JPanel {
      */
     public void exitGameNotify(final Game game, final User user) {
         this.pnlHistory.addInfo(user.getName() + " exited");
-        this.setGame(game);
+        if (!game.isOver()) {
+            this.setGame(game);
+        }
     }
 
     /**
@@ -200,5 +202,14 @@ public class GamePanel extends JPanel {
         this.pnlTime.stop();
         this.pnlGameTurn.youWin(!game.hasLost(this.user.get()));
         this.pnlGamePlay.setPanelEnabled(false);
+    }
+
+    /**
+     * Get the game associated to the panel.
+     * 
+     * @return the game associated
+     */
+    public Game getGame() {
+        return this.game.orElse(null);
     }
 }
