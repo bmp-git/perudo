@@ -15,7 +15,7 @@ import perudo.view.GUIFactory;
 import perudo.view.impl.GUIFactorySingleton;
 
 /**
- * Panel rappresenting a list of users.
+ * Panel representing a list of users.
  */
 public class PlayersListPanel extends JPanel {
 
@@ -23,6 +23,7 @@ public class PlayersListPanel extends JPanel {
      * 
      */
     private static final long serialVersionUID = 1L;
+    private static final String PANEL_TITLE = "Player turn";
 
     private final GridBagConstraints cnst;
     private final JPanel pnlUserList;
@@ -36,7 +37,7 @@ public class PlayersListPanel extends JPanel {
         this.game = Optional.empty();
         final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.pnlUserList = factory.createPanel(new GridBagLayout());
-        this.setBorder(new TitledBorder("Player turn"));
+        this.setBorder(new TitledBorder(PANEL_TITLE));
         this.cnst = new GridBagConstraints();
         this.cnst.gridy = 0;
         this.cnst.insets = new Insets(0, 0, 0, 0);

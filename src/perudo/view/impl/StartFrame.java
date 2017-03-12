@@ -41,7 +41,9 @@ public class StartFrame extends JFrame {
     private static final String EXIT_NAME = "Quitting..";
     private static final String EXIT_TEXT = "Do you really want to quit?";
     private static final String LOGO_RESPATH = "/images/perudo-logo.png";
-    private static final String ICON_RESPATH = "/images/perudo-logo.png";
+    private static final String MULTIPLAYER_BUTTON_TEXT = "Multiplayer";
+    private static final String SINGLEPLAYER_BUTTON_TEXT = "Singleplayer";
+    private static final String EXIT_BUTTON_TEXT = "Exit";
     private static final int BUTTONS_PADD = 25;
 
     private final JButton multiplayer;
@@ -60,7 +62,7 @@ public class StartFrame extends JFrame {
 
         this.setTitle(TITLE);
         this.setLayout(new BorderLayout());
-        this.setIconImage(GUIUtility.getIcon(ICON_RESPATH).getImage());
+        this.setIconImage(Icon.APPLICATION_ICON.getIcon().getImage());
 
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.setLocationByPlatform(true);
@@ -79,19 +81,19 @@ public class StartFrame extends JFrame {
 
         final JPanel main = factory.createPanel(new GridBagLayout());
 
-        this.multiplayer = (JButton) factory.createButton("Multiplayer");
+        this.multiplayer = (JButton) factory.createButton(MULTIPLAYER_BUTTON_TEXT);
         this.multiplayer.addActionListener(e -> {
             this.result = Optional.of(StartingFrameResult.MULTIPLAYER);
             this.setVisible(false);
             this.dispose();
         });
-        this.singleplayer = (JButton) factory.createButton("Singleplayer");
+        this.singleplayer = (JButton) factory.createButton(SINGLEPLAYER_BUTTON_TEXT);
         this.singleplayer.addActionListener(e -> {
             this.result = Optional.of(StartingFrameResult.SINGLEPLAYER);
             this.setVisible(false);
             this.dispose();
         });
-        this.exit = (JButton) factory.createButton("Exit");
+        this.exit = (JButton) factory.createButton(EXIT_BUTTON_TEXT);
         this.exit.addActionListener(a -> {
             final int n = JOptionPane.showConfirmDialog(this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
             if (n == JOptionPane.YES_OPTION) {
@@ -104,9 +106,9 @@ public class StartFrame extends JFrame {
         final GridBagConstraints cnst = new GridBagConstraints();
         cnst.gridy = 0;
         cnst.insets = new Insets(BUTTONS_PADD, BUTTONS_PADD, BUTTONS_PADD, BUTTONS_PADD);
-        main.add(this.multiplayer, cnst);
-        cnst.gridy++;
         main.add(this.singleplayer, cnst);
+        cnst.gridy++;
+        main.add(this.multiplayer, cnst);
         cnst.gridy++;
         main.add(this.exit, cnst);
         cnst.gridy++;

@@ -15,7 +15,7 @@ import perudo.view.GUIFactory;
 import perudo.view.impl.GUIFactorySingleton;
 
 /**
- * Panel rappresenting a form for create a lobby.
+ * Panel representing a form for create a lobby.
  */
 public class CreateLobbyPanel extends JPanel {
 

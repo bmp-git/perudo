@@ -12,7 +12,7 @@ import perudo.view.GUIFactory;
 import perudo.view.impl.GUIFactorySingleton;
 
 /**
- * Panel rappresenting a user.
+ * Panel representing a user.
  */
 public class UserPanel extends JPanel {
 

@@ -11,7 +11,7 @@ import perudo.view.GUIFactory;
 import perudo.view.impl.GUIFactorySingleton;
 
 /**
- * Panel rappresenting a user list.
+ * Panel representing a user list.
  */
 public class UserListPanel extends JPanel {
 
@@ -19,6 +19,7 @@ public class UserListPanel extends JPanel {
      * 
      */
     private static final long serialVersionUID = 1L;
+    private static final String PANEL_TITLE = "Users list";
 
     private final GridBagConstraints cnst;
     private final JPanel pnlUserList;
@@ -31,7 +32,7 @@ public class UserListPanel extends JPanel {
         this.setLayout(new FlowLayout());
         final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.pnlUserList = factory.createPanel(new GridBagLayout());
-        this.setBorder(new TitledBorder("Users list"));
+        this.setBorder(new TitledBorder(PANEL_TITLE));
         this.cnst = new GridBagConstraints();
         this.cnst.gridy = 0;
         this.cnst.insets = new Insets(0, 0, 0, 0);

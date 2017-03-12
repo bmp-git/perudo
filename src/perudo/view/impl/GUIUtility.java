@@ -2,8 +2,6 @@ package perudo.view.impl;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 /**
@@ -39,17 +37,6 @@ public final class GUIUtility {
     public static void fitFramePacked(final JFrame frame) {
         frame.pack();
         frame.setVisible(true);
-    }
-
-    /**
-     * Get icon from the resource package.
-     * 
-     * @param respath
-     *            the icon res path
-     * @return the icon
-     */
-    public static ImageIcon getIcon(final String respath) {
-        return new ImageIcon(GUIUtility.class.getResource(respath));
     }
 
 }

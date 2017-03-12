@@ -49,7 +49,7 @@ public class TimePanel extends JPanel {
     }
 
     /**
-     * Stop the timer.
+     * Stop the timer and shutdown executor.
      */
     public void stop() {
         this.executor.shutdown();

@@ -8,7 +8,7 @@ import perudo.model.Game;
 import perudo.model.User;
 
 /**
- * Panel rappresenting all players hands in game.
+ * Panel representing all players hands in game.
  */
 public class PlayersHandsListPanel extends JPanel {
 

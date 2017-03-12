@@ -13,7 +13,7 @@ import perudo.view.impl.ControllerSingleton;
 import perudo.view.impl.GUIFactorySingleton;
 
 /**
- * Panel rappresenting elements to play the game.
+ * Panel representing elements to play the game.
  */
 public class GamePlayPanel extends JPanel {
 

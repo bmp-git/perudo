@@ -14,7 +14,7 @@ import perudo.view.impl.Icon;
 import perudo.view.impl.components.DiceLabel;
 
 /**
- * Panel rapresenting dices and values to bid.
+ * Panel representing dices and values to bid.
  */
 public class BidPanel extends JPanel {
 

@@ -26,7 +26,6 @@ import perudo.view.View;
 public class ViewImpl implements View {
 
     private static final String TITLE = "Perudo";
-    private static final String ICON_RESPATH = "/images/perudo-logo.png";
     private static final String EXIT_NAME = "Quitting..";
     private static final String EXIT_TEXT = "Do you really want to quit?";
 
@@ -45,7 +44,7 @@ public class ViewImpl implements View {
         final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.latch = new CountDownLatch(1);
         this.mainFrame = factory.createFrame(TITLE);
-        this.mainFrame.setIconImage(GUIUtility.getIcon(ICON_RESPATH).getImage());
+        this.mainFrame.setIconImage(Icon.APPLICATION_ICON.getIcon().getImage());
         this.mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.mainFrame.setLocationByPlatform(true);
         this.mainFrame.addWindowListener(new WindowAdapter() {
@@ -331,7 +330,7 @@ public class ViewImpl implements View {
         try {
             this.latch.await();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(), "Await method crashed.");
         }
     }
 }
