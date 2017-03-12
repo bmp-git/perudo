@@ -168,7 +168,7 @@ public interface Game extends Serializable {
      * 
      * @return true if the user has lost, false otherwise
      */
-    boolean hasLost(final User user);
+    boolean hasLost(User user);
 
     /**
      * Gets the sum of the total dice remaining.

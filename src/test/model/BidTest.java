@@ -17,7 +17,7 @@ public class BidTest {
         Bid bid = null;
         GameSettings setts = new GameSettingsImpl(5, 6, 5, Duration.ofMinutes(2), "");
         try {
-            bid = new BidImpl(0, 1);
+            bid = new BidImpl(-1, 1);
             throw new IllegalStateException("Under limit");
         } catch (IllegalArgumentException ex) {
             //ok

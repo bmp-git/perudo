@@ -69,7 +69,7 @@ public class GameTest {
         }
 
         try {
-            game.play(new BidImpl(2, 0), game.getTurn());
+            game.play(new BidImpl(0, 1), game.getTurn());
             throw new IllegalStateException("Invalid bid");
         } catch (ErrorTypeException e) {
             assertEquals(e.getErrorType(), ErrorType.GAME_INVALID_BID);

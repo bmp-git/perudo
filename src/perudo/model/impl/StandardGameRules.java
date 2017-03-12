@@ -149,7 +149,7 @@ public class StandardGameRules implements GameRules {
 
     @Override
     public Map<User, Integer> changesDiceUrge(final User user, final Game game, final boolean win) {
-        Map<User, Integer> map = new HashMap<>();
+        final Map<User, Integer> map = new HashMap<>();
         if (win) {
             if (game.getUserStatus(user).getRemainingDice() < game.getSettings().getInitialDiceNumber()) {
                 map.put(user, 1);
@@ -164,7 +164,7 @@ public class StandardGameRules implements GameRules {
 
     @Override
     public Map<User, Integer> changesDiceDoubt(final User user, final Game game, final boolean win) {
-        Map<User, Integer> map = new HashMap<>();
+        final Map<User, Integer> map = new HashMap<>();
         map.put(win ? game.getBidUser().get() : user, -1);
         return map;
     }
