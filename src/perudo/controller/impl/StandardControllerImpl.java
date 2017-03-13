@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -32,16 +33,22 @@ import perudo.view.View;
 /**
  * A basic controller.
  */
-public class StandardControllerImpl implements Controller {
+public final class StandardControllerImpl implements Controller {
     private final Model model;
     private final Map<User, View> views;
     private final ExecutorService executor;
     private final ExecutorService turnTimer;
 
     /**
-     * Create a new StandardControllerImpl.
+     * Creates a new StandardControllerImpl.
+     * 
+     * @return the created Controller
      */
-    public StandardControllerImpl() {
+    public static Controller newStandardControllerImpl() {
+        return new StandardControllerImpl();
+    }
+
+    private StandardControllerImpl() {
         this.model = new ModelImpl();
         this.views = new ConcurrentHashMap<>();
         this.executor = Executors.newSingleThreadExecutor();
@@ -455,6 +462,9 @@ public class StandardControllerImpl implements Controller {
 
     @Override
     public void close() throws IOException {
+        for (final Entry<User, View> e : this.views.entrySet()) {
+            e.getValue().close();
+        }
         this.executor.shutdownNow();
         this.turnTimer.shutdownNow();
     }

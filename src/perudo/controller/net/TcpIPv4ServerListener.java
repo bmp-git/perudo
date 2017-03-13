@@ -24,6 +24,7 @@ public final class TcpIPv4ServerListener implements NetworkServerListener {
     private final ServerSocket serverSocket;
     private final List<BiConsumer<InputStream, OutputStream>> observers;
     private volatile boolean run;
+    private volatile boolean started;
 
     /**
      * Creates a new NetworkServerListener over TCP/IP.
@@ -46,6 +47,7 @@ public final class TcpIPv4ServerListener implements NetworkServerListener {
         this.observers = new CopyOnWriteArrayList<>(observers);
         this.serverSocket = new ServerSocket(port);
         this.run = true;
+        this.started = false;
         this.notifier = Executors.newSingleThreadExecutor();
         this.networkListener = Executors.newSingleThreadExecutor();
     }
@@ -57,6 +59,10 @@ public final class TcpIPv4ServerListener implements NetworkServerListener {
 
     @Override
     public void start() {
+        if (started) {
+            return;
+        }
+        this.started = true;
         this.networkListener.execute(() -> {
             try {
                 while (run) {

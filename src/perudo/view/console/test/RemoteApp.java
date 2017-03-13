@@ -29,7 +29,8 @@ public class RemoteApp {
         if (args.length < 2) {
             int port = 45555;
             listener = TcpIPv4ServerListener.startNewServerListener(port, Arrays.asList());
-            controller = NetworkControllerImpl.newNetworkController(new StandardControllerImpl(), listener);
+            controller = NetworkControllerImpl.newNetworkController(StandardControllerImpl.newStandardControllerImpl(),
+                    listener);
 
             args = new String[] { "127.0.0.1", Integer.toString(port) };
         }

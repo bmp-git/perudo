@@ -7,13 +7,14 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
+import perudo.controller.Controller;
 import perudo.controller.impl.StandardControllerImpl;
 import perudo.view.console.ViewImpl;
 
 public class LocalApp {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        StandardControllerImpl controller = new StandardControllerImpl();
+        Controller controller = StandardControllerImpl.newStandardControllerImpl();
         Terminal terminal1 = new DefaultTerminalFactory().createTerminal();
         Screen screen1 = new TerminalScreen(terminal1);
         screen1.startScreen();
