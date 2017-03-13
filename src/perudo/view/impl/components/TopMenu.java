@@ -10,7 +10,7 @@ import perudo.model.User;
 import perudo.view.GUIFactory;
 import perudo.view.impl.ControllerSingleton;
 import perudo.view.impl.GUIFactorySingleton;
-import perudo.view.impl.GUIUtility;
+import perudo.view.impl.Icon;
 import perudo.view.impl.panels.ChangeNamePanel;
 import perudo.view.impl.panels.CreateLobbyPanel;
 
@@ -79,7 +79,7 @@ public class TopMenu extends JMenuBar {
                 MENU_LOBBY_CREATELOBBY_TOOLTIP);
         miCreateLobby.addActionListener(e -> {
             final int n = JOptionPane.showConfirmDialog(TopMenu.this, pnlcreatelobby, CreateLobbyPanel.TITLE,
-                    JOptionPane.OK_CANCEL_OPTION, 0, GUIUtility.getIcon(CreateLobbyPanel.ICON_RESPATH));
+                    JOptionPane.OK_CANCEL_OPTION, 0, Icon.APPLICATION_ICON.getIcon());
             if (n == JOptionPane.YES_OPTION && this.user.isPresent()) {
                 ControllerSingleton.getController().createLobby(this.user.get(), pnlcreatelobby.getGameSettings());
             }

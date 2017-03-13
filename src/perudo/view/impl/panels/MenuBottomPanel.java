@@ -12,7 +12,7 @@ import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.ControllerSingleton.ControllerType;
 
 /**
- * Panel rappresenting the user and the game modality.
+ * Panel representing the user and the game modality.
  */
 public class MenuBottomPanel extends JPanel {
 
@@ -22,6 +22,11 @@ public class MenuBottomPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private static final int TOP_BOT_BORDER = 5;
     private static final int LEFT_RIGHT_BORDER = 10;
+    private static final String ONLINE_TEXT = "Online.";
+    private static final String OFFLINE_TEXT = "Offline";
+    private static final String SINGLEPLAYER_TEXT = "Offline singleplayer.";
+    private static final String NOT_LOGGED_TEXT = "Not logged yet..";
+
 
     private Optional<User> user;
     private JLabel lblname;
@@ -40,13 +45,13 @@ public class MenuBottomPanel extends JPanel {
         if (this.user.isPresent()) {
             this.lblname = (JLabel) factory.createLabel("Logged as " + this.user.get().getName());
             if (ControllerSingleton.getControllerType() == ControllerType.MULTIPLAYER) {
-                this.lblonline = (JLabel) factory.createLabel("Online.");
+                this.lblonline = (JLabel) factory.createLabel(ONLINE_TEXT);
             } else {
-                this.lblonline = (JLabel) factory.createLabel("Offline singleplayer.");
+                this.lblonline = (JLabel) factory.createLabel(SINGLEPLAYER_TEXT);
             }
         } else {
-            this.lblname = (JLabel) factory.createLabel("Not logged yet..");
-            this.lblonline = (JLabel) factory.createLabel("Offline.");
+            this.lblname = (JLabel) factory.createLabel(NOT_LOGGED_TEXT);
+            this.lblonline = (JLabel) factory.createLabel(OFFLINE_TEXT);
         }
 
         this.add(this.lblname, BorderLayout.LINE_START);
@@ -65,13 +70,13 @@ public class MenuBottomPanel extends JPanel {
             this.lblname.setText("Logged as " + this.user.get().getName());
             if (ControllerSingleton.getControllerType() == ControllerType.MULTIPLAYER) {
                 System.out.println(ControllerSingleton.getController().getClass().getName());
-                this.lblonline.setText("Online.");
+                this.lblonline.setText(ONLINE_TEXT);
             } else {
-                this.lblonline.setText(("Offline singleplayer."));
+                this.lblonline.setText((SINGLEPLAYER_TEXT));
             }
         } else {
-            this.lblname.setText("Not logged yet..");
-            this.lblonline.setText("Offline.");
+            this.lblname.setText(NOT_LOGGED_TEXT);
+            this.lblonline.setText(OFFLINE_TEXT);
         }
     }
 

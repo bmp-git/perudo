@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 /**
- * Label rappresenting a dice.
+ * Label representing a dice.
  */
 public class DiceLabel extends JLabel {
 
@@ -29,7 +29,7 @@ public class DiceLabel extends JLabel {
     }
 
     /**
-     * Set the dice value.
+     * Set the dice value and the dice image size.
      * 
      * @param value
      *            the dice value

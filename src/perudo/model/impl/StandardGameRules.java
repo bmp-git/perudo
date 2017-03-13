@@ -183,7 +183,7 @@ public class StandardGameRules implements GameRules {
             return game.getTotalRemainingDice();
         }
         final int minDiceQuantity = this.getMinDiceQuantity(diceValue, game);
-        if (minDiceQuantity >= game.getTotalRemainingDice()) {
+        if (minDiceQuantity > game.getTotalRemainingDice()) {
             return minDiceQuantity + 1;
         }
         return game.getTotalRemainingDice();

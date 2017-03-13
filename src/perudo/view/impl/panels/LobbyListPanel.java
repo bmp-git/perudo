@@ -18,10 +18,10 @@ import perudo.model.User;
 import perudo.view.GUIFactory;
 import perudo.view.impl.ControllerSingleton;
 import perudo.view.impl.GUIFactorySingleton;
-import perudo.view.impl.GUIUtility;
+import perudo.view.impl.Icon;
 
 /**
- * Panel rappresenting a list of lobby panels.
+ * Panel representing a list of lobby panels.
  */
 public class LobbyListPanel extends JPanel {
 
@@ -30,6 +30,10 @@ public class LobbyListPanel extends JPanel {
      */
     private static final long serialVersionUID = 1L;
     private static final int TOP_BOT_INSETS = 5;
+    private static final String PANEL_TITLE = "Lobbies list";
+    private static final String CREATE_LOBBY_BUTTON_TEXT = "Create new lobby";
+    private static final String CHANGE_NAME_BUTTON_TEXT = "Change username";
+
 
     private final JPanel pnlLobbyList;
     private final GridBagConstraints cnst;
@@ -50,23 +54,23 @@ public class LobbyListPanel extends JPanel {
         final JPanel pnlExtern = factory.createPanel();
         pnlExtern.setLayout(new FlowLayout());
         pnlExtern.add(this.pnlLobbyList);
-        pnlExtern.setBorder(new TitledBorder("Lobbies list"));
+        pnlExtern.setBorder(new TitledBorder(PANEL_TITLE));
         this.cnst = new GridBagConstraints();
         this.cnst.gridy = 0;
         this.cnst.insets = new Insets(TOP_BOT_INSETS, 0, TOP_BOT_INSETS, 0);
 
         final JPanel paneldown = factory.createPanel();
         paneldown.setLayout(new GridLayout(2, 1));
-        final JButton btnCreateLobby = (JButton) factory.createButton("Create new lobby");
+        final JButton btnCreateLobby = (JButton) factory.createButton(CREATE_LOBBY_BUTTON_TEXT);
         btnCreateLobby.addActionListener(e -> {
             final int n = JOptionPane.showConfirmDialog(this, pnlCreateLobby, CreateLobbyPanel.TITLE,
-                    JOptionPane.OK_CANCEL_OPTION, 0, GUIUtility.getIcon(CreateLobbyPanel.ICON_RESPATH));
+                    JOptionPane.OK_CANCEL_OPTION, 0, Icon.APPLICATION_ICON.getIcon());
             if (n == JOptionPane.YES_OPTION && this.user.isPresent() && pnlCreateLobby.getName().trim().length() > 0) {
                 ControllerSingleton.getController().createLobby(this.user.get(), pnlCreateLobby.getGameSettings());
             }
         });
         paneldown.add(btnCreateLobby);
-        final JButton btnChangeUsername = (JButton) factory.createButton("Change username");
+        final JButton btnChangeUsername = (JButton) factory.createButton(CHANGE_NAME_BUTTON_TEXT);
         btnChangeUsername.addActionListener(e -> {
             final int n = JOptionPane.showConfirmDialog(this, pnlChangeName, ChangeNamePanel.TITLE, JOptionPane.OK_CANCEL_OPTION);
             if (n == JOptionPane.YES_OPTION && this.user.isPresent() && pnlChangeName.getName().trim().length() > 0) {

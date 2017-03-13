@@ -10,7 +10,7 @@ import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.Icon;
 
 /**
- * Panel rappresenting a lobby.
+ * Panel representing a lobby.
  */
 public class LobbyPanel extends JPanel {
 

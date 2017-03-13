@@ -10,7 +10,7 @@ import perudo.view.GUIFactory;
 import perudo.view.impl.GUIFactorySingleton;
 
 /**
- * Panel rappresenting the current turn in game.
+ * Panel representing the current turn in game.
  */
 public class GameTurnPanel extends JPanel {
 
@@ -18,7 +18,7 @@ public class GameTurnPanel extends JPanel {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private static final int FONT_SIZE = 30;
+    private static final int FONT_SIZE = 25;
 
     private final JLabel lblTurn;
 
@@ -30,7 +30,7 @@ public class GameTurnPanel extends JPanel {
         this.setLayout(new GridBagLayout());
         final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.lblTurn = (JLabel) factory.createLabel("");
-        this.lblTurn.setFont(new Font("Consolas", Font.PLAIN, FONT_SIZE));
+        this.lblTurn.setFont(new Font("Consolas", Font.BOLD, FONT_SIZE));
 
         this.add(this.lblTurn);
     }

@@ -9,7 +9,7 @@ import perudo.view.GUIFactory;
 import perudo.view.impl.GUIFactorySingleton;
 
 /**
- * Panel rappresenting a form to change name.
+ * Panel representing a form to change name.
  */
 public class ChangeNamePanel extends JPanel {
 

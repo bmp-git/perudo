@@ -29,6 +29,7 @@ public class MenuPanel extends JPanel {
      */
     private static final long serialVersionUID = 1L;
     private static final int LOBBIES_LIST_ELEMENTS_BORDER_SIZE = 7;
+    private static final String CENTER_PANEL_NAME = "Lobby Info";
     private final GUIFactory factory;
 
     private final TopMenu pnlTopMenu;
@@ -45,8 +46,8 @@ public class MenuPanel extends JPanel {
      */
     public MenuPanel() {
         super();
-        this.factory = GUIFactorySingleton.getFactory();
         this.setLayout(new BorderLayout());
+        this.factory = GUIFactorySingleton.getFactory();
         this.user = Optional.empty();
         this.pnlLobbyInfoActive = Optional.empty();
         this.pnlTopMenu = new TopMenu();
@@ -54,7 +55,7 @@ public class MenuPanel extends JPanel {
         this.pnlLobbyList = new LobbyListPanel();
         this.pnlUserList = new UserListPanel();
         this.pnlCenter = this.factory.createPanel(new BorderLayout());
-        this.pnlCenter.setBorder(new TitledBorder("Lobby Info"));
+        this.pnlCenter.setBorder(new TitledBorder(CENTER_PANEL_NAME));
 
         this.add(pnlLobbyList, BorderLayout.WEST);
         this.add(pnlTopMenu, BorderLayout.NORTH);
@@ -64,7 +65,7 @@ public class MenuPanel extends JPanel {
     }
 
     /**
-     * Set the user using the panel.
+     * Set the user which is using the panel.
      * 
      * @param user
      *            the user to set

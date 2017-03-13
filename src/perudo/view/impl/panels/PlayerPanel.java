@@ -12,7 +12,7 @@ import perudo.view.GUIFactory;
 import perudo.view.impl.GUIFactorySingleton;
 
 /**
- * Panel rappresenting a a player in game.
+ * Panel representing a a player in game.
  */
 public class PlayerPanel extends JPanel {
 

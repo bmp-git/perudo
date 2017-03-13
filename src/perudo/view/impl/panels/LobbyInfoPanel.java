@@ -24,7 +24,7 @@ import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.Icon;
 
 /**
- * Panel rappresenting the information of a lobby.
+ * Panel representing the information of a lobby.
  */
 public class LobbyInfoPanel extends JPanel {
 
@@ -39,7 +39,7 @@ public class LobbyInfoPanel extends JPanel {
     private static final String BOT_SPACE = "Add bot";
 
     private static final int MINUMUM_PLAYERS = 2;
-    private static final int TITLE_SIZE = 30;
+    private static final int TITLE_SIZE = 25;
     private static final int LEFT_RIGHT_PADDING = 20;
     private static final int VERTICAL_PADDING = 10;
     private static final int PLAYER_BOX_PADDING = 7;
@@ -68,7 +68,7 @@ public class LobbyInfoPanel extends JPanel {
         pnlPlayers.setLayout(new BoxLayout(pnlPlayers, BoxLayout.Y_AXIS));
         pnlPlayers.setBorder(BorderFactory.createEmptyBorder(0, LEFT_RIGHT_PADDING, 0, LEFT_RIGHT_PADDING));
         final JLabel name = (JLabel) factory.createLabel(this.lobby.getInfo().getName(), Color.BLUE);
-        name.setFont(new Font("Consolas", Font.PLAIN, TITLE_SIZE));
+        name.setFont(new Font("Consolas", Font.BOLD, TITLE_SIZE));
         final JLabel owner = (JLabel) factory.createLabel(this.lobby.getOwner().getName(), Icon.OWNER.getIcon(), JLabel.RIGHT);
         owner.setBorder(factory.createBorder(Color.BLACK, PLAYER_BOX_PADDING));
         pnlPlayers.add(owner);

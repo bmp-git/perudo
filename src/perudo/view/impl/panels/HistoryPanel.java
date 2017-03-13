@@ -7,7 +7,7 @@ import perudo.view.GUIFactory;
 import perudo.view.impl.GUIFactorySingleton;
 
 /**
- * Panel rappresenting the play's history in a game.
+ * Panel representing the play's history in a game.
  */
 public class HistoryPanel extends JPanel {
 
@@ -15,6 +15,8 @@ public class HistoryPanel extends JPanel {
      * 
      */
     private static final long serialVersionUID = 1L;
+    private static final String START_ROW = "Match begin";
+
     private final JTextArea textArea;
 
     /**
@@ -26,7 +28,7 @@ public class HistoryPanel extends JPanel {
         this.textArea = (JTextArea) factory.createTextArea();
         this.textArea.setLineWrap(false);
         this.textArea.setEditable(false);
-        this.textArea.setText("Match begin");
+        this.textArea.setText(START_ROW);
         this.add(textArea);
     }
 

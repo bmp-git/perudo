@@ -17,7 +17,7 @@ import perudo.view.impl.GUIFactorySingleton;
 import perudo.view.impl.components.DiceLabel;
 
 /**
- * Panel rappresenting the hand of a player.
+ * Panel representing the hand of a player.
  */
 public class PlayerHandPanel extends JPanel {
 
