@@ -186,8 +186,12 @@ public class GamePanel extends JPanel {
      */
     public void exitGameNotify(final Game game, final User user) {
         this.pnlHistory.addInfo(user.getName() + " exited");
-        if (!game.isOver()) {
+        if (!this.game.get().isOver()) {
             this.setGame(game);
+        } else {
+            this.pnlPlayers.setGame(game);
+            this.pnlHand.setGame(this.game.get(), this.user.get());
+            this.pnlCenter.revalidate();
         }
     }
 

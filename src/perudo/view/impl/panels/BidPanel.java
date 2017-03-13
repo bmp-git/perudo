@@ -88,18 +88,18 @@ public class BidPanel extends JPanel {
     }
 
     private void updateDiceButtons() {
-        if (this.lblDice.getValue() >= game.getSettings().getMaxDiceValue()) {
-            btnNextDice.setEnabled(false);
-            btnPrevDice.setEnabled(true);
+        if (this.game.turnIsPalifico() && this.game.getCurrentBid().isPresent()) {
+            this.btnNextDice.setEnabled(false);
+            this.btnPrevDice.setEnabled(false);
+        } else if (this.lblDice.getValue() >= game.getSettings().getMaxDiceValue()) {
+            this.btnNextDice.setEnabled(false);
+            this.btnPrevDice.setEnabled(true);
         } else if (this.lblDice.getValue() <= 1) {
-            btnPrevDice.setEnabled(false);
-            btnNextDice.setEnabled(true);
-        } else if (this.game.turnIsPalifico() && this.game.getCurrentBid().isPresent()) {
-            btnNextDice.setEnabled(false);
-            btnPrevDice.setEnabled(false);
+            this.btnPrevDice.setEnabled(false);
+            this.btnNextDice.setEnabled(true);
         } else {
-            btnNextDice.setEnabled(true);
-            btnPrevDice.setEnabled(true);
+            this.btnNextDice.setEnabled(true);
+            this.btnPrevDice.setEnabled(true);
         }
     }
 
@@ -109,15 +109,19 @@ public class BidPanel extends JPanel {
     }
 
     private void updateNumButtons(final int diceValue) {
-        if (Integer.parseInt(this.lblNum.getText()) >= this.game.getMaxDiceQuantity(diceValue)) {
-            btnNextNum.setEnabled(false);
-            btnPrevNum.setEnabled(true);
+        if (Integer.parseInt(this.lblNum.getText()) == this.game.getMaxDiceQuantity(diceValue)
+                && Integer.parseInt(this.lblNum.getText()) == this.game.getMinDiceQuantity(diceValue)) {
+            this.btnNextNum.setEnabled(false);
+            this.btnPrevNum.setEnabled(false);
+        } else if (Integer.parseInt(this.lblNum.getText()) >= this.game.getMaxDiceQuantity(diceValue)) {
+            this.btnNextNum.setEnabled(false);
+            this.btnPrevNum.setEnabled(true);
         } else if (Integer.parseInt(this.lblNum.getText()) <= this.game.getMinDiceQuantity(diceValue)) {
-            btnPrevNum.setEnabled(false);
-            btnNextNum.setEnabled(true);
+            this.btnPrevNum.setEnabled(false);
+            this.btnNextNum.setEnabled(true);
         } else {
-            btnNextNum.setEnabled(true);
-            btnPrevNum.setEnabled(true);
+            this.btnNextNum.setEnabled(true);
+            this.btnPrevNum.setEnabled(true);
         }
     }
 
@@ -142,19 +146,6 @@ public class BidPanel extends JPanel {
         this.lblNum.setText(String.valueOf(this.game.getMinDiceQuantity(this.lblDice.getValue())));
         this.updateDiceButtons();
         this.updateNumButtons(Integer.valueOf(this.lblDice.getValue()));
-    }
-
-    /**
-     * Set if panel is enabled.
-     * 
-     * @param enabled
-     *            false not enabled, true enabled
-     */
-    public void setBidEnabled(final boolean enabled) {
-        this.btnNextDice.setEnabled(enabled);
-        this.btnPrevDice.setEnabled(enabled);
-        this.btnNextNum.setEnabled(enabled);
-        this.btnPrevNum.setEnabled(enabled);
     }
 
     /**

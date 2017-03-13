@@ -85,7 +85,6 @@ public class GamePlayPanel extends JPanel {
         this.game = game;
         this.user = user;
         this.pnlBid.setGame(this.game);
-        this.pnlBid.setBidEnabled(this.game.getTurn().equals(this.user));
         updateButtons();
     }
 
@@ -107,6 +106,5 @@ public class GamePlayPanel extends JPanel {
         this.btnDubit.setEnabled(enabled);
         this.btnUrge.setEnabled(enabled);
         this.btnPalifico.setEnabled(enabled);
-        this.pnlBid.setBidEnabled(enabled);
     }
 }
