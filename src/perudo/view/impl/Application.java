@@ -44,9 +44,9 @@ public final class Application {
         }
 
         ViewImpl view = new ViewImpl();
-        ViewImpl view2 = new ViewImpl();
+        //ViewImpl view2 = new ViewImpl();
         view.await();
-        view2.await();
+        //view2.await();
 
         try {
             ControllerSingleton.getController().close();

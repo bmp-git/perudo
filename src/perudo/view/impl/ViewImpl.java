@@ -226,8 +226,10 @@ public class ViewImpl implements View {
     public void getGamesRespond(final Response<Set<Game>> games) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                // games.getValue().forEach(g -> menuPanel.updateGame(g));
-                mainFrame.getContentPane().revalidate();
+                if (games.isOk()) {
+                    // games.getValue().forEach(g -> menuPanel.updateGame(g));
+                    mainFrame.getContentPane().revalidate();
+                }
             }
         });
     }
