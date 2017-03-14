@@ -16,23 +16,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import perudo.controller.Controller;
+import perudo.controller.impl.StandardControllerImpl;
+import perudo.controller.net.client.ControllerClientImpl;
 import perudo.view.GUIFactory;
 
 /**
  * Frame modelling a simple menu for choosing playing type.
  */
 public class StartFrame extends JFrame {
-
-    /**
-     * Enumeration listing possible choices in menu.
-     */
-    public enum StartingFrameResult {
-        /**
-         * Results.
-         */
-        MULTIPLAYER, SINGLEPLAYER, EXIT;
-    }
-
     /**
      * 
      */
@@ -46,20 +38,20 @@ public class StartFrame extends JFrame {
     private static final String EXIT_BUTTON_TEXT = "Exit";
     private static final int BUTTONS_PADD = 25;
 
-    private final JButton multiplayer;
-    private final JButton singleplayer;
-    private final JButton exit;
-    private JLabel logo;
-    private Optional<StartingFrameResult> result;
+    private Optional<Controller> result;
 
     /**
      * Initialize and create the menu frame.
+     * 
+     * @param server
+     *            the server name or ip
+     * @param port
+     *            the service port
      */
-    public StartFrame() {
+    public StartFrame(final String server, final int port) {
         super();
         final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.result = Optional.empty();
-
         this.setTitle(TITLE);
         this.setLayout(new BorderLayout());
         this.setIconImage(Icon.APPLICATION_ICON.getIcon().getImage());
@@ -72,7 +64,7 @@ public class StartFrame extends JFrame {
             public void windowClosing(final WindowEvent event) {
                 final int n = JOptionPane.showConfirmDialog(StartFrame.this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
                 if (n == JOptionPane.YES_OPTION) {
-                    StartFrame.this.result = Optional.of(StartingFrameResult.EXIT);
+                    result = Optional.empty();
                     StartFrame.this.setVisible(false);
                     StartFrame.this.dispose();
                 }
@@ -81,45 +73,51 @@ public class StartFrame extends JFrame {
 
         final JPanel main = factory.createPanel(new GridBagLayout());
 
-        this.multiplayer = (JButton) factory.createButton(MULTIPLAYER_BUTTON_TEXT);
-        this.multiplayer.addActionListener(e -> {
-            this.result = Optional.of(StartingFrameResult.MULTIPLAYER);
-            this.setVisible(false);
-            this.dispose();
+        final JButton multiplayer = (JButton) factory.createButton(MULTIPLAYER_BUTTON_TEXT);
+        multiplayer.addActionListener(e -> {
+            try {
+                result = Optional.ofNullable(ControllerClientImpl.createFromServerName(server, port));
+                StartFrame.this.setVisible(false);
+                StartFrame.this.dispose();
+            } catch (IOException e1) {
+                JOptionPane.showMessageDialog(StartFrame.this, "Can't connecy to the server " + server + ":" + port,
+                        "Network error", JOptionPane.ERROR_MESSAGE);
+            }
         });
-        this.singleplayer = (JButton) factory.createButton(SINGLEPLAYER_BUTTON_TEXT);
-        this.singleplayer.addActionListener(e -> {
-            this.result = Optional.of(StartingFrameResult.SINGLEPLAYER);
-            this.setVisible(false);
-            this.dispose();
+        final JButton singleplayer = (JButton) factory.createButton(SINGLEPLAYER_BUTTON_TEXT);
+        singleplayer.addActionListener(e -> {
+            result = Optional.ofNullable(StandardControllerImpl.newStandardControllerImpl());
+            StartFrame.this.setVisible(false);
+            StartFrame.this.dispose();
         });
-        this.exit = (JButton) factory.createButton(EXIT_BUTTON_TEXT);
-        this.exit.addActionListener(a -> {
+        final JButton exit = (JButton) factory.createButton(EXIT_BUTTON_TEXT);
+        exit.addActionListener(a -> {
             final int n = JOptionPane.showConfirmDialog(this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
             if (n == JOptionPane.YES_OPTION) {
-                this.result = Optional.of(StartingFrameResult.EXIT);
-                this.setVisible(false);
-                this.dispose();
+                result = Optional.empty();
+                StartFrame.this.setVisible(false);
+                StartFrame.this.dispose();
             }
         });
 
         final GridBagConstraints cnst = new GridBagConstraints();
         cnst.gridy = 0;
         cnst.insets = new Insets(BUTTONS_PADD, BUTTONS_PADD, BUTTONS_PADD, BUTTONS_PADD);
-        main.add(this.singleplayer, cnst);
+        main.add(singleplayer, cnst);
         cnst.gridy++;
-        main.add(this.multiplayer, cnst);
+        main.add(multiplayer, cnst);
         cnst.gridy++;
-        main.add(this.exit, cnst);
+        main.add(exit, cnst);
         cnst.gridy++;
 
         final JPanel top = factory.createPanel();
+        JLabel logo = null;
         try {
-            this.logo = (JLabel) factory.createPicLabel(LOGO_RESPATH);
+            logo = (JLabel) factory.createPicLabel(LOGO_RESPATH);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        top.add(this.logo);
+        top.add(logo);
 
         this.getContentPane().add(top, BorderLayout.NORTH);
         this.getContentPane().add(main, BorderLayout.CENTER);
@@ -131,7 +129,7 @@ public class StartFrame extends JFrame {
      * 
      * @return the result
      */
-    public Optional<StartingFrameResult> getResult() {
+    public Optional<Controller> getResult() {
         return this.result;
     }
 
