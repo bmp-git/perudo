@@ -171,7 +171,8 @@ public class StandardGameRules implements GameRules {
 
     @Override
     public int getMinDiceQuantity(final int diceValue, final Game game) {
-        if (game.turnIsPalifico() && game.getCurrentBid().isPresent() && diceValue != game.getCurrentBid().get().getDiceValue()) {
+        if (game.turnIsPalifico() && game.getCurrentBid().isPresent()
+                && diceValue != game.getCurrentBid().get().getDiceValue()) {
             throw new IllegalStateException("You can't play different dice value if the turn is palifico!");
         }
         return this.nextBid(diceValue, game).getQuantity();
@@ -184,7 +185,7 @@ public class StandardGameRules implements GameRules {
         }
         final int minDiceQuantity = this.getMinDiceQuantity(diceValue, game);
         if (minDiceQuantity > game.getTotalRemainingDice()) {
-            return minDiceQuantity + 1;
+            return minDiceQuantity;
         }
         return game.getTotalRemainingDice();
     }
