@@ -548,4 +548,10 @@ public final class StandardControllerImpl implements Controller {
         return this.views.entrySet().stream().filter(e -> game.getUsers().contains(e.getKey()))
                 .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
     }
+
+    @Override
+    public String toString() {
+        return "Users connected: " + this.views.size() + "\nLobbies active: " + this.model.getLobbies().size()
+                + "\nGames active: " + this.model.getGames().size();
+    }
 }
