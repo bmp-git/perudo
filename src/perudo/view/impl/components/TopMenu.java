@@ -26,10 +26,13 @@ public class TopMenu extends JMenuBar {
 
     private static final String MENU_USER = "User";
     private static final String MENU_LOBBY = "Lobby";
+    private static final String MENU_PERUDO = "Perudo";
     private static final String MENU_USER_CHANGENAME = "Change user name";
     private static final String MENU_USER_CHANGENAME_TOOLTIP = "Change your user name..";
     private static final String MENU_LOBBY_CREATELOBBY = "Create lobby";
     private static final String MENU_LOBBY_CREATELOBBY_TOOLTIP = "Create a new lobby..";
+    private static final String MENU_PERUDO_BACKTOMENU = "Back to menu";
+    private static final String MENU_PERUDO_BACKTOMENU_TOOLTIP = "Back to main menu...";
 
     private Optional<User> user;
     private boolean returnMenu;
@@ -45,9 +48,9 @@ public class TopMenu extends JMenuBar {
         final CreateLobbyPanel pnlcreatelobby = new CreateLobbyPanel();
         final ChangeNamePanel pnlchangename = new ChangeNamePanel();
 
-        final JMenu perudoMenu = (JMenu) factory.createMenu("Perudo");
+        final JMenu perudoMenu = (JMenu) factory.createMenu(MENU_PERUDO);
         perudoMenu.setMnemonic(KeyEvent.VK_P);
-        final JMenuItem miBackMenu = (JMenuItem) factory.createMenuItem("Back to menu", KeyEvent.VK_B, "Back to main menu...");
+        final JMenuItem miBackMenu = (JMenuItem) factory.createMenuItem(MENU_PERUDO_BACKTOMENU, KeyEvent.VK_B, MENU_PERUDO_BACKTOMENU_TOOLTIP);
         miBackMenu.addActionListener(e -> {
             if (this.user.isPresent()) {
                 this.returnMenu = true;
