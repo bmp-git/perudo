@@ -26,12 +26,16 @@ public class TopMenu extends JMenuBar {
 
     private static final String MENU_USER = "User";
     private static final String MENU_LOBBY = "Lobby";
+    private static final String MENU_PERUDO = "Perudo";
     private static final String MENU_USER_CHANGENAME = "Change user name";
     private static final String MENU_USER_CHANGENAME_TOOLTIP = "Change your user name..";
     private static final String MENU_LOBBY_CREATELOBBY = "Create lobby";
     private static final String MENU_LOBBY_CREATELOBBY_TOOLTIP = "Create a new lobby..";
+    private static final String MENU_PERUDO_BACKTOMENU = "Back to menu";
+    private static final String MENU_PERUDO_BACKTOMENU_TOOLTIP = "Back to main menu...";
 
     private Optional<User> user;
+    private boolean returnMenu;
 
     /**
      * Initialize the menu with menu items.
@@ -39,26 +43,21 @@ public class TopMenu extends JMenuBar {
     public TopMenu() {
         super();
         this.user = Optional.empty();
+        this.returnMenu = false;
         final GUIFactory factory = GUIFactorySingleton.getFactory();
         final CreateLobbyPanel pnlcreatelobby = new CreateLobbyPanel();
         final ChangeNamePanel pnlchangename = new ChangeNamePanel();
 
-        /*
-         * JMenu perudoMenu = (JMenu) this.factory.createMenu("Perudo");
-         * perudoMenu.setMnemonic(KeyEvent.VK_P); JMenuItem miChangeType =
-         * (JMenuItem) this.factory.createMenuItem("Offline/Online",
-         * KeyEvent.VK_C, "Change status from Offline/Online");
-         * miChangeType.addActionListener(e -> { if
-         * (ControllerSingleton.getControllerType() ==
-         * ControllerSingleton.ControllerType.MULTIPLAYER) {
-         * ControllerSingleton.setSingleplayerController(); } else if
-         * (ControllerSingleton.getControllerType() ==
-         * ControllerSingleton.ControllerType.SINGLEPLAYER) { try {
-         * ControllerSingleton.setMultiplayerController("2.224.173.8", 45555); }
-         * catch (IOException e1) { e1.printStackTrace(); } }
-         * ControllerSingleton.getController().initializeNewUser(view); });
-         * perudoMenu.add(miChangeType);
-         */
+        final JMenu perudoMenu = (JMenu) factory.createMenu(MENU_PERUDO);
+        perudoMenu.setMnemonic(KeyEvent.VK_P);
+        final JMenuItem miBackMenu = (JMenuItem) factory.createMenuItem(MENU_PERUDO_BACKTOMENU, KeyEvent.VK_B, MENU_PERUDO_BACKTOMENU_TOOLTIP);
+        miBackMenu.addActionListener(e -> {
+            if (this.user.isPresent()) {
+                this.returnMenu = true;
+                ControllerSingleton.getController().closeNow(this.user.get());
+            }
+        });
+        perudoMenu.add(miBackMenu);
 
         final JMenu userMenu = (JMenu) factory.createMenu(MENU_USER);
         userMenu.setMnemonic(KeyEvent.VK_U);
@@ -86,6 +85,7 @@ public class TopMenu extends JMenuBar {
         });
         lobbyMenu.add(miCreateLobby);
 
+        this.add(perudoMenu);
         this.add(userMenu);
         this.add(lobbyMenu);
     }
@@ -98,6 +98,15 @@ public class TopMenu extends JMenuBar {
      */
     public void setUser(final User user) {
         this.user = Optional.ofNullable(user);
+    }
+
+    /**
+     * Return true if the user want to return to menu.
+     * 
+     * @return true if the user want to return to start menu, false otherwise
+     */
+    public boolean isReturnMenu() {
+        return this.returnMenu;
     }
 
 }

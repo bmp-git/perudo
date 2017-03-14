@@ -226,8 +226,10 @@ public class ViewImpl implements View {
     public void getGamesRespond(final Response<Set<Game>> games) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                // games.getValue().forEach(g -> menuPanel.updateGame(g));
-                mainFrame.getContentPane().revalidate();
+                if (games.isOk()) {
+                    // games.getValue().forEach(g -> menuPanel.updateGame(g));
+                    mainFrame.getContentPane().revalidate();
+                }
             }
         });
     }
@@ -321,6 +323,15 @@ public class ViewImpl implements View {
         this.mainFrame.setVisible(false);
         this.mainFrame.dispose();
         latch.countDown();
+    }
+
+    /**
+     * Return if the user want to return to menu.
+     * 
+     * @return true if the user want to return to start menu, false otherwise
+     */
+    public boolean isReturnMenu() {
+        return this.menuPanel.isReturnMenu();
     }
 
     /**

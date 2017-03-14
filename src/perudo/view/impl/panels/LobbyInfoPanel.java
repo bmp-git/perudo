@@ -138,7 +138,6 @@ public class LobbyInfoPanel extends JPanel {
 
                     @Override
                     public void mousePressed(final MouseEvent event) {
-                        ControllerSingleton.getController().addBotToLobby(user, lobby, UserType.BOT_EASY);
                     }
 
                     @Override
