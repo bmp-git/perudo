@@ -14,6 +14,7 @@ import perudo.view.View;
  * A decorator of a Controller.
  */
 public abstract class ControllerDecorator implements Controller {
+
     private final Controller decoratedController;
 
     /**
@@ -128,6 +129,11 @@ public abstract class ControllerDecorator implements Controller {
     @Override
     public void close() throws IOException {
         this.decoratedController.close();
+    }
+
+    @Override
+    public String toString() {
+        return this.decoratedController.toString();
     }
 
 }
