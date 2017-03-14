@@ -22,6 +22,8 @@ import perudo.model.User;
 import perudo.model.UserType;
 import perudo.utility.DiffTime;
 import perudo.utility.ErrorTypeException;
+import perudo.utility.LogSeverity;
+import perudo.utility.impl.LoggerSingleton;
 import perudo.view.View;
 
 /**
@@ -84,7 +86,8 @@ public final class ControllerClientImpl implements Controller {
                 }
                 this.close();
             } catch (IOException ex) {
-                System.out.println("ControllerClient: exception during closing.");
+                LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(),
+                        "exception during closing.\n" + ex.getMessage());
             }
         };
         this.stream = DatagramStreamImpl.initializeNewDatagramStream(socket.getInputStream(), socket.getOutputStream(),

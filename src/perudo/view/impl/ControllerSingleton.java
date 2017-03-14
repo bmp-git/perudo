@@ -53,7 +53,7 @@ public final class ControllerSingleton {
      * Set the controller with a StandardController.
      */
     public static void setSingleplayerController() {
-        singleton = new StandardControllerImpl();
+        singleton = StandardControllerImpl.newStandardControllerImpl();
         controllerType = ControllerType.SINGLEPLAYER;
     }
 

@@ -48,7 +48,8 @@ public final class NetworkControllerImpl extends ControllerDecorator {
                     try {
                         dgs.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(),
+                                "IOException closing DatagramStream for user " + dgs.getUser().orElse(null));
                     }
                 }
             });
@@ -66,7 +67,8 @@ public final class NetworkControllerImpl extends ControllerDecorator {
                         methodInvoker.execute(this, dg);
                     }
                 } catch (ErrorTypeException e) {
-                    e.printStackTrace();
+                    LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(),
+                            "ErrorTypeException in methodInvoker " + e.getMessage());
                 }
             });
 
@@ -80,7 +82,8 @@ public final class NetworkControllerImpl extends ControllerDecorator {
                 } catch (IOException e) {
                     // in case of exception the client who has requested a
                     // connection is ignored
-                    e.printStackTrace();
+                    LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(),
+                            "IOException in initializeNewDatagramStream.");
                 }
             });
         };

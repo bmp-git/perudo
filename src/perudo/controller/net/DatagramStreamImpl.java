@@ -78,7 +78,7 @@ public final class DatagramStreamImpl implements DatagramStream {
                 LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), "Exception in receive.");
                 this.notifyIOException(e);
             } catch (Exception e) {
-                e.printStackTrace();
+                LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(), "Exception in receive.");
             }
         });
     }
@@ -124,12 +124,8 @@ public final class DatagramStreamImpl implements DatagramStream {
         if (!this.closed) {
             this.closed = true;
             this.receiver.shutdown();
-            try {
-                this.objInStream.close();
-                this.objOutStream.close();
-            } catch (IOException e) {
-                LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), "Exception closing streams.");
-            }
+            this.objInStream.close();
+            this.objOutStream.close();
             LoggerSingleton.get().add(LogSeverity.INFO, this.getClass(),
                     "datagramStream of user " + user.get().getName() + " shutted down!");
         }

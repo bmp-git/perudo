@@ -10,7 +10,9 @@ import perudo.model.Game;
 import perudo.model.Lobby;
 import perudo.model.User;
 import perudo.utility.ErrorType;
+import perudo.utility.LogSeverity;
 import perudo.utility.Response;
+import perudo.utility.impl.LoggerSingleton;
 import perudo.view.View;
 
 /**
@@ -205,7 +207,7 @@ public abstract class AbstractBot implements View {
 
     @Override
     public void showError(final ErrorType errorType) {
-        System.out.println(this.getClass().getName() + " -> showError -> " + errorType);
+        LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), errorType.toString());
 
         this.executor.execute(() -> {
             this.play();

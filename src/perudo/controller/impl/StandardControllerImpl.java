@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -32,16 +33,22 @@ import perudo.view.View;
 /**
  * A basic controller.
  */
-public class StandardControllerImpl implements Controller {
+public final class StandardControllerImpl implements Controller {
     private final Model model;
     private final Map<User, View> views;
     private final ExecutorService executor;
     private final ExecutorService turnTimer;
 
     /**
-     * Create a new StandardControllerImpl.
+     * Creates a new StandardControllerImpl.
+     * 
+     * @return the created Controller
      */
-    public StandardControllerImpl() {
+    public static Controller newStandardControllerImpl() {
+        return new StandardControllerImpl();
+    }
+
+    private StandardControllerImpl() {
         this.model = new ModelImpl();
         this.views = new ConcurrentHashMap<>();
         this.executor = Executors.newSingleThreadExecutor();
@@ -92,7 +99,8 @@ public class StandardControllerImpl implements Controller {
                 try {
                     this.model.addUser(user);
                 } catch (ErrorTypeException e1) {
-                    e1.printStackTrace();
+                    LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(),
+                            "cannot add old user after changeUserName failed.");
                     this.views.forEach((u, v) -> v.userExitNotify(user));
                     this.views.remove(user);
                     view.showError(e1.getErrorType());
@@ -203,7 +211,8 @@ public class StandardControllerImpl implements Controller {
                     this.views.forEach((u, v) -> v.userExitNotify(botU));
                     this.views.remove(botU);
                 } catch (ErrorTypeException e1) {
-                    e1.printStackTrace();
+                    LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(),
+                            "cannot remove botU from model after adding it to lobby failed.");
                     view.showError(e1.getErrorType());
                 }
                 view.showError(e.getErrorType());
@@ -261,7 +270,8 @@ public class StandardControllerImpl implements Controller {
                     this.model.addLobby(lobby);
                     this.views.forEach((u, v) -> v.createLobbyNotify(lobby));
                 } catch (ErrorTypeException e1) {
-                    e1.printStackTrace();
+                    LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(),
+                            "cannot add old lobby after adding the game failed.");
                     view.showError(e1.getErrorType());
                 }
                 view.showError(e.getErrorType());
@@ -397,12 +407,13 @@ public class StandardControllerImpl implements Controller {
                     view.userExitNotify(user);
                     view.close();
                     LoggerSingleton.get().add(LogSeverity.INFO, this.getClass(),
-                            "StandardController: view of user" + user.getName() + " closed and removed.");
+                            "view of user" + user.getName() + " closed and removed.");
                 }
             } catch (ErrorTypeException e) {
                 view.showError(e.getErrorType());
             } catch (IOException e) {
-                e.printStackTrace();
+                LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(),
+                        "closing view of user " + user.getName() + " throwed an IO exception.");
             }
         });
     }
@@ -416,7 +427,7 @@ public class StandardControllerImpl implements Controller {
                     this.views.get(user).close();
                     this.views.remove(user);
                     LoggerSingleton.get().add(LogSeverity.INFO, this.getClass(),
-                            "StandardController: view of user" + user.getName() + " closed and removed.");
+                            "view of user" + user.getName() + " closed and removed.");
                 }
                 if (this.userIsInLobby(user)) {
                     final Lobby lobby = this.getLobbyFromModel(user);
@@ -446,15 +457,20 @@ public class StandardControllerImpl implements Controller {
                 }
 
             } catch (ErrorTypeException e) {
-                e.printStackTrace();
+                LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), "calling closeNow() for user "
+                        + user.getName() + " caused an ErrorTypeException " + e.getMessage());
             } catch (IOException e) {
-                e.printStackTrace();
+                LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(),
+                        "calling close() on view of user " + user.getName() + " caused an IOException");
             }
         });
     }
 
     @Override
     public void close() throws IOException {
+        for (final Entry<User, View> e : this.views.entrySet()) {
+            e.getValue().close();
+        }
         this.executor.shutdownNow();
         this.turnTimer.shutdownNow();
     }
@@ -472,13 +488,15 @@ public class StandardControllerImpl implements Controller {
                         final Map<User, View> gameViews = this.getViewsfromGame(game);
                         gameViews.forEach((u, v) -> v.playNotify(game, user));
                     } catch (ErrorTypeException e) {
-                        e.printStackTrace();
+                        LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(),
+                                "failed playing the default play.");
                     }
                 }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(),
+                            "sleep of TurnTimeChecker interrupted.");
                 }
             }
         });
