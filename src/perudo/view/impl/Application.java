@@ -46,6 +46,7 @@ public final class Application {
         ViewImpl view = new ViewImpl();
         //ViewImpl view2 = new ViewImpl();
         view.await();
+        System.out.println(view.isReturnMenu());
         //view2.await();
 
         try {

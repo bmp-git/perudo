@@ -76,7 +76,7 @@ public class MenuPanel extends JPanel {
         this.pnlBottomMenu.setUser(user);
         this.pnlLobbyList.setUser(user);
         this.pnlUserList.setUser(user);
-        //need to update lobbies becouse user is changed
+        // need to update lobbies becouse user is changed
         ControllerSingleton.getController().getLobbies(this.user.get());
     }
 
@@ -215,4 +215,14 @@ public class MenuPanel extends JPanel {
     public void updateUsers(final User user) {
         this.pnlUserList.updateUser(user);
     }
+
+    /**
+     * Return true if the user want to return to menu.
+     * 
+     * @return true if the user want to return to start menu, false otherwise
+     */
+    public boolean isReturnMenu() {
+        return this.pnlTopMenu.isReturnMenu();
+    }
+
 }

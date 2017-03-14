@@ -326,6 +326,15 @@ public class ViewImpl implements View {
     }
 
     /**
+     * Return if the user want to return to menu.
+     * 
+     * @return true if the user want to return to start menu, false otherwise
+     */
+    public boolean isReturnMenu() {
+        return this.menuPanel.isReturnMenu();
+    }
+
+    /**
      * Wait for the View closing.
      */
     public void await() {
