@@ -3,6 +3,7 @@ package perudo.controller.net;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -19,6 +20,10 @@ import perudo.utility.impl.LoggerSingleton;
  *
  */
 public final class TcpIPv4ServerListener implements NetworkServerListener {
+    /**
+     * The default maximum length of the queue of incoming connections.
+     */
+    public static final int DEFAULT_BACKLOG = 50;
     private final ExecutorService networkListener;
     private final ExecutorService notifier;
     private final ServerSocket serverSocket;
@@ -42,14 +47,40 @@ public final class TcpIPv4ServerListener implements NetworkServerListener {
         return new TcpIPv4ServerListener(port, observers);
     }
 
-    private TcpIPv4ServerListener(final int port, final List<BiConsumer<InputStream, OutputStream>> observers)
+    /**
+     * Creates a new NetworkServerListener over TCP/IP.
+     * 
+     * @param port
+     *            the port where to listen.
+     * @param backlog
+     *            maximum length of the queue of incoming connections.
+     * @param bindAddr
+     *            the local InetAddress the server will bind to
+     * @param observers
+     *            the consumers to be executed when a new connection occurs.
+     * @return the created NetworkServerListner.
+     * @throws IOException
+     *             can't create the NetworkServerListner.
+     */
+    public static NetworkServerListener startNewServerListener(final int port, final int backlog,
+            final InetAddress bindAddr, final List<BiConsumer<InputStream, OutputStream>> observers)
             throws IOException {
+        return new TcpIPv4ServerListener(port, observers);
+    }
+
+    private TcpIPv4ServerListener(final int port, final int backlog, final InetAddress bindAddr,
+            final List<BiConsumer<InputStream, OutputStream>> observers) throws IOException {
         this.observers = new CopyOnWriteArrayList<>(observers);
-        this.serverSocket = new ServerSocket(port);
+        this.serverSocket = new ServerSocket(port, backlog, bindAddr);
         this.run = true;
         this.started = false;
         this.notifier = Executors.newSingleThreadExecutor();
         this.networkListener = Executors.newSingleThreadExecutor();
+    }
+
+    private TcpIPv4ServerListener(final int port, final List<BiConsumer<InputStream, OutputStream>> observers)
+            throws IOException {
+        this(port, DEFAULT_BACKLOG, null, observers);
     }
 
     @Override
@@ -76,7 +107,8 @@ public final class TcpIPv4ServerListener implements NetworkServerListener {
                     });
                 }
             } catch (IOException e) {
-                LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), "Server listener closed...");
+                LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(),
+                        "exception while listening, probably the ServerSocket has been closed.");
             }
         });
     }
