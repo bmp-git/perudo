@@ -7,18 +7,12 @@ import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.Optional;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
-
-import perudo.controller.Controller;
-import perudo.controller.impl.StandardControllerImpl;
-import perudo.controller.net.client.ControllerClientImpl;
 import perudo.view.GUIFactory;
 
 /**
@@ -38,7 +32,7 @@ public class StartFrame extends JFrame {
     private static final String EXIT_BUTTON_TEXT = "Exit";
     private static final int BUTTONS_PADD = 25;
 
-    private Optional<Controller> result;
+    private boolean initialized;
 
     /**
      * Initialize and create the menu frame.
@@ -51,7 +45,7 @@ public class StartFrame extends JFrame {
     public StartFrame(final String server, final int port) {
         super();
         final GUIFactory factory = GUIFactorySingleton.getFactory();
-        this.result = Optional.empty();
+        this.initialized = false;
         this.setTitle(TITLE);
         this.setLayout(new BorderLayout());
         this.setIconImage(Icon.APPLICATION_ICON.getIcon().getImage());
@@ -64,7 +58,7 @@ public class StartFrame extends JFrame {
             public void windowClosing(final WindowEvent event) {
                 final int n = JOptionPane.showConfirmDialog(StartFrame.this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
                 if (n == JOptionPane.YES_OPTION) {
-                    result = Optional.empty();
+                    initialized = false;
                     StartFrame.this.setVisible(false);
                     StartFrame.this.dispose();
                 }
@@ -76,7 +70,8 @@ public class StartFrame extends JFrame {
         final JButton multiplayer = (JButton) factory.createButton(MULTIPLAYER_BUTTON_TEXT);
         multiplayer.addActionListener(e -> {
             try {
-                result = Optional.ofNullable(ControllerClientImpl.createFromServerName(server, port));
+                ControllerSingleton.setMultiplayerController(server, port);
+                initialized = true;
                 StartFrame.this.setVisible(false);
                 StartFrame.this.dispose();
             } catch (IOException e1) {
@@ -86,7 +81,8 @@ public class StartFrame extends JFrame {
         });
         final JButton singleplayer = (JButton) factory.createButton(SINGLEPLAYER_BUTTON_TEXT);
         singleplayer.addActionListener(e -> {
-            result = Optional.ofNullable(StandardControllerImpl.newStandardControllerImpl());
+            ControllerSingleton.setSingleplayerController();
+            initialized = true;
             StartFrame.this.setVisible(false);
             StartFrame.this.dispose();
         });
@@ -94,7 +90,7 @@ public class StartFrame extends JFrame {
         exit.addActionListener(a -> {
             final int n = JOptionPane.showConfirmDialog(this, EXIT_TEXT, EXIT_NAME, JOptionPane.YES_NO_OPTION);
             if (n == JOptionPane.YES_OPTION) {
-                result = Optional.empty();
+                initialized = false;
                 StartFrame.this.setVisible(false);
                 StartFrame.this.dispose();
             }
@@ -127,10 +123,10 @@ public class StartFrame extends JFrame {
     /**
      * Get the result of the start menu user choice.
      * 
-     * @return the result
+     * @return true if the controller is initialized, false otherwise
      */
-    public Optional<Controller> getResult() {
-        return this.result;
+    public boolean isInitialized() {
+        return this.initialized;
     }
 
     /**
