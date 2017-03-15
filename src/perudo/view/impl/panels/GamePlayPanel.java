@@ -22,9 +22,9 @@ public class GamePlayPanel extends JPanel {
      */
     private static final long serialVersionUID = 1L;
     private static final String PLAY_BUTTON = "Play";
-    private static final String DUBIT_BUTTON = "Dubit";
+    private static final String DUBIT_BUTTON = "Doubt";
     private static final String URGE_BUTTON = "Urge";
-    private static final String PALIFICO_BUTTON = "Palific";
+    private static final String PALIFICO_BUTTON = "Palifico";
     private static final int TOP_BOT_INSETS = 5;
 
     private Game game;

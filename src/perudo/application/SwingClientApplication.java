@@ -29,13 +29,7 @@ public final class SwingClientApplication {
         while (true) {
             final StartFrame start = new StartFrame(serverName, port);
             start.showFrame();
-            while (start.isActive()) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            start.await();
             if (!start.isInitialized()) {
                 break;
             }

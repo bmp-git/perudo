@@ -7,12 +7,17 @@ import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+
+import perudo.utility.LogSeverity;
+import perudo.utility.impl.LoggerSingleton;
 import perudo.view.GUIFactory;
 
 /**
@@ -33,6 +38,7 @@ public class StartFrame extends JFrame {
     private static final int BUTTONS_PADD = 25;
 
     private boolean initialized;
+    private final CountDownLatch latch;
 
     /**
      * Initialize and create the menu frame.
@@ -45,6 +51,7 @@ public class StartFrame extends JFrame {
     public StartFrame(final String server, final int port) {
         super();
         final GUIFactory factory = GUIFactorySingleton.getFactory();
+        this.latch = new CountDownLatch(1);
         this.initialized = false;
         this.setTitle(TITLE);
         this.setLayout(new BorderLayout());
@@ -61,6 +68,7 @@ public class StartFrame extends JFrame {
                     initialized = false;
                     StartFrame.this.setVisible(false);
                     StartFrame.this.dispose();
+                    latch.countDown();
                 }
             }
         });
@@ -74,6 +82,7 @@ public class StartFrame extends JFrame {
                 initialized = true;
                 StartFrame.this.setVisible(false);
                 StartFrame.this.dispose();
+                this.latch.countDown();
             } catch (IOException e1) {
                 JOptionPane.showMessageDialog(StartFrame.this, "Can't connecy to the server " + server + ":" + port,
                         "Network error", JOptionPane.ERROR_MESSAGE);
@@ -85,6 +94,7 @@ public class StartFrame extends JFrame {
             initialized = true;
             StartFrame.this.setVisible(false);
             StartFrame.this.dispose();
+            this.latch.countDown();
         });
         final JButton exit = (JButton) factory.createButton(EXIT_BUTTON_TEXT);
         exit.addActionListener(a -> {
@@ -93,6 +103,7 @@ public class StartFrame extends JFrame {
                 initialized = false;
                 StartFrame.this.setVisible(false);
                 StartFrame.this.dispose();
+                this.latch.countDown();
             }
         });
 
@@ -127,6 +138,17 @@ public class StartFrame extends JFrame {
      */
     public boolean isInitialized() {
         return this.initialized;
+    }
+
+    /**
+     * Wait for the frame closing.
+     */
+    public void await() {
+        try {
+            this.latch.await();
+        } catch (InterruptedException e) {
+            LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(), "Await method crashed.");
+        }
     }
 
     /**

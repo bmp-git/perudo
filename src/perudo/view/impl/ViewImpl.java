@@ -322,7 +322,7 @@ public class ViewImpl implements View {
     public void close() throws IOException {
         this.mainFrame.setVisible(false);
         this.mainFrame.dispose();
-        latch.countDown();
+        this.latch.countDown();
     }
 
     /**

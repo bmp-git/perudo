@@ -141,7 +141,7 @@ public class BidPanel extends JPanel {
         if (this.game.getCurrentBid().isPresent()) {
             this.lblDice.setValue(this.game.getCurrentBid().get().getDiceValue(), DICE_SIZE);
         } else {
-            this.lblDice.setValue(Math.round(game.getSettings().getMaxDiceValue() / 2), DICE_SIZE);
+            this.lblDice.setValue(Math.round(game.getSettings().getMaxDiceValue() / 2f), DICE_SIZE);
         }
         this.lblNum.setText(String.valueOf(this.game.getMinDiceQuantity(this.lblDice.getValue())));
         this.updateDiceButtons();
