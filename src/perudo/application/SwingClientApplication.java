@@ -2,9 +2,9 @@ package perudo.application;
 
 import java.io.IOException;
 
-import perudo.view.impl.ControllerSingleton;
-import perudo.view.impl.StartFrame;
-import perudo.view.impl.ViewImpl;
+import perudo.view.swing.StartFrame;
+import perudo.view.swing.ViewImpl;
+import perudo.view.swing.utility.ControllerSingleton;
 
 /**
  * Start point of swing client view.
@@ -27,7 +27,7 @@ public final class SwingClientApplication {
      */
     public static void run(final String serverName, final int port) throws IOException {
         while (true) {
-            final StartFrame start = new StartFrame(serverName, port);
+            final StartFrame start = new StartFrame("casa-home.no-ip.biz", port);
             start.showFrame();
             start.await();
             if (!start.isInitialized()) {
