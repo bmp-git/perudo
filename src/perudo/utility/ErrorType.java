@@ -74,15 +74,15 @@ public enum ErrorType {
     /**
      * The user name is too long.
      */
-    USER_NAME_TOO_LONG(3000, "The user name is too long."),
+    USER_NAME_TOO_LONG(3007, "The user name is too long."),
     /**
      * The user name is too long.
      */
-    USER_NAME_TOO_SHORT(3000, "The user name is too long."),
+    USER_NAME_TOO_SHORT(3008, "The user name is too short."),
     /**
      * The user name contains invalid characters.
      */
-    USER_NAME_INVALID(3000, "The user name contains invalid characters."),
+    USER_NAME_INVALID(3009, "The user name contains invalid characters."),
 
     /**
      * It is not your turn.

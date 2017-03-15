@@ -35,19 +35,19 @@ public class MethodInvoker {
     /**
      * Executes a method on an instance.
      * 
-     * @param istance
+     * @param instance
      *            the instance on which the method will be called.
      * @param datagram
      *            the datagram that contains the method to call.
      * @throws ErrorTypeException
      *             if an error occurs during invocation.
      */
-    public void execute(final Object istance, final Datagram datagram) throws ErrorTypeException {
+    public void execute(final Object instance, final Datagram datagram) throws ErrorTypeException {
         if (!indexer.containsKey(datagram.getMethodName())) {
             throw new ErrorTypeException(ErrorType.METHOD_NOT_FOUND);
         }
         try {
-            indexer.get(datagram.getMethodName()).invoke(istance, datagram.getParams());
+            indexer.get(datagram.getMethodName()).invoke(instance, datagram.getParams());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ErrorTypeException(ErrorType.METHOD_INVALID);
         }
