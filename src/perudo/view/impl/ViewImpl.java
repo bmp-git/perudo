@@ -288,6 +288,7 @@ public class ViewImpl implements View {
             public void run() {
                 if (isMyGame(game)) {
                     if (ViewImpl.this.user.equals(user)) {
+                        gamePanel.close();
                         showPanel(menuPanel);
                         menuPanel.repaint();
                     } else {
@@ -320,6 +321,9 @@ public class ViewImpl implements View {
 
     @Override
     public void close() throws IOException {
+        if (this.gamePanel != null) {
+            this.gamePanel.close();
+        }
         this.mainFrame.setVisible(false);
         this.mainFrame.dispose();
         this.latch.countDown();

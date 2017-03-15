@@ -203,9 +203,9 @@ public class GamePanel extends JPanel {
      */
     public void gameEndedNotify(final Game game) {
         this.pnlHistory.addInfo("Game finished");
-        this.pnlTime.stop();
         this.pnlGameTurn.youWin(!game.hasLost(this.user.get()));
         this.pnlGamePlay.setPanelEnabled(false);
+        this.close();
     }
 
     /**
@@ -215,5 +215,11 @@ public class GamePanel extends JPanel {
      */
     public Game getGame() {
         return this.game.orElse(null);
+    }
+    /**
+     * Close gamePanel.
+     */
+    public void close() {
+        this.pnlTime.stop();
     }
 }
