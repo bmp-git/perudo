@@ -6,7 +6,7 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 /**
  * 
  */
-public abstract class BaseForm {
+public class BaseForm {
 
     private final MultiWindowTextGUI textGUI;
     private final BasicWindow window;
@@ -15,7 +15,7 @@ public abstract class BaseForm {
      * @param textGUI
      *            to do
      */
-    public BaseForm(final MultiWindowTextGUI textGUI) {
+    protected BaseForm(final MultiWindowTextGUI textGUI) {
         this.textGUI = textGUI;
         this.window = new BasicWindow();
     }

@@ -20,10 +20,7 @@ import perudo.model.UserType;
  */
 public class BotSelectForm extends BaseForm {
 
-    private final Button btnCancel;
-    private final List<Button> btnBots;
     private UserType type;
-    private final Panel panel;
 
     /**
      * 
@@ -32,13 +29,13 @@ public class BotSelectForm extends BaseForm {
      */
     public BotSelectForm(final MultiWindowTextGUI textGUI) {
         super(textGUI);
-        type = null;
+        final Button btnCancel = new Button("Cancel", () -> this.close());
+        this.setUserType(null);
 
-        panel = new Panel(new GridLayout(1));
-        btnCancel = new Button("Cancel", () -> this.close());
-        btnBots = Arrays.asList(UserType.values()).stream().filter(t -> t.isBot())
+        final Panel panel = new Panel(new GridLayout(1));
+        final List<Button> btnBots = Arrays.asList(UserType.values()).stream().filter(t -> t.isBot())
                 .map(t -> new Button(t.toString(), () -> {
-                    this.type = t;
+                    this.setUserType(t);
                     this.close();
                 })).collect(Collectors.toList());
 
@@ -50,6 +47,10 @@ public class BotSelectForm extends BaseForm {
         super.getWindow().setHints(Arrays.asList(Window.Hint.CENTERED));
 
         super.getWindow().setComponent(panel);
+    }
+
+    private void setUserType(final UserType type) {
+        this.type = type;
     }
 
     /**
