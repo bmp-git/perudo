@@ -18,7 +18,7 @@ public class GameSettingsImpl implements GameSettings {
     /**
      * Maximum players number.
      */
-    public static final int MAX_PLAYER_NUMBERS = 10;
+    public static final int MAX_PLAYER_NUMBERS = 8;
 
     /**
      * Minimum dice value (number of faces).
@@ -27,7 +27,7 @@ public class GameSettingsImpl implements GameSettings {
     /**
      * Maximum dice value (number of faces).
      */
-    public static final int MAX_DICE_FACES = 20;
+    public static final int MAX_DICE_FACES = 10;
 
     /**
      * Minimum starting dice number.
@@ -36,7 +36,7 @@ public class GameSettingsImpl implements GameSettings {
     /**
      * Maximum starting dice number.
      */
-    public static final int MAX_INITIAL_DICE_NUMBERS = 10;
+    public static final int MAX_INITIAL_DICE_NUMBERS = 8;
 
     /**
      * Minimum turn duration time.
