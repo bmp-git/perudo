@@ -23,7 +23,7 @@ public interface GUIFactory {
      *            the frame title
      * @return the frame
      */
-    JFrame createFrame(final String title);
+    JFrame createFrame(String title);
 
     /**
      * Create an empty panel.
@@ -39,7 +39,7 @@ public interface GUIFactory {
      *            the layout for panel
      * @return the panel
      */
-    JPanel createPanel(final LayoutManager layout);
+    JPanel createPanel(LayoutManager layout);
 
     /**
      * Create a border with a color and an internal padding.
@@ -50,7 +50,7 @@ public interface GUIFactory {
      *            the border padding
      * @return the border
      */
-    Border createBorder(final Color color, final int padding);
+    Border createBorder(Color color, int padding);
 
     /**
      * Create a button with text.
@@ -59,7 +59,7 @@ public interface GUIFactory {
      *            the button text
      * @return the button
      */
-    JComponent createButton(final String text);
+    JComponent createButton(String text);
 
     /**
      * Create a button with text and icon.
@@ -70,7 +70,7 @@ public interface GUIFactory {
      *            the button icon
      * @return the button
      */
-    JComponent createButton(final String text, final Icon icon);
+    JComponent createButton(String text, Icon icon);
 
     /**
      * Create a label with text.
@@ -79,7 +79,7 @@ public interface GUIFactory {
      *            the label text
      * @return the label
      */
-    JComponent createLabel(final String text);
+    JComponent createLabel(String text);
 
     /**
      * Create a label with text and color.
@@ -90,7 +90,7 @@ public interface GUIFactory {
      *            the label text color
      * @return the label
      */
-    JComponent createLabel(final String text, final Color color);
+    JComponent createLabel(String text, Color color);
 
     /**
      * Create a label with text and icon.
@@ -103,7 +103,7 @@ public interface GUIFactory {
      *            the label alignment
      * @return the label
      */
-    JComponent createLabel(final String text, final Icon icon, final int alignment);
+    JComponent createLabel(String text, Icon icon, int alignment);
 
     /**
      * Create a label with image inside.
@@ -114,7 +114,7 @@ public interface GUIFactory {
      * @throws IOException
      *             if the image is not found
      */
-    JComponent createPicLabel(final String respath) throws IOException;
+    JComponent createPicLabel(String respath) throws IOException;
 
     /**
      * Create a textfield.
@@ -137,7 +137,7 @@ public interface GUIFactory {
      *            the menu name
      * @return the menu
      */
-    JComponent createMenu(final String name);
+    JComponent createMenu(String name);
 
     /**
      * Create a menu item specifing name, mnemonic associated key and tooltip.
@@ -150,7 +150,7 @@ public interface GUIFactory {
      *            the tooltip
      * @return the menu item
      */
-    JComponent createMenuItem(final String name, final int mnemonic, final String tooltip);
+    JComponent createMenuItem(String name, int mnemonic, String tooltip);
 
     /**
      * Create a combo box from values.
@@ -159,7 +159,7 @@ public interface GUIFactory {
      *            the values to insert in combobox
      * @return the combobox
      */
-    JComboBox<Object> createComboBox(final Object[] values);
+    JComboBox<Object> createComboBox(Object[] values);
 
     /**
      * Create a slider beetween two values.
@@ -172,7 +172,7 @@ public interface GUIFactory {
      *            the default value
      * @return the slider
      */
-    JComponent createSliderHorizontal(final int minvalue, final int maxvalue, final int defaultvalue);
+    JComponent createSliderHorizontal(int minvalue, int maxvalue, int defaultvalue);
 
     /**
      * Create a JScrollPane without black border.
@@ -181,6 +181,6 @@ public interface GUIFactory {
      *            panel to add into scroll panel
      * @return the scroll panel without border
      */
-    JScrollPane createScrollPaneWithoutBorder(final JPanel panel);
+    JScrollPane createScrollPaneWithoutBorder(JPanel panel);
 
 }
