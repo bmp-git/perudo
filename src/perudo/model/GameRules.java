@@ -168,6 +168,21 @@ public interface GameRules extends Serializable {
     Optional<Integer> getRealBidDiceCount(Game game);
 
     /**
+     * Check if a given dice should be count in the sum of the actual bid dice
+     * count.
+     * 
+     * @param diceValue
+     *            the dice value
+     * @param user
+     *            the user who has the dice
+     * @param game
+     *            the actual state of the game
+     * 
+     * @return true if the dice must be counted, false otherwise
+     */
+    boolean isDiceInBid(int diceValue, User user, Game game);
+
+    /**
      * Gets the dice that should be added or removed after a urge.
      * 
      * @param user

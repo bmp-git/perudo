@@ -296,4 +296,22 @@ public interface Game extends Serializable {
     default int getMaxDiceQuantity(final int diceValue) {
         return this.getRules().getMaxDiceQuantity(diceValue, this);
     }
+
+    /**
+     * Check if a given dice should be count in the sum of the actual bid dice
+     * count.
+     * 
+     * @param diceValue
+     *            the dice value
+     * @param user
+     *            the user who has the dice
+     * 
+     * @return true if the dice must be counted, false otherwise
+     */
+    default boolean isDiceInBid(final int diceValue, final User user) {
+        if (!this.getCurrentBid().isPresent()) {
+            return false;
+        }
+        return this.getRules().isDiceInBid(diceValue, user, this);
+    }
 }

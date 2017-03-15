@@ -137,14 +137,22 @@ public class StandardGameRules implements GameRules {
         if (!game.getCurrentBid().isPresent()) {
             return Optional.empty();
         }
-        final int bidUserJollyCount = game.getUsers().stream().filter(u -> game.getBidUser().get().equals(u))
-                .mapToInt(u -> game.getUserStatus(u).getDiceCount().get(1)).sum();
-        final int usersDiceCount = game.getUsers().stream()
-                .mapToInt(u -> game.getUserStatus(u).getDiceCount().get(game.getCurrentBid().get().getDiceValue()))
-                .sum();
 
-        return Optional.of((game.getCurrentBid().get().getDiceValue() == 1 ? usersDiceCount
-                : (usersDiceCount + bidUserJollyCount)));
+        return Optional
+                .of(game.getUsers().stream()
+                        .mapToInt(u -> game.getUserStatus(u).getDiceCount().entrySet().stream()
+                                .mapToInt(p -> (this.isDiceInBid(p.getKey(), u, game) ? 1 : 0) * p.getValue()).sum())
+                        .sum());
+    }
+
+    @Override
+    public boolean isDiceInBid(final int diceValue, final User user, final Game game) {
+        // if the user is bid user count the jolly
+        if (game.getBidUser().get().equals(user) && diceValue == 1) {
+            return true;
+        }
+
+        return diceValue == game.getCurrentBid().get().getDiceValue();
     }
 
     @Override
