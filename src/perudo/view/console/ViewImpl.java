@@ -19,6 +19,9 @@ import perudo.utility.ErrorType;
 import perudo.utility.Response;
 import perudo.view.View;
 
+/**
+ * 
+ */
 public class ViewImpl implements View {
 
     private final MultiWindowTextGUI textGUI;
@@ -29,6 +32,13 @@ public class ViewImpl implements View {
     private final GameForm gameForm;
     private final Controller controller;
 
+    /**
+     * 
+     * @param screen
+     *            to do
+     * @param controller
+     *            to do
+     */
     public ViewImpl(final Screen screen, final Controller controller) {
         this.controller = controller;
         this.textGUI = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
@@ -46,6 +56,9 @@ public class ViewImpl implements View {
 
     }
 
+    /**
+     * 
+     */
     public void waitEnd() {
         textGUI.waitForWindowToClose(menuForm.getWindow());
         this.gameForm.close();
@@ -280,7 +293,6 @@ public class ViewImpl implements View {
         });
 
     }
-
 
     @Override
     public void close() throws IOException {

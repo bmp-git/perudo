@@ -6,9 +6,23 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import perudo.model.Lobby;
 
-public class Utils {
+/**
+ * 
+ */
+public final class Utils {
+
+    private Utils() {
+
+    }
+
+    /**
+     * 
+     * @param lobby
+     *            to do
+     * @return to do
+     */
     public static String lobbyToString(final Lobby lobby) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(76);
         sb.append("Name: ");
         sb.append(lobby.getInfo().getName());
         sb.append("\nCapacity: ");
@@ -21,14 +35,22 @@ public class Utils {
         sb.append(lobby.getInfo().getMaxDiceValue());
         sb.append("\nTurn time: ");
         sb.append(lobby.getInfo().getMaxTurnTime().getSeconds());
-        sb.append("s");
-        sb.append("\n\nOwner: ");
-        sb.append(lobby.getOwner() == null? "EMPTY":lobby.getOwner().getName());
+        sb.append("s\n\nOwner: ");
+        sb.append(lobby.getOwner() == null ? "EMPTY" : lobby.getOwner().getName());
         return sb.toString();
     }
-    
-    public static void showMessageBox(String title, String message, MultiWindowTextGUI textGUI){
+
+    /**
+     * 
+     * @param title
+     *            to do
+     * @param message
+     *            to do
+     * @param textGUI
+     *            to do
+     */
+    public static void showMessageBox(final String title, final String message, final MultiWindowTextGUI textGUI) {
         new MessageDialogBuilder().setTitle(title).setText(message).addButton(MessageDialogButton.OK).build()
-        .showDialog(textGUI);
+                .showDialog(textGUI);
     }
 }

@@ -5,7 +5,6 @@ import java.io.IOException;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
 
 import perudo.view.console.MainForm;
 
@@ -29,8 +28,17 @@ public final class LanternaClientApplication {
      *             if something goes wrong
      */
     public static void run(final String serverName, final int port) throws IOException {
-        final Terminal terminal = new DefaultTerminalFactory().createTerminal();
-        final Screen screen = new TerminalScreen(terminal);
+        Screen screen = null;
+        try {
+            screen = new TerminalScreen(new DefaultTerminalFactory().createTerminal());
+        } catch (final Exception ex) {
+            try {
+                screen = new TerminalScreen(new DefaultTerminalFactory().createTerminalEmulator());
+            } catch (final Exception ex1) {
+                System.out.println("Can't create appropriate terminal");
+                System.exit(1);
+            }
+        }
         screen.startScreen();
         while (true) {
             final MainForm main = new MainForm(screen, serverName, port);

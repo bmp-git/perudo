@@ -30,89 +30,103 @@ import perudo.model.Bid;
 import perudo.model.Game;
 import perudo.model.User;
 import perudo.model.impl.BidImpl;
-import perudo.utility.ErrorTypeException;
 
+/**
+ * 
+ */
 public class GameForm extends BaseForm {
 
-    private final Button btnDoubt, btnUrge, btnPlay, btnPalifico, btnExit;
+    private final Label lblHand, lblBid, lblPalifico;
     private final TextBox txbDiceQuantity, txbDiceValue;
-    private final Label lblHand, lblBid, lblPalifico, lblTime;
     private final ActionListBox lstHistory, lstUsers;
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+    private final List<String> diceCount = new ArrayList<String>();
 
     private final Controller controller;
     private User user;
     private Game game;
 
-    public GameForm(Controller controller, MultiWindowTextGUI textGUI) {
+    /**
+     * 
+     * @param controller
+     *            to do
+     * @param textGUI
+     *            to do
+     */
+    public GameForm(final Controller controller, final MultiWindowTextGUI textGUI) {
         super(textGUI);
-        this.controller = controller;
-        this.window.setTitle("PERUDO - GAME");
-        this.window.setHints(Arrays.asList(Window.Hint.CENTERED, Window.Hint.EXPANDED));
 
-        this.lblTime = new Label("Time left: 42s");
+        final Label lblTime;
+        final Button btnDoubt, btnUrge, btnPlay, btnPalifico, btnExit;
+
+        this.controller = controller;
+        super.getWindow().setTitle("PERUDO - GAME");
+        super.getWindow().setHints(Arrays.asList(Window.Hint.CENTERED, Window.Hint.EXPANDED));
+
+        lblTime = new Label("Time left: 42s");
         this.lblHand = new Label("lblHand");
         this.lblBid = new Label("lblBid");
         this.lblPalifico = new Label("lblPalifico");
 
-        this.btnDoubt = new Button("Doubt   ", () -> btnDoubtClicked());
-        this.btnUrge = new Button("Urge    ", () -> btnUrgeClicked());
-        this.btnPlay = new Button("Play    ", () -> btnPlayClicked());
-        this.btnExit = new Button("Exit    ", () -> btnExitClicked());
-        this.btnPalifico = new Button("Palifico", () -> btnPalificoClicked());
+        btnDoubt = new Button("Doubt   ", () -> btnDoubtClicked());
+        btnUrge = new Button("Urge    ", () -> btnUrgeClicked());
+        btnPlay = new Button("Play    ", () -> btnPlayClicked());
+        btnExit = new Button("Exit    ", () -> btnExitClicked());
+        btnPalifico = new Button("Palifico", () -> btnPalificoClicked());
 
         this.txbDiceQuantity = new TextBox(new TerminalSize(3, 1)).setValidationPattern(Pattern.compile("^\\d{1,2}$"));
         this.txbDiceValue = new TextBox(new TerminalSize(3, 1)).setValidationPattern(Pattern.compile("^\\d{1,2}$"));
         this.lstHistory = new ActionListBox();
         this.lstUsers = new ActionListBox();
         this.executor.scheduleAtFixedRate(() -> {
-            this.textGUI.getGUIThread().invokeLater(() -> {
+            super.getTextGUI().getGUIThread().invokeLater(() -> {
                 if (this.game != null) {
-                    this.lblTime.setText("Time: " + this.game.getTurnRemainingTime().getSeconds() + "s");
+                    lblTime.setText("Time: " + this.game.getTurnRemainingTime().getSeconds() + "s");
                 } else {
-                    this.lblTime.setText("lblTime");
+                    lblTime.setText("lblTime");
                 }
             });
         }, 0, 1, TimeUnit.SECONDS);
 
-        Panel mainPanel = new Panel(new BorderLayout());
+        final Panel mainPanel = new Panel(new BorderLayout());
 
-        Panel leftPanel = new Panel(new BorderLayout());
-        Panel midPanel = new Panel(new BorderLayout());
-        Panel rightPanel = new Panel(new BorderLayout());
+        final Panel leftPanel = new Panel(new BorderLayout());
+        final Panel midPanel = new Panel(new BorderLayout());
+        final Panel rightPanel = new Panel(new BorderLayout());
 
         mainPanel.addComponent(leftPanel.withBorder(Borders.singleLine()), BorderLayout.Location.LEFT);
         mainPanel.addComponent(midPanel, BorderLayout.Location.CENTER);
         mainPanel.addComponent(rightPanel, BorderLayout.Location.RIGHT);
 
         // left panel
-        Panel gridLeftPanel = new Panel(new GridLayout(1));
+        final Panel gridLeftPanel = new Panel(new GridLayout(1));
         leftPanel.addComponent(gridLeftPanel, BorderLayout.Location.TOP);
 
         gridLeftPanel.addComponent(this.txbDiceQuantity.withBorder(Borders.singleLine("Quantity")));
         gridLeftPanel.addComponent(this.txbDiceValue.withBorder(Borders.singleLine("Value   ")));
         gridLeftPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
-        gridLeftPanel.addComponent(this.btnPlay);
+        gridLeftPanel.addComponent(btnPlay);
         gridLeftPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
-        gridLeftPanel.addComponent(this.btnDoubt);
+        gridLeftPanel.addComponent(btnDoubt);
         gridLeftPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
-        gridLeftPanel.addComponent(this.btnUrge);
+        gridLeftPanel.addComponent(btnUrge);
         gridLeftPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
-        gridLeftPanel.addComponent(this.btnPalifico);
+        gridLeftPanel.addComponent(btnPalifico);
 
-        leftPanel.addComponent(new Panel(new GridLayout(1)).addComponent(this.btnExit), BorderLayout.Location.BOTTOM);
+        leftPanel.addComponent(new Panel(new GridLayout(1)).addComponent(btnExit), BorderLayout.Location.BOTTOM);
 
         // mid panel
-        Panel statusPanel = new Panel(new GridLayout(1));
+        final Panel statusPanel = new Panel(new GridLayout(1));
 
-        statusPanel.addComponent(lblHand);
+        statusPanel.addComponent(this.lblHand);
         statusPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
-        statusPanel.addComponent(lblBid);
+        statusPanel.addComponent(this.lblBid);
         statusPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
-        statusPanel.addComponent(lblPalifico);
+        statusPanel.addComponent(this.lblPalifico);
 
         midPanel.addComponent(statusPanel.withBorder(Borders.singleLine("Status")), BorderLayout.Location.BOTTOM);
-        midPanel.addComponent(lstHistory.withBorder(Borders.singleLine("Hisory")), BorderLayout.Location.CENTER);
+        midPanel.addComponent(this.lstHistory.withBorder(Borders.singleLine("Hisory")), BorderLayout.Location.CENTER);
 
         // right panel
         rightPanel.addComponent(lstUsers.withBorder(Borders.singleLine("Players")), BorderLayout.Location.CENTER);
@@ -120,10 +134,15 @@ public class GameForm extends BaseForm {
         rightPanel.addComponent(new Panel().addComponent(lblTime).withBorder(Borders.singleLine()),
                 BorderLayout.Location.BOTTOM);
 
-        this.window.setComponent(mainPanel);
+        super.getWindow().setComponent(mainPanel);
     }
 
-    public void setUser(User user) {
+    /**
+     * 
+     * @param user
+     *            to do
+     */
+    public void setUser(final User user) {
         this.user = user;
     }
 
@@ -137,7 +156,7 @@ public class GameForm extends BaseForm {
         try {
             bid = new BidImpl(Integer.parseInt(txbDiceQuantity.getText()), Integer.parseInt(txbDiceValue.getText()));
         } catch (IllegalArgumentException e) {
-            Utils.showMessageBox("Error", "Invalid bid", this.textGUI);
+            Utils.showMessageBox("Error", "Invalid bid", super.getTextGUI());
         }
         if (bid != null) {
             this.controller.play(this.user, bid);
@@ -157,29 +176,39 @@ public class GameForm extends BaseForm {
         this.controller.callPalifico(this.user);
     }
 
-    public void updateGame(Game game) {
+    /**
+     * 
+     * @param game
+     *            to do
+     */
+    public void updateGame(final Game game) {
         if (game.equals(this.game)) {
             this.setGame(game);
         }
     }
 
-    private String getCurrentTime() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        return dtf.format(now);
-    }
-
-    public void setGame(Game game) {
+    /**
+     * 
+     * @param game
+     *            to do
+     */
+    public void setGame(final Game game) {
         this.game = game;
         this.lstHistory.clearItems();
         this.addToHisoty("GAME STARTED!", "game started");
         this.refreshNewRound();
     }
 
+    private String getCurrentTime() {
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        final LocalDateTime now = LocalDateTime.now();
+        return dtf.format(now);
+    }
+
     private void addToHisoty(final String title, final String str) {
         final String strTime = str + "\n\n" + this.getCurrentTime();
         this.lstHistory.addItem(title, () -> {
-            Utils.showMessageBox(title, strTime, this.textGUI);
+            Utils.showMessageBox(title, strTime, super.getTextGUI());
         });
         this.lstHistory.setSelectedIndex(this.lstHistory.getItemCount() - 1);
     }
@@ -200,29 +229,25 @@ public class GameForm extends BaseForm {
             this.lblBid.setForegroundColor(TextColor.ANSI.RED);
         }
 
-        // auto set a decent value in the textboxs
-
+        // my turn
         if (this.game.getTurn().equals(this.user) && !this.game.isOver()) {
-            String quantity = "";
-            try {
-                if (this.game.turnIsPalifico() && this.game.getCurrentBid().isPresent()) {
-                    quantity = Integer.toString(this.game.getCurrentBid().get().getQuantity() + 1);
 
-                } else if (this.game.getCurrentBid().isPresent()) {
-                    int value = Integer.parseInt(this.txbDiceValue.getText());
-                    quantity = Integer.toString((this.game.nextBid(value).getQuantity()));
+            // auto set a decent value in the textboxs
+            if (!this.txbDiceQuantity.isFocused()) {
+                try {
+                    this.txbDiceQuantity.setText(Integer
+                            .toString(this.game.nextBid(Integer.parseInt(this.txbDiceValue.getText())).getQuantity()));
+                } catch (final NumberFormatException ex) {
+                    this.txbDiceQuantity.setText(Integer.toString(this.game.nextBid(1).getQuantity()));
+                    this.txbDiceValue.setText("1");
                 }
-            } catch (Exception ex) {
             }
-            if (quantity.length() <= 2) {
-                this.txbDiceQuantity.setText(quantity);
-            }
-            Utils.showMessageBox("Your turn", "Is your turn", this.textGUI);
+            Utils.showMessageBox("Your turn", "Is your turn", super.getTextGUI());
         }
 
     }
 
-    private String diceToString(Map<Integer, Integer> diceCount) {
+    private String diceToString(final Map<Integer, Integer> diceCount) {
         String dice = "";
         for (int d = 1; d <= this.game.getSettings().getMaxDiceValue(); d++) {
             for (int k = 0; k < diceCount.get(d); k++) {
@@ -272,20 +297,25 @@ public class GameForm extends BaseForm {
         }
     }
 
+    /**
+     * 
+     * @param game
+     *            to do
+     * @param user
+     *            to do
+     */
     public void playNotify(final Game game, final User user) {
         if (!game.equals(this.game)) {
             return;
         }
 
         this.game = game;
-        String str = user.getName() + " bid to " + this.game.getCurrentBid().get().getQuantity() + " dice of "
+        final String str = user.getName() + " bid to " + this.game.getCurrentBid().get().getQuantity() + " dice of "
                 + this.game.getCurrentBid().get().getDiceValue();
         this.addToHisoty(str, str);
         this.refreshNewTurn();
 
     }
-
-    private final List<String> diceCount = new ArrayList<String>();
 
     private void refreshDiceCount() {
         if (!this.game.getCurrentBid().isPresent()) {
@@ -309,7 +339,16 @@ public class GameForm extends BaseForm {
         diceCount.add("## DICE COUNT ##");
     }
 
-    public void doubtNotify(Game game, User user, boolean win) {
+    /**
+     * 
+     * @param game
+     *            to do
+     * @param user
+     *            to do
+     * @param win
+     *            to do
+     */
+    public void doubtNotify(final Game game, final User user, final boolean win) {
         if (!game.equals(this.game)) {
             return;
         }
@@ -319,16 +358,25 @@ public class GameForm extends BaseForm {
                 .forEach(s -> this.addToHisoty(s, this.diceCount.stream().reduce((s1, s2) -> s1 + "\n" + s2).get()));
 
         if (win) {
-            String str = user.getName() + " doubts and wins";
+            final String str = user.getName() + " doubts and wins";
             this.addToHisoty(str, str);
         } else {
-            String str = user.getName() + " doubts and loses";
+            final String str = user.getName() + " doubts and loses";
             this.addToHisoty(str, str);
         }
         this.refreshNewRound();
     }
 
-    public void urgeNotify(Game game, User user, boolean win) {
+    /**
+     * 
+     * @param game
+     *            to do
+     * @param user
+     *            to do
+     * @param win
+     *            to do
+     */
+    public void urgeNotify(final Game game, final User user, final boolean win) {
         if (!game.equals(this.game)) {
             return;
         }
@@ -338,16 +386,23 @@ public class GameForm extends BaseForm {
                 .forEach(s -> this.addToHisoty(s, this.diceCount.stream().reduce((s1, s2) -> s1 + "\n" + s2).get()));
 
         if (win) {
-            String str = user.getName() + " urges and wins";
+            final String str = user.getName() + " urges and wins";
             this.addToHisoty(str, str);
         } else {
-            String str = user.getName() + " urges and loses";
+            final String str = user.getName() + " urges and loses";
             this.addToHisoty(str, str);
         }
         this.refreshNewRound();
     }
 
-    public void exitGameNotify(Game game, User user) {
+    /**
+     * 
+     * @param game
+     *            to do
+     * @param user
+     *            to do
+     */
+    public void exitGameNotify(final Game game, final User user) {
         if (!game.equals(this.game)) {
             return;
         }
@@ -356,25 +411,28 @@ public class GameForm extends BaseForm {
             return;
         }
         this.game = game;
-        String str = user.getName() + " exits the game";
+        final String str = user.getName() + " exits the game";
         this.addToHisoty(str, str);
         this.refreshUsersList();
         this.refreshNewRound();
     }
 
-    public void callPalificoNotify(Game game, User user) {
+    /**
+     * 
+     * @param game
+     *            to do
+     * @param user
+     *            to do
+     */
+    public void callPalificoNotify(final Game game, final User user) {
         if (!game.equals(this.game)) {
             return;
         }
 
         this.game = game;
-        String str = user.getName() + " calls palifico";
+        final String str = user.getName() + " calls palifico";
         this.addToHisoty(str, str);
         this.refreshNewRound();
-    }
-
-    public Window getWindow() {
-        return this.window;
     }
 
     @Override
@@ -383,6 +441,10 @@ public class GameForm extends BaseForm {
         this.executor.shutdown();
     }
 
+    /**
+     * 
+     * @return to do
+     */
     public Game getGame() {
         return this.game;
     }

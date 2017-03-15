@@ -23,17 +23,31 @@ import perudo.model.Game;
 import perudo.model.Lobby;
 import perudo.model.User;
 
+/**
+ * 
+ */
 public class GameMenuForm extends BaseForm {
 
-    private final Button btnMenuChangeName, btnCreateLobby, btnExit, btnRefresh;
     private final ActionListBox lstUsers, lstLobbies, lstGames;
     private final Controller controller;
     private User user;
 
+    private final Set<User> users = new HashSet<>();
+    private final Set<Lobby> lobbies = new HashSet<>();
+    private final Set<Game> games = new HashSet<>();
+
+    /**
+     * 
+     * @param controller
+     *            to do
+     * @param textGUI
+     *            to do
+     */
     public GameMenuForm(final Controller controller, final MultiWindowTextGUI textGUI) {
         super(textGUI);
+        final Button btnMenuChangeName, btnCreateLobby, btnExit, btnRefresh;
         this.controller = controller;
-        this.window.setHints(Arrays.asList(Window.Hint.CENTERED, Window.Hint.EXPANDED));
+        super.getWindow().setHints(Arrays.asList(Window.Hint.CENTERED, Window.Hint.EXPANDED));
         this.setUser(null);
 
         btnMenuChangeName = new Button("Change name", () -> {
@@ -51,18 +65,20 @@ public class GameMenuForm extends BaseForm {
             this.controller.getUsers(this.user);
         });
 
-        Panel mainPanel = new Panel();
+        final Panel mainPanel = new Panel();
+        // CHECKSTYLE:OFF: checkstyle:magicnumber
         this.lstUsers = new ActionListBox(new TerminalSize(1400, 2000));
         this.lstLobbies = new ActionListBox(new TerminalSize(1400, 2000));
         this.lstGames = new ActionListBox(new TerminalSize(1400, 2000));
+        // CHECKSTYLE:ON: checkstyle:magicnumber
 
         mainPanel.setLayoutManager(new BorderLayout());
 
-        Panel leftPanel = new Panel();
+        final Panel leftPanel = new Panel();
         leftPanel.setLayoutManager(new BorderLayout());
         leftPanel.setLayoutData(BorderLayout.Location.LEFT);
 
-        Panel leftTopPanel = new Panel();
+        final Panel leftTopPanel = new Panel();
         leftTopPanel.setLayoutManager(new GridLayout(1));
         leftTopPanel.setLayoutData(BorderLayout.Location.TOP);
 
@@ -73,7 +89,7 @@ public class GameMenuForm extends BaseForm {
         leftTopPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
         leftTopPanel.addComponent(btnExit);
 
-        Panel leftBottomPanel = new Panel();
+        final Panel leftBottomPanel = new Panel();
         leftBottomPanel.setLayoutManager(new GridLayout(1));
         leftBottomPanel.setLayoutData(BorderLayout.Location.BOTTOM);
         leftBottomPanel.addComponent(btnRefresh);
@@ -82,7 +98,7 @@ public class GameMenuForm extends BaseForm {
         leftPanel.addComponent(leftTopPanel);
         leftPanel.addComponent(leftBottomPanel);
 
-        Panel rightPanel = new Panel();
+        final Panel rightPanel = new Panel();
         rightPanel.setLayoutManager(new GridLayout(3));
         rightPanel.setLayoutData(BorderLayout.Location.RIGHT);
 
@@ -93,20 +109,25 @@ public class GameMenuForm extends BaseForm {
         mainPanel.addComponent(leftPanel);
         mainPanel.addComponent(rightPanel);
 
-        window.setComponent(mainPanel);
+        super.getWindow().setComponent(mainPanel);
     }
 
     private boolean checkUserNotNull() {
         if (this.user == null) {
-            Utils.showMessageBox("User is null", "User is not been initialized yet.", this.textGUI);
+            Utils.showMessageBox("User is null", "User is not been initialized yet.", super.getTextGUI());
             return false;
         }
         return true;
     }
 
-    public void setUser(User user) {
+    /**
+     * 
+     * @param user
+     *            to do
+     */
+    public void setUser(final User user) {
         this.user = user;
-        this.window.setTitle("PERUDO - GAME MENU" + (this.user == null ? "" : " - " + this.user.getName()));
+        super.getWindow().setTitle("PERUDO - GAME MENU" + (this.user == null ? "" : " - " + this.user.getName()));
     }
 
     private void btnMenuChangeNameClicked() {
@@ -114,8 +135,8 @@ public class GameMenuForm extends BaseForm {
             return;
         }
 
-        String name = new TextInputDialogBuilder().setTitle("Change name").setDescription("Write your name").build()
-                .showDialog(this.textGUI);
+        final String name = new TextInputDialogBuilder().setTitle("Change name").setDescription("Write your name")
+                .build().showDialog(super.getTextGUI());
 
         if (name != null) {
             this.controller.changeUserName(this.user, name);
@@ -127,28 +148,38 @@ public class GameMenuForm extends BaseForm {
             return;
         }
 
-        CreateLobbyForm form = new CreateLobbyForm(this.textGUI);
+        final CreateLobbyForm form = new CreateLobbyForm(super.getTextGUI());
         form.showDialog();
         if (form.getGameSettings().isPresent()) {
             this.controller.createLobby(this.user, form.getGameSettings().get());
         }
     }
 
-    // NOTIFY
-    private final Set<User> users = new HashSet<>();
-    private final Set<Lobby> lobbies = new HashSet<>();
-    private final Set<Game> games = new HashSet<>();
-
+    /**
+     * 
+     * @param user
+     *            to do
+     */
     public void addUser(final User user) {
         this.users.add(user);
         this.refreshUsersList();
     }
 
+    /**
+     * 
+     * @param user
+     *            to do
+     */
     public void removeUser(final User user) {
         this.users.remove(user);
         this.refreshUsersList();
     }
 
+    /**
+     * 
+     * @param users
+     *            to do
+     */
     public void setUsers(final Set<User> users) {
         this.users.clear();
         users.stream().forEach(u -> this.users.add(u));
@@ -158,9 +189,9 @@ public class GameMenuForm extends BaseForm {
     private void refreshUsersList() {
         this.lstUsers.clearItems();
         users.stream().forEach(u -> {
-            Runnable run = () -> {
+            final Runnable run = () -> {
                 Utils.showMessageBox("User", u.getName() + " - id: " + u.getId() + (u.getType().isBot() ? "\nBOT" : ""),
-                        this.textGUI);
+                        super.getTextGUI());
             };
             this.lstUsers.addItem(
                     " " + u.getName() + (u.equals(this.user) ? " <-" : "") + (u.getType().isBot() ? " (bot)" : ""),
@@ -168,16 +199,31 @@ public class GameMenuForm extends BaseForm {
         });
     }
 
+    /**
+     * 
+     * @param lobby
+     *            to do
+     */
     public void addLobby(final Lobby lobby) {
         this.lobbies.add(lobby);
         this.refreshLobbiesList();
     }
 
-    void removeLobby(final Lobby lobby) {
+    /**
+     * 
+     * @param lobby
+     *            to do
+     */
+    public void removeLobby(final Lobby lobby) {
         this.lobbies.remove(lobby);
         this.refreshLobbiesList();
     }
 
+    /**
+     * 
+     * @param lobbies
+     *            to do
+     */
     public void setLobbies(final Set<Lobby> lobbies) {
         this.lobbies.clear();
         lobbies.stream().forEach(l -> this.lobbies.add(l));
@@ -187,11 +233,11 @@ public class GameMenuForm extends BaseForm {
     private void refreshLobbiesList() {
         this.lstLobbies.clearItems();
         this.lobbies.forEach(l -> {
-            Runnable run = () -> {
+            final Runnable run = () -> {
                 MessageDialogButton response = new MessageDialogBuilder().setTitle("Join lobby")
                         .setText("Do you want to join this lobby?\n\n" + Utils.lobbyToString(l))
                         .addButton(MessageDialogButton.Yes).addButton(MessageDialogButton.No).build()
-                        .showDialog(this.textGUI);
+                        .showDialog(super.getTextGUI());
 
                 if (response.equals(MessageDialogButton.Yes)) {
                     if (!checkUserNotNull()) {
@@ -205,16 +251,31 @@ public class GameMenuForm extends BaseForm {
         });
     }
 
+    /**
+     * 
+     * @param game
+     *            to do
+     */
     public void addGame(final Game game) {
         this.games.add(game);
         this.refreshGamesList();
     }
 
-    void removeGame(final Game game) {
+    /**
+     * 
+     * @param game
+     *            to do
+     */
+    public void removeGame(final Game game) {
         this.games.remove(game);
         this.refreshGamesList();
     }
 
+    /**
+     * 
+     * @param games
+     *            to do
+     */
     public void setGames(final Set<Game> games) {
         this.games.clear();
         games.stream().forEach(l -> this.games.add(l));
@@ -224,16 +285,11 @@ public class GameMenuForm extends BaseForm {
     private void refreshGamesList() {
         this.lstGames.clearItems();
         this.games.forEach(g -> {
-            Runnable run = () -> {
-                new MessageDialogBuilder().setTitle("Spectate game").setText("This feature is not implemented yet")
-                        .addButton(MessageDialogButton.OK).build().showDialog(this.textGUI);
+            final Runnable run = () -> {
+                Utils.showMessageBox("Spectate game", "This feature is not implemented yet", super.getTextGUI());
             };
             this.lstGames.addItem(" " + g.getSettings().getName(), run);
         });
-    }
-
-    public Window getWindow() {
-        return this.window;
     }
 
 }

@@ -14,26 +14,35 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import perudo.model.GameSettings;
 import perudo.model.impl.GameSettingsImpl;
 
+/**
+ * 
+ */
 public class CreateLobbyForm extends BaseForm {
 
     private final TextBox txbPlayers, txbDiceFaces, txbDiceN, txbTurnTime, txbName;
     private final Button btnOk, btnCancel;
     private GameSettings lobby;
 
+    /**
+     * 
+     * @param textGUI
+     *            to do
+     */
+
     public CreateLobbyForm(final MultiWindowTextGUI textGUI) {
         super(textGUI);
         this.lobby = null;
+        // CHECKSTYLE:OFF: checkstyle:magicnumber
         this.txbPlayers = new TextBox(new TerminalSize(30, 1)).setText("4");
         this.txbDiceFaces = new TextBox(new TerminalSize(30, 1)).setText("6");
         this.txbDiceN = new TextBox(new TerminalSize(30, 1)).setText("5");
         this.txbTurnTime = new TextBox(new TerminalSize(30, 1)).setText("60");
         this.txbName = new TextBox(new TerminalSize(30, 1));
+        // CHECKSTYLE:ON: checkstyle:magicnumber
         this.btnOk = new Button("Done", new Runnable() {
             @Override
             public void run() {
@@ -47,15 +56,13 @@ public class CreateLobbyForm extends BaseForm {
             }
         });
 
-        this.window.setTitle("PERUDO - CREATE LOBBY");
-        this.window.setHints(Arrays.asList(Window.Hint.CENTERED));
-        Panel panel = new Panel();
+        super.getWindow().setTitle("PERUDO - CREATE LOBBY");
+        super.getWindow().setHints(Arrays.asList(Window.Hint.CENTERED));
+        final Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(2));
 
         panel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
         panel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
-
-        
 
         panel.addComponent(new EmptySpace(new TerminalSize(2, 1)));
         panel.addComponent(this.txbPlayers.setValidationPattern(Pattern.compile("\\d{1,2}"))
@@ -76,7 +83,7 @@ public class CreateLobbyForm extends BaseForm {
         panel.addComponent(this.txbTurnTime.setValidationPattern(Pattern.compile("\\d{1,3}"))
                 .withBorder(Borders.singleLine("Turn time ( " + GameSettingsImpl.MIN_TURN_TIME.getSeconds() + "s - "
                         + GameSettingsImpl.MAX_TURN_TIME.getSeconds() + "s )")));
-        
+
         panel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
         panel.addComponent(this.txbName.withBorder(Borders.singleLine("Lobby name")));
 
@@ -84,10 +91,12 @@ public class CreateLobbyForm extends BaseForm {
         panel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
         panel.addComponent(new EmptySpace(new TerminalSize(2, 1)));
 
-        Panel subPanel = new Panel();
+        final Panel subPanel = new Panel();
         subPanel.setLayoutManager(new GridLayout(3));
         subPanel.addComponent(this.btnOk);
+        // CHECKSTYLE:OFF: checkstyle:magicnumber
         subPanel.addComponent(new EmptySpace(new TerminalSize(12, 1)));
+        // CHECKSTYLE:ON: checkstyle:magicnumber
         subPanel.addComponent(this.btnCancel);
 
         panel.addComponent(subPanel);
@@ -96,14 +105,13 @@ public class CreateLobbyForm extends BaseForm {
         panel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
         panel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
 
-        window.setComponent(panel);
+        super.getWindow().setComponent(panel);
         this.txbName.takeFocus();
     }
 
     private void btnOkClicked() {
-        if(this.txbName.getText().trim().length() == 0){
-            new MessageDialogBuilder().setTitle("Input error").setText("Enter a name for the lobby.").addButton(MessageDialogButton.OK).build()
-            .showDialog(this.textGUI);
+        if (this.txbName.getText().trim().length() == 0) {
+            Utils.showMessageBox("Input error", "Enter a name for the lobby.", super.getTextGUI());
             this.lobby = null;
             return;
         }
@@ -113,8 +121,7 @@ public class CreateLobbyForm extends BaseForm {
                     Duration.ofSeconds(Integer.parseInt(this.txbTurnTime.getText())), txbName.getText().trim());
             this.close();
         } catch (final Exception ex) {
-            new MessageDialogBuilder().setTitle("Input error").setText(ex.getMessage()).addButton(MessageDialogButton.OK).build()
-            .showDialog(this.textGUI);
+            Utils.showMessageBox("Input error", ex.getMessage(), super.getTextGUI());
             this.lobby = null;
         }
     }
@@ -124,13 +131,15 @@ public class CreateLobbyForm extends BaseForm {
         this.close();
     }
 
+    /**
+     * 
+     * @return to do
+     */
     public Optional<GameSettings> getGameSettings() {
         if (this.lobby != null) {
             return Optional.of(lobby);
         }
         return Optional.empty();
     }
-
-
 
 }

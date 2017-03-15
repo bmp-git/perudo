@@ -20,6 +20,9 @@ import perudo.controller.Controller;
 import perudo.model.Lobby;
 import perudo.model.User;
 
+/**
+ * 
+ */
 public class LobbyForm extends BaseForm {
 
     private final Button btnExit, btnStart;
@@ -32,7 +35,19 @@ public class LobbyForm extends BaseForm {
 
     class UserPanel extends Panel {
 
-        public UserPanel(final Optional<User> user, final Lobby lobby, final User me) {
+        /**
+         * 
+         * @param user
+         *            to do
+         * @param lobby
+         *            to do
+         * @param me
+         *            to do
+         * @param textGUI
+         *            to do
+         */
+        protected UserPanel(final Optional<User> user, final Lobby lobby, final User me,
+                final MultiWindowTextGUI textGUI) {
             Label label;
             Button btnAddBot;
             this.setLayoutManager(new BorderLayout());
@@ -45,7 +60,7 @@ public class LobbyForm extends BaseForm {
                 }
                 if (user.get().getType().isBot() && me.equals(lobby.getOwner())) {
                     btnAddBot = new Button("Remove bot", () -> {
-                        btnStart.takeFocus();
+                        btnExit.takeFocus();
                         controller.closeNow(user.get());
                     });
                     this.addComponent(btnAddBot, BorderLayout.Location.RIGHT);
@@ -54,23 +69,30 @@ public class LobbyForm extends BaseForm {
                 label = new Label("Free Space");
                 if (me.equals(lobby.getOwner())) {
                     btnAddBot = new Button("Add bot", () -> {
-                        BotSelectForm botForm = new BotSelectForm(textGUI);
+                        final BotSelectForm botForm = new BotSelectForm(textGUI);
                         botForm.showDialog();
                         if (botForm.getBotType().isPresent()) {
-                            btnStart.takeFocus();
+                            btnExit.takeFocus();
                             controller.addBotToLobby(me, lobby, botForm.getBotType().get());
                         }
                     });
                     this.addComponent(btnAddBot, BorderLayout.Location.RIGHT);
                 }
             }
-
+            // CHECKSTYLE:OFF: checkstyle:magicnumber
             this.setPreferredSize(new TerminalSize(25, 1));
-
+            // CHECKSTYLE:ON: checkstyle:magicnumber
             this.addComponent(label, BorderLayout.Location.LEFT);
         }
     }
 
+    /**
+     * 
+     * @param controller
+     *            to do
+     * @param textGUI
+     *            to do
+     */
     public LobbyForm(final Controller controller, final MultiWindowTextGUI textGUI) {
         super(textGUI);
         this.controller = controller;
@@ -82,16 +104,16 @@ public class LobbyForm extends BaseForm {
         });
         this.btnStart.setEnabled(false);
         this.lblInfo = new Label("Info");
-        this.window.setTitle("PERUDO - LOBBY");
-        this.window.setHints(Arrays.asList(Window.Hint.CENTERED));
+        super.getWindow().setTitle("PERUDO - LOBBY");
+        super.getWindow().setHints(Arrays.asList(Window.Hint.CENTERED));
         this.userSpacePanel = new ArrayList<>();
 
-        Panel mainPanel = new Panel();
+        final Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new BorderLayout());
-        Panel topPanel = new Panel();
+        final Panel topPanel = new Panel();
         this.centerPanel = new Panel();
         this.centerPanel.setLayoutManager(new GridLayout(1));
-        Panel bottomPanel = new Panel();
+        final Panel bottomPanel = new Panel();
         bottomPanel.setLayoutManager(new BorderLayout());
 
         mainPanel.addComponent(topPanel, BorderLayout.Location.LEFT);
@@ -102,9 +124,14 @@ public class LobbyForm extends BaseForm {
 
         bottomPanel.addComponent(btnStart, BorderLayout.Location.LEFT);
         bottomPanel.addComponent(btnExit, BorderLayout.Location.RIGHT);
-        this.window.setComponent(mainPanel);
+        super.getWindow().setComponent(mainPanel);
     }
 
+    /**
+     * 
+     * @param user
+     *            to do
+     */
     public void setUser(final User user) {
         this.user = user;
     }
@@ -126,33 +153,38 @@ public class LobbyForm extends BaseForm {
         }
     }
 
+    /**
+     * 
+     * @param lobby
+     *            to do
+     */
     public void updateLobby(final Lobby lobby) {
         if (lobby.equals(this.lobby)) {
             this.setLobby(lobby);
         }
     }
 
+    /**
+     * 
+     * @param lobby
+     *            to do
+     */
     public void setLobby(final Lobby lobby) {
         this.lobby = lobby;
 
         this.btnStart.setEnabled(lobby.getOwner() != null && lobby.getOwner().equals(user));
         this.lblInfo.setText(Utils.lobbyToString(lobby));
 
-        this.btnExit.takeFocus();
         this.centerPanel.removeAllComponents();
-        Panel panel = new Panel();
+        final Panel panel = new Panel();
         panel.setLayoutManager(new BorderLayout());
         this.userSpacePanel.clear();
 
         for (int i = 0; i < lobby.getInfo().getMaxPlayer(); i++) {
-            UserPanel p = new UserPanel(lobby.getUsers().stream().skip(i).findFirst(), this.lobby, this.user);
+            final UserPanel p = new UserPanel(lobby.getUsers().stream().skip(i).findFirst(), this.lobby, this.user,
+                    super.getTextGUI());
             this.userSpacePanel.add(p);
             this.centerPanel.addComponent(p.withBorder(Borders.singleLine()));
         }
     }
-
-    public Window getWindow() {
-        return this.window;
-    }
-
 }

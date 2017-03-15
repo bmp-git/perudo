@@ -19,15 +19,27 @@ import perudo.controller.Controller;
 import perudo.controller.impl.StandardControllerImpl;
 import perudo.controller.net.client.ControllerClientImpl;
 
+/**
+ * 
+ */
 public class MainForm extends BaseForm {
 
-    Controller controller = null;
+    private Controller controller;
 
+    /**
+     * 
+     * @param screen
+     *            to do
+     * @param serverName
+     *            to do
+     * @param port
+     *            to do
+     */
     public MainForm(final Screen screen, final String serverName, final int port) {
         super(new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE)));
-        this.window.setTitle("PERUDO - MENU");
-        this.window.setHints(Arrays.asList(Window.Hint.CENTERED));
-        Panel panel = new Panel();
+        super.getWindow().setTitle("PERUDO - MENU");
+        super.getWindow().setHints(Arrays.asList(Window.Hint.CENTERED));
+        final Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(1));
         panel.addComponent(new Button("Single player", new Runnable() {
             @Override
@@ -44,7 +56,7 @@ public class MainForm extends BaseForm {
                     controller = ControllerClientImpl.createFromServerName(serverName, port);
                     close();
                 } catch (IOException e) {
-                    Utils.showMessageBox("Network error", "Can't connect to " + serverName + ":" + port, textGUI);
+                    Utils.showMessageBox("Network error", "Can't connect to " + serverName + ":" + port, getTextGUI());
                 }
 
             }
@@ -58,9 +70,13 @@ public class MainForm extends BaseForm {
                 close();
             }
         }));
-        this.window.setComponent(panel);
+        super.getWindow().setComponent(panel);
     }
 
+    /**
+     * 
+     * @return to do
+     */
     public Optional<Controller> getController() {
         return Optional.ofNullable(controller);
     }
