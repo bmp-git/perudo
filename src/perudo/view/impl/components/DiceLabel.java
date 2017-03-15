@@ -1,12 +1,9 @@
 package perudo.view.impl.components;
 
-import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import perudo.view.impl.GUIUtility;
+import perudo.view.impl.Icon;
 
 /**
  * Label representing a dice.
@@ -38,12 +35,8 @@ public class DiceLabel extends JLabel {
      */
     public void setValue(final int value, final int size) {
         this.value = value;
-        try {
-            this.setIcon(new ImageIcon(
-                    ImageIO.read(new File(DiceLabel.class.getResource("/images/dices/d" + this.value + ".jpg").getPath()))
-                            .getScaledInstance(size, size, Image.SCALE_DEFAULT)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.setIcon(new ImageIcon(GUIUtility.getScaledImage(
+                new ImageIcon(Icon.class.getResource("/images/dices/d" + this.value + ".jpg")).getImage(), size, size)));
     }
+
 }

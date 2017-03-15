@@ -1,7 +1,12 @@
 package perudo.view.impl;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+
 import javax.swing.JFrame;
 
 /**
@@ -37,6 +42,28 @@ public final class GUIUtility {
     public static void fitFramePacked(final JFrame frame) {
         frame.pack();
         frame.setVisible(true);
+    }
+
+    /**
+     * Return an image scaled in height and width.
+     * 
+     * @param srcImg
+     *            source image
+     * @param w
+     *            width scaled
+     * @param h
+     *            height scaled
+     * @return image scaled
+     */
+    public static Image getScaledImage(final Image srcImg, final int w, final int h) {
+        final BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g2 = resizedImg.createGraphics();
+
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+
+        return resizedImg;
     }
 
 }

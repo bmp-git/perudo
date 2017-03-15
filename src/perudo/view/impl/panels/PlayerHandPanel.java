@@ -3,10 +3,6 @@ package perudo.view.impl.panels;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,6 +10,8 @@ import perudo.model.Game;
 import perudo.model.User;
 import perudo.view.GUIFactory;
 import perudo.view.impl.GUIFactorySingleton;
+import perudo.view.impl.GUIUtility;
+import perudo.view.impl.Icon;
 import perudo.view.impl.components.DiceLabel;
 
 /**
@@ -73,14 +71,9 @@ public class PlayerHandPanel extends JPanel {
 
     private void addInvisibleDice(final int value) {
         for (int i = 0; i < value; i++) {
-            try {
-                final JLabel lbl = new JLabel(
-                        new ImageIcon(ImageIO.read(new File(DiceLabel.class.getResource("/images/dices/di.jpg").getPath()))
-                                .getScaledInstance(DICE_SIZE, DICE_SIZE, Image.SCALE_DEFAULT)));
-                this.pnlDice.add(lbl);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            final JLabel lbl = new JLabel(new ImageIcon(GUIUtility.getScaledImage(
+                    new ImageIcon(Icon.class.getResource("/images/dices/di.jpg")).getImage(), DICE_SIZE, DICE_SIZE)));
+            this.pnlDice.add(lbl);
         }
     }
 
