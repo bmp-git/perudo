@@ -195,7 +195,7 @@ public class GameImpl implements Game {
         this.rules.checkCanPalifico(user, this);
 
         this.usersStatus.put(user, this.getUserStatus(user).callPalifico());
-        this.resetGame(this.rules.nextTurnPalifico(user, this));
+        this.goNextTurn(this.rules.nextTurnPalifico(user, this));
         this.palifico = true;
     }
 
