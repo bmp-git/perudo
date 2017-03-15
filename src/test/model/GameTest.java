@@ -11,12 +11,20 @@ import perudo.model.impl.UserImpl;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.util.Arrays;
 
+/**
+ * Test for Game implementation.
+ */
 public class GameTest {
+    /**
+     * The main test.
+     */
     @org.junit.Test
     public void main() {
         User u1 = null, u2 = null, u3 = null;
@@ -25,17 +33,18 @@ public class GameTest {
             u2 = UserImpl.createPlayer("u2");
             u3 = UserImpl.createPlayer("u3");
         } catch (ErrorTypeException e2) {
-
+            throw new IllegalStateException("Should be ok, 1");
         }
-        GameSettings setts = new GameSettingsImpl(3, 6, 5, Duration.ofMinutes(10), "");
+        // CHECKSTYLE:OFF: checkstyle:magicnumber
+        final GameSettings setts = new GameSettingsImpl(3, 6, 5, Duration.ofMinutes(10), "");
         Game game = null;
         try {
-            Lobby l = new LobbyImpl(setts, u1);
+            final Lobby l = new LobbyImpl(setts, u1);
             l.addUser(u2);
             l.addUser(u3);
             game = l.startGame(u1);
         } catch (Exception e1) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 2");
         }
 
         assertTrue(game.getTurnRemainingTime().getSeconds() <= 600);
@@ -76,9 +85,9 @@ public class GameTest {
         }
         User ut = game.getTurn();
         try {
-            game.play(new BidImpl(2, 2), game.getTurn());
+            game.play(new BidImpl(2, 2), ut);
         } catch (Exception e1) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 3");
         }
 
         try {
@@ -91,13 +100,13 @@ public class GameTest {
         try {
             game.play(new BidImpl(20, 3), game.getTurn());
         } catch (Exception e1) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 4");
         }
 
         try {
             game.urge(ut);
         } catch (Exception e1) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 5");
         }
 
         assertEquals(game.getUserStatus(ut).getRemainingDice(), 4);
@@ -107,9 +116,11 @@ public class GameTest {
         try {
             game.play(new BidImpl(20, 3), game.getTurn());
             game.doubt(game.getTurn());
+            utDice--;
         } catch (Exception e1) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 6");
         }
-        assertEquals(game.getUserStatus(ut).getRemainingDice(), utDice - 1);
+        assertEquals(game.getUserStatus(ut).getRemainingDice(), utDice);
+        // CHECKSTYLE:ON: checkstyle:magicnumber
     }
 }

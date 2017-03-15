@@ -11,15 +11,21 @@ import perudo.model.impl.UserImpl;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.util.Arrays;
 
+/**
+ * Test for Model implementation.
+ */
 public class ModelTest {
+    /**
+     * The main test.
+     */
     @org.junit.Test
     public void main() {
-        Model model = new ModelImpl();
         User u1 = null, u2 = null, u3 = null, u4 = null, u5 = null, u6 = null;
         try {
             u1 = UserImpl.createPlayer("u1");
@@ -29,14 +35,17 @@ public class ModelTest {
             u5 = UserImpl.createPlayer("u5");
             u6 = UserImpl.createPlayer("u6");
         } catch (ErrorTypeException e2) {
-
+            throw new IllegalStateException("Should be ok, 1");
         }
+
         Lobby l1 = null, l2 = null, l3 = null;
         Game g1 = null, g2 = null, g3 = null;
         try {
+            // CHECKSTYLE:OFF: checkstyle:magicnumber
             l1 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), ""), u1);
             l2 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), ""), u2);
             l3 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), ""), u3);
+            // CHECKSTYLE:ON: checkstyle:magicnumber
             l1.addUser(u4);
             l2.addUser(u5);
             l3.addUser(u6);
@@ -44,9 +53,10 @@ public class ModelTest {
             g2 = l2.startGame(u2);
             g3 = l3.startGame(u3);
         } catch (Exception e1) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 2");
         }
 
+        final Model model = new ModelImpl();
         // USERS
         try {
             model.removeUser(u1);
@@ -58,7 +68,7 @@ public class ModelTest {
         try {
             model.addUser(u1);
         } catch (Exception e) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 3");
         }
 
         try {
@@ -74,7 +84,7 @@ public class ModelTest {
             model.addUser(u2);
             model.addUser(u3);
         } catch (Exception e) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 4");
         }
 
         assertTrue(model.getUsers().containsAll(Arrays.asList(u1, u2, u3)));
@@ -106,7 +116,7 @@ public class ModelTest {
             model.addLobby(l2);
             model.addLobby(l3);
         } catch (Exception e) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 5");
         }
 
         assertTrue(model.getLobbies().containsAll(Arrays.asList(l1, l2, l3)));
@@ -122,7 +132,7 @@ public class ModelTest {
         try {
             model.addGame(g1);
         } catch (Exception e) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 6");
         }
 
         try {
@@ -138,7 +148,7 @@ public class ModelTest {
             model.addGame(g2);
             model.addGame(g3);
         } catch (Exception e) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 7");
         }
 
         assertTrue(model.getGames().containsAll(Arrays.asList(g1, g2, g3)));

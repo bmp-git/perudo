@@ -59,7 +59,7 @@ public class PlayerStatusImpl implements PlayerStatus {
         if (remainingDice < 0) {
             throw new IllegalArgumentException("remainingDice should be positive");
         }
-        if (maxDiceValue <= 0) {
+        if (maxDiceValue <= 1) {
             throw new IllegalArgumentException("dice faces should be at least 1");
         }
         this.remainingDice = remainingDice;

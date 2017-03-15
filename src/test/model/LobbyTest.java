@@ -1,6 +1,9 @@
 package test.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -13,20 +16,28 @@ import perudo.model.impl.UserImpl;
 import perudo.utility.ErrorType;
 import perudo.utility.ErrorTypeException;
 
+/**
+ * Test for Lobby implementation.
+ */
 public class LobbyTest {
+    /**
+     * The main test.
+     */
     @org.junit.Test
     public void main() {
         User owner = null;
         try {
             owner = UserImpl.createPlayer("host");
         } catch (ErrorTypeException e) {
+            throw new IllegalStateException("Should be ok, 1");
         }
         Lobby l, l1;
         try {
+            // CHECKSTYLE:OFF: checkstyle:magicnumber
             l = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), ""), owner);
             l1 = new LobbyImpl(new GameSettingsImpl(4, 6, 5, Duration.ofMinutes(1), ""), owner);
         } catch (Exception ex) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 2");
         }
         assertNotEquals(l.getId(), l1.getId());
         assertEquals(l.getFreeSpace(), 3);
@@ -35,18 +46,19 @@ public class LobbyTest {
         assertEquals(l.getInfo().getMaxPlayer(), 4);
         assertEquals(l.getInfo().getMaxDiceValue(), 6);
         assertEquals(l.getInfo().getInitialDiceNumber(), 5);
+        // CHECKSTYLE:ON: checkstyle:magicnumber
         assertEquals(l.getInfo().getMaxTurnTime(), Duration.ofMinutes(1));
         try {
             l.removeUser(owner);
         } catch (Exception ex) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 3");
         }
         assertEquals(l.getFreeSpace(), 4);
-        assertTrue(l.getOwner() == null);
+        assertEquals(l.getOwner(), null);
         try {
             l.addUser(owner);
         } catch (Exception ex) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 4");
         }
         assertEquals(owner, l.getOwner());
         assertEquals(l.getFreeSpace(), 3);
@@ -65,7 +77,7 @@ public class LobbyTest {
             u3 = UserImpl.createPlayer("u3");
             u4 = UserImpl.createPlayer("u4");
         } catch (ErrorTypeException e2) {
-
+            throw new IllegalStateException("Should be ok, 9");
         }
 
         try {
@@ -84,7 +96,7 @@ public class LobbyTest {
         try {
             l.addUser(u1);
         } catch (Exception ex) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 5");
         }
         try {
             l.startGame(u1);
@@ -95,13 +107,13 @@ public class LobbyTest {
         try {
             l.addUser(u2);
         } catch (Exception ex) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 6");
         }
 
         try {
             l.addUser(u3);
         } catch (Exception ex) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 7");
         }
         try {
             l.addUser(u4);
@@ -112,7 +124,7 @@ public class LobbyTest {
         try {
             l.removeUser(u3);
         } catch (Exception ex) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 8");
         }
 
         assertTrue(l.getUsers().containsAll(Arrays.asList(owner, u1, u2)));
@@ -122,7 +134,7 @@ public class LobbyTest {
         try {
             l.startGame(owner);
         } catch (Exception ex) {
-            throw new IllegalStateException("Should be ok");
+            throw new IllegalStateException("Should be ok, 9");
         }
 
         try {
