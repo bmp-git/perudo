@@ -269,7 +269,7 @@ public class ViewImpl implements View {
     public void gameEndedNotify(final Game game) {
         this.runOnGui(() -> {
             if (game.equals(this.gameForm.getGame())) {
-                String win = (game.getUserStatus(this.user) != null
+                final String win = (game.getUserStatus(this.user) != null
                         && game.getUserStatus(this.user).getRemainingDice() > 0) ? "win" : "lose";
                 Utils.showMessageBox("Game ended", "The game is ended\nYou " + win + "\nExit game please",
                         this.textGUI);

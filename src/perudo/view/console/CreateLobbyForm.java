@@ -24,7 +24,6 @@ import perudo.model.impl.GameSettingsImpl;
 public class CreateLobbyForm extends BaseForm {
 
     private final TextBox txbPlayers, txbDiceFaces, txbDiceN, txbTurnTime, txbName;
-    private final Button btnOk, btnCancel;
     private GameSettings lobby;
 
     /**
@@ -35,6 +34,7 @@ public class CreateLobbyForm extends BaseForm {
 
     public CreateLobbyForm(final MultiWindowTextGUI textGUI) {
         super(textGUI);
+
         this.lobby = null;
         // CHECKSTYLE:OFF: checkstyle:magicnumber
         this.txbPlayers = new TextBox(new TerminalSize(30, 1)).setText("4");
@@ -43,13 +43,13 @@ public class CreateLobbyForm extends BaseForm {
         this.txbTurnTime = new TextBox(new TerminalSize(30, 1)).setText("60");
         this.txbName = new TextBox(new TerminalSize(30, 1));
         // CHECKSTYLE:ON: checkstyle:magicnumber
-        this.btnOk = new Button("Done", new Runnable() {
+        final Button btnOk = new Button("Done", new Runnable() {
             @Override
             public void run() {
                 btnOkClicked();
             }
         });
-        this.btnCancel = new Button("Cancel", new Runnable() {
+        final Button btnCancel = new Button("Cancel", new Runnable() {
             @Override
             public void run() {
                 btnCancelClicked();
@@ -93,11 +93,11 @@ public class CreateLobbyForm extends BaseForm {
 
         final Panel subPanel = new Panel();
         subPanel.setLayoutManager(new GridLayout(3));
-        subPanel.addComponent(this.btnOk);
+        subPanel.addComponent(btnOk);
         // CHECKSTYLE:OFF: checkstyle:magicnumber
         subPanel.addComponent(new EmptySpace(new TerminalSize(12, 1)));
         // CHECKSTYLE:ON: checkstyle:magicnumber
-        subPanel.addComponent(this.btnCancel);
+        subPanel.addComponent(btnCancel);
 
         panel.addComponent(subPanel);
 
