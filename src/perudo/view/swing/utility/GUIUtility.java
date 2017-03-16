@@ -30,6 +30,7 @@ public final class GUIUtility {
         final int screenWidth = (int) screen.getWidth();
         final int screenHeight = (int) screen.getHeight();
         frame.setSize(screenWidth / proportion, screenHeight / proportion);
+        frame.setMinimumSize(new Dimension(screenWidth / proportion, screenHeight / proportion));
         frame.setVisible(true);
     }
 
@@ -41,6 +42,7 @@ public final class GUIUtility {
      */
     public static void fitFramePacked(final JFrame frame) {
         frame.pack();
+
         frame.setVisible(true);
     }
 
