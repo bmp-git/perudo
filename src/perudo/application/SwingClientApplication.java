@@ -27,7 +27,7 @@ public final class SwingClientApplication {
      */
     public static void run(final String serverName, final int port) throws IOException {
         while (true) {
-            final StartFrame start = new StartFrame("casa-home.no-ip.biz", port);
+            final StartFrame start = new StartFrame(serverName, port);
             start.showFrame();
             start.await();
             if (!start.isInitialized()) {
