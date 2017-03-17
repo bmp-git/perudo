@@ -8,9 +8,9 @@ import java.util.Arrays;
 
 import perudo.controller.Controller;
 import perudo.controller.impl.StandardControllerImpl;
-import perudo.controller.net.NetworkControllerImpl;
-import perudo.controller.net.NetworkServerListener;
-import perudo.controller.net.TcpIPv4ServerListener;
+import perudo.controller.net.server.NetworkControllerImpl;
+import perudo.controller.net.server.NetworkServerListener;
+import perudo.controller.net.server.TcpIPv4ServerListener;
 import perudo.utility.LogSeverity;
 import perudo.utility.impl.LoggerSingleton;
 
