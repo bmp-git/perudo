@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import perudo.model.Game;
 import perudo.model.User;
 import perudo.view.swing.utility.GUIFactory;
@@ -19,6 +20,7 @@ public class GameTurnPanel extends JPanel {
      */
     private static final long serialVersionUID = 1L;
     private static final int FONT_SIZE = 25;
+    private static final int PADDING_TOP = 20;
 
     private final JLabel lblTurn;
 
@@ -31,7 +33,7 @@ public class GameTurnPanel extends JPanel {
         final GUIFactory factory = GUIFactorySingleton.getFactory();
         this.lblTurn = (JLabel) factory.createLabel("");
         this.lblTurn.setFont(new Font("Consolas", Font.BOLD, FONT_SIZE));
-
+        this.setBorder(new EmptyBorder(PADDING_TOP, 0, 0, 0));
         this.add(this.lblTurn);
     }
 
