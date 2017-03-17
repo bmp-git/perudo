@@ -1,4 +1,4 @@
-package perudo.controller.net;
+package perudo.controller.net.server;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +9,10 @@ import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 import perudo.controller.Controller;
 import perudo.controller.impl.ControllerDecorator;
+import perudo.controller.net.Datagram;
+import perudo.controller.net.DatagramStream;
+import perudo.controller.net.DatagramStreamImpl;
+import perudo.controller.net.MethodInvoker;
 import perudo.utility.ErrorTypeException;
 import perudo.utility.LogSeverity;
 import perudo.utility.impl.LoggerSingleton;

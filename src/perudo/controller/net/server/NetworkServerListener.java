@@ -1,4 +1,4 @@
-package perudo.controller.net;
+package perudo.controller.net.server;
 
 import java.io.Closeable;
 import java.io.InputStream;

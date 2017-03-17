@@ -1,4 +1,4 @@
-package perudo.controller.net;
+package perudo.controller.net.server;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -8,6 +8,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import perudo.controller.net.Datagram;
+import perudo.controller.net.DatagramStream;
 import perudo.model.Game;
 import perudo.model.Lobby;
 import perudo.model.User;

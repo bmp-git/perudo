@@ -34,6 +34,8 @@ import perudo.view.View;
  * A basic controller.
  */
 public final class StandardControllerImpl implements Controller {
+    private static final String DEFAULT_USERNAME = "Anonymous";
+    private static final String DEFAULT_BOTNAME = "Bot";
     private final Model model;
     private final Map<User, View> views;
     private final ExecutorService executor;
@@ -60,7 +62,7 @@ public final class StandardControllerImpl implements Controller {
         Objects.requireNonNull(view);
         this.executor.execute(() -> {
             try {
-                final User newUser = UserImpl.getNewAnonymousUser("Anonymous", UserType.PLAYER);
+                final User newUser = UserImpl.getNewAnonymousUser(DEFAULT_USERNAME, UserType.PLAYER);
                 this.model.addUser(newUser);
                 this.views.put(newUser, view);
                 view.initializeNewUserRespond(ResponseImpl.of(newUser));
@@ -188,7 +190,7 @@ public final class StandardControllerImpl implements Controller {
                 if (!Objects.equals(lobbyModelTemp.getOwner(), user)) {
                     throw new ErrorTypeException(ErrorType.USER_DOES_NOT_OWN_LOBBY);
                 }
-                botUTemp = UserImpl.getNewAnonymousUser("Bot", type);
+                botUTemp = UserImpl.getNewAnonymousUser(DEFAULT_BOTNAME, type);
                 botVTemp = BotFactory.createBot(this, botUTemp);
                 this.model.addUser(botUTemp);
             } catch (ErrorTypeException e) {

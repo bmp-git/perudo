@@ -1,4 +1,4 @@
-package perudo.controller.net;
+package perudo.controller.net.server;
 
 import java.io.IOException;
 import java.io.InputStream;
