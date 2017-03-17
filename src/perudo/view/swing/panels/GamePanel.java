@@ -1,6 +1,8 @@
 package perudo.view.swing.panels;
 
 import java.awt.BorderLayout;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.util.Optional;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -72,9 +74,18 @@ public class GamePanel extends JPanel {
         this.add(this.pnlCenter, BorderLayout.CENTER);
         this.add(this.pnlBottomMenu, BorderLayout.SOUTH);
         this.add(pnlRight, BorderLayout.EAST);
-        final JScrollPane scroll = this.factory.createScrollPaneWithoutBorder(this.pnlHistory);
-        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        final JScrollPane scroll = factory.createScrollPaneWithoutBorder(this.pnlHistory);
+        scroll.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            private int value = pnlHistory.getElements();
+            public void adjustmentValueChanged(final AdjustmentEvent e) {
+                if (pnlHistory.getElements() > this.value) {
+                    e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                    this.value = pnlHistory.getElements();
+                }
+            }
+        });
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         this.add(scroll, BorderLayout.WEST);
     }
 
@@ -129,8 +140,7 @@ public class GamePanel extends JPanel {
      *            the user who has played
      */
     public void playNotify(final Game game, final User user) {
-        this.pnlHistory.addInfo(user.getName() + " play " + game.getCurrentBid().get().getQuantity() + " dices of "
-                + game.getCurrentBid().get().getDiceValue());
+        this.pnlHistory.playNotify(game, user);
         this.setGame(game);
     }
 
@@ -145,7 +155,7 @@ public class GamePanel extends JPanel {
      *            the doubt result
      */
     public void doubtNotify(final Game game, final User user, final boolean win) {
-        this.pnlHistory.addInfo(user.getName() + " doubt " + (win ? "and win" : "and lose"));
+        this.pnlHistory.doubtNotify(game, user, win);
         this.setGame(game);
     }
 
@@ -160,7 +170,7 @@ public class GamePanel extends JPanel {
      *            the urge result
      */
     public void urgeNotify(final Game game, final User user, final boolean win) {
-        this.pnlHistory.addInfo(user.getName() + " urged " + (win ? "and win" : "and lose"));
+        this.pnlHistory.urgeNotify(game, user, win);
         this.setGame(game);
     }
 
@@ -173,7 +183,7 @@ public class GamePanel extends JPanel {
      *            the user who has called palifico
      */
     public void callPalificoNotify(final Game game, final User user) {
-        this.pnlHistory.addInfo(user.getName() + " called palifico");
+        this.pnlHistory.callPalificoNotify(game, user);
         this.setGame(game);
     }
 
@@ -186,7 +196,7 @@ public class GamePanel extends JPanel {
      *            the user who exited
      */
     public void exitGameNotify(final Game game, final User user) {
-        this.pnlHistory.addInfo(user.getName() + " exited");
+        this.pnlHistory.exitGameNotify(game, user);
         if (!this.game.get().isOver()) {
             this.setGame(game);
         } else {
@@ -203,7 +213,7 @@ public class GamePanel extends JPanel {
      *            the updated game
      */
     public void gameEndedNotify(final Game game) {
-        this.pnlHistory.addInfo("Game finished");
+        this.pnlHistory.gameEndedNotify(game);
         this.pnlGameTurn.youWin(!game.hasLost(this.user.get()));
         this.pnlGamePlay.setPanelEnabled(false);
         this.close();
@@ -217,6 +227,7 @@ public class GamePanel extends JPanel {
     public Game getGame() {
         return this.game.orElse(null);
     }
+
     /**
      * Close gamePanel.
      */

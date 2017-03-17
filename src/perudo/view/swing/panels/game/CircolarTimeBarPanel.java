@@ -25,7 +25,7 @@ public class CircolarTimeBarPanel extends JPanel {
     private static final Color DANGER_COLOR = Color.RED;
     private static final Color OK_COLOR = Color.GREEN;
     private static final Color LABEL_COLOR = Color.BLACK;
-    private static final String LABEL_END_TEXT = "!";
+    private static final String LABEL_END_TEXT = "!!";
     private static final int FONT_SIZE = 40;
 
     private final Duration totalTime;
@@ -80,7 +80,9 @@ public class CircolarTimeBarPanel extends JPanel {
                 360, 1);
         g2.fill(arc);
 
-        this.label.setText(remainingTime.isNegative() ? LABEL_END_TEXT : Integer.toString((int) remainingTime.getSeconds()));
+        this.label.setText(remainingTime.isNegative() ? LABEL_END_TEXT
+                : remainingTime.compareTo(Duration.ofSeconds(10)) < 0 ? "0" + Integer.toString((int) remainingTime.getSeconds())
+                        : Integer.toString((int) remainingTime.getSeconds()));
 
     }
 }
