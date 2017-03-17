@@ -484,9 +484,16 @@ public final class StandardControllerImpl implements Controller {
                     try {
                         final Bid bid = game.nextBid();
                         final User user = game.getTurn();
-                        game.play(bid, user);
+
                         final Map<User, View> gameViews = this.getViewsfromGame(game);
-                        gameViews.forEach((u, v) -> v.playNotify(game, user));
+                        if (game.getRules().bidValid(bid, game)) {
+                            game.play(bid, user);
+                            gameViews.forEach((u, v) -> v.playNotify(game, user));
+                        } else {
+                            final boolean result = game.doubt(user);
+                            gameViews.forEach((u, v) -> v.doubtNotify(game, user, result));
+                        }
+
                     } catch (ErrorTypeException e) {
                         LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(),
                                 "failed playing the default play.");

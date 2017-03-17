@@ -1,6 +1,5 @@
 package perudo.view.console;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -52,13 +51,8 @@ public class MainForm extends BaseForm {
         panel.addComponent(new Button("Online", new Runnable() {
             @Override
             public void run() {
-                try {
-                    controller = ControllerClientImpl.createFromServerName(serverName, port);
-                    close();
-                } catch (IOException e) {
-                    Utils.showMessageBox("Network error", "Can't connect to " + serverName + ":" + port, getTextGUI());
-                }
-
+                controller = ControllerClientImpl.createFromServerName(serverName, port);
+                close();
             }
         }));
         panel.addComponent(new EmptySpace(new TerminalSize(1, 1)));

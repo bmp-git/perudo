@@ -2,7 +2,7 @@ package perudo.model.impl;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import perudo.model.Game;
@@ -42,7 +42,7 @@ public class LobbyImpl implements Lobby {
         }
         this.started = false;
         this.id = IdDispenser.getLobbyIdDispenser().getNextId();
-        this.userSet = new HashSet<>(Arrays.asList(owner));
+        this.userSet = new LinkedHashSet<>(Arrays.asList(owner));
         this.owner = owner;
         this.settings = settings;
     }

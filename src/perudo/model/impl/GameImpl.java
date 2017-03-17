@@ -40,6 +40,7 @@ public class GameImpl implements Game {
     private Bid currentBid;
     private User bidUser;
     private boolean palifico;
+    private Game lastRound;
 
     /**
      * Create a standard GameImpl.
@@ -67,6 +68,23 @@ public class GameImpl implements Game {
 
         // random start player
         this.resetGame(this.getUsers().get(new Random().nextInt(this.getUsers().size())));
+    }
+
+    private GameImpl(final GameImpl game) {
+        this.id = game.id;
+        this.userList = new ArrayList<>(game.userList);
+        this.usersStatus = new HashMap<>(game.usersStatus);
+        this.settings = game.settings;
+        this.rules = game.rules;
+        this.currentTurn = game.currentTurn;
+        this.turnStartTime = game.turnStartTime;
+        this.currentBid = game.currentBid;
+        this.bidUser = game.bidUser;
+        this.palifico = game.palifico;
+        // change to game.lastRound if you want to permit
+        // game.getLastRound().getLastRound().getLastRound()...
+        // with null you can do max game.getLastRound()
+        this.lastRound = null;
     }
 
     private void resetGame(final User playerTurn) {
@@ -167,6 +185,7 @@ public class GameImpl implements Game {
 
         this.rules.checkCanDoubt(user, this);
 
+        this.lastRound = new GameImpl(this);
         final boolean win = this.rules.doubtWin(this);
         this.changeDiceQuantity(this.rules.changesDiceDoubt(user, this, win));
         this.resetGame(this.rules.nextTurnDoubt(user, this, win));
@@ -181,6 +200,7 @@ public class GameImpl implements Game {
 
         this.rules.checkCanUrge(user, this);
 
+        this.lastRound = new GameImpl(this);
         final boolean win = this.rules.urgeWin(this);
         this.changeDiceQuantity(this.rules.changesDiceUrge(user, this, win));
         this.resetGame(this.rules.nextTurnUrge(user, this, win));
@@ -284,5 +304,10 @@ public class GameImpl implements Game {
     @Override
     public int getTotalRemainingDice() {
         return this.getUsers().stream().mapToInt(u -> this.getUserStatus(u).getRemainingDice()).sum();
+    }
+
+    @Override
+    public Optional<Game> getLastRound() {
+        return Optional.ofNullable(lastRound);
     }
 }

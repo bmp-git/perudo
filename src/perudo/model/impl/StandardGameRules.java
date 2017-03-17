@@ -67,7 +67,8 @@ public class StandardGameRules implements GameRules {
     @Override
     public boolean bidValid(final Bid bid, final Game game) {
         // illegal bid
-        if (bid.getDiceValue() > game.getSettings().getMaxDiceValue()) {
+        if (bid.getDiceValue() > game.getSettings().getMaxDiceValue()
+                || bid.getQuantity() > game.getTotalRemainingDice()) {
             return false;
         }
 

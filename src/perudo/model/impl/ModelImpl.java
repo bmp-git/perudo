@@ -1,7 +1,7 @@
 package perudo.model.impl;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import perudo.utility.ErrorType;
@@ -24,9 +24,9 @@ public class ModelImpl implements Model {
      * Create a empty Model.
      */
     public ModelImpl() {
-        this.users = Collections.synchronizedSet(new HashSet<>());
-        this.games = Collections.synchronizedSet(new HashSet<>());
-        this.lobbies = Collections.synchronizedSet(new HashSet<>());
+        this.users = Collections.synchronizedSet(new LinkedHashSet<>());
+        this.games = Collections.synchronizedSet(new LinkedHashSet<>());
+        this.lobbies = Collections.synchronizedSet(new LinkedHashSet<>());
     }
 
     @Override

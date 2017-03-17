@@ -314,4 +314,12 @@ public interface Game extends Serializable {
         }
         return this.getRules().isDiceInBid(diceValue, user, this);
     }
+
+    /**
+     * Gets the game an instant before a urge or a doubt. Can be useful if you
+     * want to show the dice count for the previous round.
+     * 
+     * @return the game in the previous round
+     */
+    Optional<Game> getLastRound();
 }

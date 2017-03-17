@@ -132,7 +132,12 @@ public enum ErrorType {
     /**
      * Network error or application not updated.
      */
-    METHOD_INVALID(5002, "Network error or application not updated.");
+    METHOD_INVALID(5002, "Network error or application not updated."),
+
+    /**
+     * The name is already taken.
+     */
+    CONNECTION_REJECTED_FROM_SERVER(10000, "The server rejected the connection.");
 
     private final int id;
     private final String message;
