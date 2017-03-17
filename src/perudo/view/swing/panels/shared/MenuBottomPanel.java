@@ -69,7 +69,6 @@ public class MenuBottomPanel extends JPanel {
         if (this.user.isPresent()) {
             this.lblname.setText("Logged as " + this.user.get().getName());
             if (ControllerSingleton.getControllerType() == ControllerType.MULTIPLAYER) {
-                System.out.println(ControllerSingleton.getController().getClass().getName());
                 this.lblonline.setText(ONLINE_TEXT);
             } else {
                 this.lblonline.setText((SINGLEPLAYER_TEXT));

@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 import perudo.model.Bid;
 import perudo.model.Game;
 import perudo.model.impl.BidImpl;
+import perudo.utility.LogSeverity;
+import perudo.utility.impl.LoggerSingleton;
 import perudo.view.swing.components.DiceLabel;
 import perudo.view.swing.utility.GUIFactory;
 import perudo.view.swing.utility.GUIFactorySingleton;
@@ -157,7 +159,7 @@ public class BidPanel extends JPanel {
         try {
             return new BidImpl(Integer.parseInt(this.lblNum.getText()), this.lblDice.getValue());
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(), "Can't create a bid with these arguments");
             throw new IllegalStateException();
         }
     }

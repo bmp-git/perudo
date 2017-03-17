@@ -88,7 +88,8 @@ public class StartFrame extends JFrame {
                 StartFrame.this.dispose();
                 this.latch.countDown();
             } catch (IOException e1) {
-                JOptionPane.showMessageDialog(StartFrame.this, "Can't connecy to the server " + server + ":" + port,
+                LoggerSingleton.get().add(LogSeverity.INFO, this.getClass(), "Can't connect to the server " + server + ":" + port);
+                JOptionPane.showMessageDialog(StartFrame.this, "Can't connect to the server " + server + ":" + port,
                         "Network error", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -126,7 +127,7 @@ public class StartFrame extends JFrame {
         try {
             logo = (JLabel) factory.createPicLabel(LOGO_RESPATH);
         } catch (IOException e) {
-            e.printStackTrace();
+            LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, this.getClass(), "Can't load image " + LOGO_RESPATH);
         }
         top.add(logo);
 

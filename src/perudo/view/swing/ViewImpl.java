@@ -322,7 +322,6 @@ public class ViewImpl implements View {
     public void showError(final ErrorType errorType) {
         JOptionPane.showMessageDialog(mainFrame, errorType.getMessage(), "Error: " + errorType.getId(),
                 JOptionPane.ERROR_MESSAGE);
-        System.out.println(errorType);
     }
 
     @Override
