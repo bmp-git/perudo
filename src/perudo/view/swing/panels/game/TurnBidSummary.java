@@ -64,7 +64,7 @@ public class TurnBidSummary extends JPanel {
                 final DiceLabel lbl = new DiceLabel();
                 lbl.setValue(e.getKey(), DICE_SIZE);
                 if (game.isDiceInBid(e.getKey(), user)) {
-                    lbl.setBorder(this.factory.createBorder(Color.YELLOW, 0));
+                    lbl.setBorder(this.factory.createBorder(Color.RED, 0));
                 }
                 pnl.add(lbl);
             }

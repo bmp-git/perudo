@@ -77,7 +77,7 @@ public class HistoryPanel extends JPanel {
      *            the doubt result
      */
     public void doubtNotify(final Game game, final User user, final boolean win) {
-        this.pnlHistory.add(new TurnBidSummary(game, user, " doubt ", win), cnst);
+        this.pnlHistory.add(new TurnBidSummary(game.getLastRound().get(), user, " doubt ", win), cnst);
         this.cnst.gridy++;
     }
 
@@ -92,7 +92,7 @@ public class HistoryPanel extends JPanel {
      *            the urge result
      */
     public void urgeNotify(final Game game, final User user, final boolean win) {
-        this.pnlHistory.add(new TurnBidSummary(game, user, " urged ", win), cnst);
+        this.pnlHistory.add(new TurnBidSummary(game.getLastRound().get(), user, " urged ", win), cnst);
         this.cnst.gridy++;
     }
 
