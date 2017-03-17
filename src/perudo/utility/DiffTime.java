@@ -32,7 +32,7 @@ public final class DiffTime {
      * @param diff
      *            the difference between client and server time
      */
-    public static void setServerDiffTime(final Duration diff) {
+    public static synchronized void setServerDiffTime(final Duration diff) {
         deltaTime = diff;
     }
 }
