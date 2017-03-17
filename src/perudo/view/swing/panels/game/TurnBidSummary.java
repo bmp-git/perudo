@@ -47,10 +47,10 @@ public class TurnBidSummary extends JPanel {
         cnst.anchor = GridBagConstraints.WEST;
         cnst.insets = new Insets(0, 0, 0, 0);
         final JPanel pnl = this.factory.createPanel(new FlowLayout());
-        pnl.add(factory.createLabel(user.getName() + play + (win ? "and win" : "and lose")));
+        pnl.add(factory.createLabel(user.getName() + play + (win ? "and wins" : "and loses")));
         this.add(pnl, cnst);
         cnst.gridy++;
-        game.getUsers().forEach(u -> {
+        game.getUsers().stream().filter(u -> !game.hasLost(u)).forEach(u -> {
             this.add(getHand(u, game), cnst);
             cnst.gridy++;
         });
