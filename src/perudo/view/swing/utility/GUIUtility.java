@@ -2,9 +2,10 @@ package perudo.view.swing.utility;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
@@ -26,9 +27,9 @@ public final class GUIUtility {
      *            the dividing proportion
      */
     public static void fitFrame(final JFrame frame, final int proportion) {
-        final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        final int screenWidth = (int) screen.getWidth();
-        final int screenHeight = (int) screen.getHeight();
+        final GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        final int screenWidth = gd.getDisplayMode().getWidth();
+        final int screenHeight = gd.getDisplayMode().getHeight();
         frame.setSize(screenWidth / proportion, screenHeight / proportion);
         frame.setMinimumSize(new Dimension(screenWidth / proportion, screenHeight / proportion));
         frame.setVisible(true);
