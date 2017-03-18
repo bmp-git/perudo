@@ -21,211 +21,211 @@ import perudo.view.View;
  */
 public abstract class AbstractBot implements View {
 
-	private final Controller controller;
-	private final User user;
-	private final ExecutorService executor;
-	private Game game;
-	private Lobby lobby;
-	private volatile boolean closed;
+    private final Controller controller;
+    private final User user;
+    private final ExecutorService executor;
+    private Game game;
+    private Lobby lobby;
+    private volatile boolean closed;
 
-	/**
-	 * Create the AbstractBot from controller and user.
-	 * 
-	 * @param controller
-	 *            The controller to use
-	 * 
-	 * @param user
-	 *            The user to use.
-	 */
-	public AbstractBot(final Controller controller, final User user) {
-		this.controller = controller;
-		this.user = user;
-		this.closed = false;
-		this.executor = Executors.newSingleThreadExecutor();
-	}
+    /**
+     * Create the AbstractBot from controller and user.
+     * 
+     * @param controller
+     *            The controller to use
+     * 
+     * @param user
+     *            The user to use.
+     */
+    public AbstractBot(final Controller controller, final User user) {
+        this.controller = controller;
+        this.user = user;
+        this.closed = false;
+        this.executor = Executors.newSingleThreadExecutor();
+    }
 
-	/**
-	 * This is called when the bot should evaluate what to do.
-	 */
-	protected abstract void play();
+    /**
+     * This is called when the bot should evaluate what to do.
+     */
+    protected abstract void play();
 
-	/**
-	 * The controller where call the actions.
-	 * 
-	 * @return the controller instance
-	 */
-	protected Controller getController() {
-		return controller;
-	}
+    /**
+     * The controller where call the actions.
+     * 
+     * @return the controller instance
+     */
+    protected Controller getController() {
+        return controller;
+    }
 
-	/**
-	 * The user to utilize in the calls to controller.
-	 * 
-	 * @return the user instance
-	 */
-	protected User getUser() {
-		return user;
-	}
+    /**
+     * The user to utilize in the calls to controller.
+     * 
+     * @return the user instance
+     */
+    protected User getUser() {
+        return user;
+    }
 
-	/**
-	 * The actual game to evaluate.
-	 * 
-	 * @return the game instance
-	 */
-	protected Game getGame() {
-		return game;
-	}
+    /**
+     * The actual game to evaluate.
+     * 
+     * @return the game instance
+     */
+    protected Game getGame() {
+        return game;
+    }
 
-	@Override
-	public void initializeNewUserRespond(final Response<User> user) {
-	}
+    @Override
+    public void initializeNewUserRespond(final Response<User> user) {
+    }
 
-	@Override
-	public void initializeNewUserNotify(final User user) {
-	}
+    @Override
+    public void initializeNewUserNotify(final User user) {
+    }
 
-	@Override
-	public void userExitNotify(final User user) {
-	}
+    @Override
+    public void userExitNotify(final User user) {
+    }
 
-	@Override
-	public void changeNameNotify(final User oldUser, final User newUser) {
-	}
+    @Override
+    public void changeNameNotify(final User oldUser, final User newUser) {
+    }
 
-	@Override
-	public void getUsersRespond(final Response<Set<User>> users) {
-	}
+    @Override
+    public void getUsersRespond(final Response<Set<User>> users) {
+    }
 
-	@Override
-	public void createLobbyNotify(final Lobby lobby) {
-	}
+    @Override
+    public void createLobbyNotify(final Lobby lobby) {
+    }
 
-	@Override
-	public void removeLobbyNotify(final Lobby lobby) {
-	}
+    @Override
+    public void removeLobbyNotify(final Lobby lobby) {
+    }
 
-	@Override
-	public void getLobbiesRespond(final Response<Set<Lobby>> lobbies) {
-	}
+    @Override
+    public void getLobbiesRespond(final Response<Set<Lobby>> lobbies) {
+    }
 
-	@Override
-	public void joinLobbyNotify(final Lobby lobby, final User user) {
-		if (this.user.equals(user)) {
-			this.lobby = lobby;
-		}
-	}
+    @Override
+    public void joinLobbyNotify(final Lobby lobby, final User user) {
+        if (this.user.equals(user)) {
+            this.lobby = lobby;
+        }
+    }
 
-	@Override
-	public void exitLobbyNotify(final Lobby lobby, final User user) {
-		this.runOnExecutor(() -> {
-			if (this.user.equals(lobby.getOwner())) {
-				this.controller.closeNow(this.user);
-			}
-		});
-	}
+    @Override
+    public void exitLobbyNotify(final Lobby lobby, final User user) {
+        this.runOnExecutor(() -> {
+            if (this.user.equals(lobby.getOwner())) {
+                this.controller.closeNow(this.user);
+            }
+        });
+    }
 
-	@Override
-	public void startLobbyNotify(final Lobby lobby, final Game game) {
-		this.runOnExecutor(() -> {
-			if (lobby.equals(this.lobby)) {
-				this.game = game;
-				this.play();
-			}
-		});
-	}
+    @Override
+    public void startLobbyNotify(final Lobby lobby, final Game game) {
+        this.runOnExecutor(() -> {
+            if (lobby.equals(this.lobby)) {
+                this.game = game;
+                this.play();
+            }
+        });
+    }
 
-	@Override
-	public void removeGameNotify(final Game game) {
-	}
+    @Override
+    public void removeGameNotify(final Game game) {
+    }
 
-	@Override
-	public void getGamesRespond(final Response<Set<Game>> games) {
-	}
+    @Override
+    public void getGamesRespond(final Response<Set<Game>> games) {
+    }
 
-	@Override
-	public void playNotify(final Game game, final User user) {
-		this.runOnExecutor(() -> {
-			if (game.equals(this.game)) {
-				this.game = game;
-				this.play();
-			}
-		});
-	}
+    @Override
+    public void playNotify(final Game game, final User user) {
+        this.runOnExecutor(() -> {
+            if (game.equals(this.game)) {
+                this.game = game;
+                this.play();
+            }
+        });
+    }
 
-	@Override
-	public void doubtNotify(final Game game, final User user, final boolean win) {
-		this.runOnExecutor(() -> {
-			if (game.equals(this.game)) {
-				this.game = game;
-				this.play();
-			}
-		});
-	}
+    @Override
+    public void doubtNotify(final Game game, final User user, final boolean win) {
+        this.runOnExecutor(() -> {
+            if (game.equals(this.game)) {
+                this.game = game;
+                this.play();
+            }
+        });
+    }
 
-	@Override
-	public void urgeNotify(final Game game, final User user, final boolean win) {
-		this.runOnExecutor(() -> {
-			if (game.equals(this.game)) {
-				this.game = game;
-				this.play();
-			}
-		});
-	}
+    @Override
+    public void urgeNotify(final Game game, final User user, final boolean win) {
+        this.runOnExecutor(() -> {
+            if (game.equals(this.game)) {
+                this.game = game;
+                this.play();
+            }
+        });
+    }
 
-	@Override
-	public void callPalificoNotify(final Game game, final User user) {
-		this.runOnExecutor(() -> {
-			if (game.equals(this.game)) {
-				this.game = game;
-				this.play();
-			}
-		});
-	}
+    @Override
+    public void callPalificoNotify(final Game game, final User user) {
+        this.runOnExecutor(() -> {
+            if (game.equals(this.game)) {
+                this.game = game;
+                this.play();
+            }
+        });
+    }
 
-	@Override
-	public void exitGameNotify(final Game game, final User user) {
-		this.runOnExecutor(() -> {
-			if (this.user.equals(user)) {
-				this.controller.closeNow(this.user);
-			}
+    @Override
+    public void exitGameNotify(final Game game, final User user) {
+        this.runOnExecutor(() -> {
+            if (this.user.equals(user)) {
+                this.controller.closeNow(this.user);
+            }
 
-			if (game.equals(this.game)) {
-				if (game.getUsers().stream().allMatch(u -> u.getType().isBot())) {
-					// all bots
-					this.controller.closeNow(this.user);
-				} else {
-					this.game = game;
-					this.play();
-				}
-			}
+            if (game.equals(this.game)) {
+                if (game.getUsers().stream().allMatch(u -> u.getType().isBot())) {
+                    // all bots
+                    this.controller.closeNow(this.user);
+                } else {
+                    this.game = game;
+                    this.play();
+                }
+            }
 
-		});
+        });
 
-	}
+    }
 
-	@Override
-	public void gameEndedNotify(final Game game) {
-	}
+    @Override
+    public void gameEndedNotify(final Game game) {
+    }
 
-	@Override
-	public void showError(final ErrorType errorType) {
-		LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), errorType.toString());
+    @Override
+    public void showError(final ErrorType errorType) {
+        LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(), errorType.toString());
 
-		this.runOnExecutor(() -> {
-			this.play();
-		});
-	}
+        this.runOnExecutor(() -> {
+            this.play();
+        });
+    }
 
-	@Override
-	public void close() throws IOException {
-		this.closed = true;
-		this.executor.shutdown();
-	}
+    @Override
+    public void close() throws IOException {
+        this.closed = true;
+        this.executor.shutdown();
+    }
 
-	private void runOnExecutor(final Runnable runnable) {
-		if (this.closed) {
-			return;
-		}
-		this.executor.execute(runnable);
-	}
+    private void runOnExecutor(final Runnable runnable) {
+        if (this.closed) {
+            return;
+        }
+        this.executor.execute(runnable);
+    }
 }

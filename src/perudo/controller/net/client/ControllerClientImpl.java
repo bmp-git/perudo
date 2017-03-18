@@ -137,10 +137,10 @@ public final class ControllerClientImpl implements Controller {
         if (this.users.containsKey(user)) {
             this.users.get(user).send(dg);
         } else {
-            //TODO for closing bot (temporary solution)
-        	this.streams.keySet().stream().limit(1).forEach(s -> s.send(dg));
-        	
-        	LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(),
+            // TODO for closing bot (temporary solution)
+            this.streams.keySet().stream().limit(1).forEach(s -> s.send(dg));
+
+            LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(),
                     "The user " + user.getName() + " is not been initializated yet. Datagram: " + dg.getMethodName());
         }
     }
