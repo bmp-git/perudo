@@ -12,6 +12,7 @@ import java.util.Optional;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import perudo.model.Lobby;
 import perudo.model.User;
@@ -33,7 +34,6 @@ public class LobbyListPanel extends JPanel {
     private static final String PANEL_TITLE = "Lobbies list";
     private static final String CREATE_LOBBY_BUTTON_TEXT = "Create new lobby";
     private static final String CHANGE_NAME_BUTTON_TEXT = "Change username";
-
 
     private final JPanel pnlLobbyList;
     private final GridBagConstraints cnst;
@@ -66,7 +66,12 @@ public class LobbyListPanel extends JPanel {
             final int n = JOptionPane.showConfirmDialog(this, pnlCreateLobby, CreateLobbyPanel.TITLE,
                     JOptionPane.OK_CANCEL_OPTION, 0, Icon.APPLICATION_ICON.getIcon());
             if (n == JOptionPane.YES_OPTION && this.user.isPresent() && pnlCreateLobby.getName().trim().length() > 0) {
-                ControllerSingleton.getController().createLobby(this.user.get(), pnlCreateLobby.getGameSettings());
+                try {
+                    ControllerSingleton.getController().createLobby(this.user.get(), pnlCreateLobby.getGameSettings());
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this), ex.getMessage(), "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         paneldown.add(btnCreateLobby);
