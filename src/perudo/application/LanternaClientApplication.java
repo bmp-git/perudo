@@ -6,6 +6,8 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
+import perudo.utility.LogSeverity;
+import perudo.utility.impl.LoggerSingleton;
 import perudo.view.console.MainForm;
 
 /**
@@ -35,7 +37,8 @@ public final class LanternaClientApplication {
             try {
                 screen = new TerminalScreen(new DefaultTerminalFactory().createTerminalEmulator());
             } catch (final Exception ex1) {
-                System.out.println("Can't create appropriate terminal");
+                LoggerSingleton.get().add(LogSeverity.ERROR_UNEXPECTED, LanternaClientApplication.class,
+                        "Can't create appropriate terminal");
                 System.exit(1);
             }
         }
