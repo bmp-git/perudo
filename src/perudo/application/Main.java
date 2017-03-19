@@ -10,7 +10,7 @@ import perudo.utility.impl.LoggerSingleton;
  */
 public final class Main {
 
-    private static final String DEFAULT_HOST_NAME = "localhost";
+    private static final String DEFAULT_HOST_NAME = "perudo.mnd.cloud";
     private static final String DEFAULT_PORT = "45555";
 
     private Main() {
