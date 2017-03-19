@@ -39,6 +39,19 @@ public class GameSettingsImpl implements GameSettings {
     public static final int MAX_INITIAL_DICE_NUMBERS = 8;
 
     /**
+     * Minimum name length.
+     */
+    public static final int MIN_NAME_LENGTH = 2;
+    /**
+     * Maximum name length.
+     */
+    public static final int MAX_NAME_LENGTH = 15;
+    /**
+     * The set of allowed characters for the name.
+     */
+    public static final String PERMITTED_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+    /**
      * Minimum turn duration time.
      */
     public static final Duration MIN_TURN_TIME = Duration.ofSeconds(15);
@@ -100,11 +113,26 @@ public class GameSettingsImpl implements GameSettings {
             throw new IllegalArgumentException("maxTurnTime should be at most " + MAX_TURN_TIME);
         }
 
+        if (name == null) {
+            throw new IllegalArgumentException("the name can not be null");
+        }
+        if (name.length() > MAX_NAME_LENGTH) {
+            throw new IllegalArgumentException("the name length should at most " + MAX_NAME_LENGTH);
+        }
+        if (name.length() < MIN_NAME_LENGTH) {
+            throw new IllegalArgumentException("the name length should be at least " + MIN_NAME_LENGTH);
+        }
+        for (int i = 0; i < name.length(); i++) {
+            if (!PERMITTED_CHARACTERS.contains(Character.toString(name.charAt(i)))) {
+                throw new IllegalArgumentException("Invalid name's characters");
+            }
+        }
+
         this.maxPlayer = playerNumbers;
         this.maxDiceValue = diceFaces;
         this.initialDiceNumber = initialDiceNumbers;
         this.maxTurnTime = turnTime;
-        this.name = name == null ? "" : name;
+        this.name = name;
     }
 
     @Override
