@@ -31,7 +31,7 @@ public class CreateLobbyPanel extends JPanel {
      * Panel icon respath.
      */
     public static final String ICON_RESPATH = "/images/perudo-logo.png";
-    private static final String DEFAULT_NAME = "Default lobby";
+    private static final String DEFAULT_NAME = "DefaultLobby";
     private static final String LABEL_NAME = "Name";
     private static final String LABEL_PLAYERS_NUM = "Max players";
     private static final String LABEL_DICES_NUM = "Max dices";

@@ -6,6 +6,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import perudo.model.User;
 import perudo.view.swing.panels.menu.ChangeNamePanel;
 import perudo.view.swing.panels.menu.CreateLobbyPanel;
@@ -50,7 +52,8 @@ public class TopMenu extends JMenuBar {
 
         final JMenu perudoMenu = (JMenu) factory.createMenu(MENU_PERUDO);
         perudoMenu.setMnemonic(KeyEvent.VK_P);
-        final JMenuItem miBackMenu = (JMenuItem) factory.createMenuItem(MENU_PERUDO_BACKTOMENU, KeyEvent.VK_B, MENU_PERUDO_BACKTOMENU_TOOLTIP);
+        final JMenuItem miBackMenu = (JMenuItem) factory.createMenuItem(MENU_PERUDO_BACKTOMENU, KeyEvent.VK_B,
+                MENU_PERUDO_BACKTOMENU_TOOLTIP);
         miBackMenu.addActionListener(e -> {
             if (this.user.isPresent()) {
                 this.returnMenu = true;
@@ -79,8 +82,13 @@ public class TopMenu extends JMenuBar {
         miCreateLobby.addActionListener(e -> {
             final int n = JOptionPane.showConfirmDialog(TopMenu.this, pnlcreatelobby, CreateLobbyPanel.TITLE,
                     JOptionPane.OK_CANCEL_OPTION, 0, Icon.APPLICATION_ICON.getIcon());
-            if (n == JOptionPane.YES_OPTION && this.user.isPresent()) {
-                ControllerSingleton.getController().createLobby(this.user.get(), pnlcreatelobby.getGameSettings());
+            if (n == JOptionPane.YES_OPTION && this.user.isPresent() && pnlcreatelobby.getName().trim().length() > 0) {
+                try {
+                    ControllerSingleton.getController().createLobby(this.user.get(), pnlcreatelobby.getGameSettings());
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this), ex.getMessage(), "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         lobbyMenu.add(miCreateLobby);
