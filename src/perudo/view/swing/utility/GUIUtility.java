@@ -15,6 +15,9 @@ import javax.swing.JFrame;
  */
 public final class GUIUtility {
 
+    private static final int MIN_HEIGHT = 540;
+    private static final int MIN_WIDTH = 960;
+
     private GUIUtility() {
     }
 
@@ -30,8 +33,16 @@ public final class GUIUtility {
         final GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         final int screenWidth = gd.getDisplayMode().getWidth();
         final int screenHeight = gd.getDisplayMode().getHeight();
-        frame.setSize(screenWidth / proportion, screenHeight / proportion);
-        frame.setMinimumSize(new Dimension(screenWidth / proportion, screenHeight / proportion));
+        Dimension d = null;
+        if ((screenWidth / proportion * screenHeight / proportion) > (MIN_WIDTH * MIN_HEIGHT)) {
+            d = new Dimension(screenWidth / proportion, screenHeight / proportion);
+            frame.setSize(d);
+            frame.setMinimumSize(d);
+        } else {
+            d = new Dimension(MIN_WIDTH, MIN_HEIGHT);
+            frame.setSize(d);
+            frame.setMinimumSize(d);
+        }
         frame.setVisible(true);
     }
 

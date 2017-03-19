@@ -18,17 +18,17 @@ public final class Main {
     }
 
     /**
-     * .
+     * Start point application.
      * 
      * @param args
-     *            1� argument: "client" or "server"
+     *            1 argument: "client" or "server"
      * 
-     *            2� argument: ip or name of the server (for the client). ip of
+     *            2 argument: ip or name of the server (for the client). ip of
      *            the listening interface (for the server).
      * 
-     *            3� argument: tcp port
+     *            3 argument: tcp port
      * 
-     *            4� argument: if first is "client" you can specify "console" to
+     *            4 argument: if first is "client" you can specify "console" to
      *            start console view istead of the swing one
      */
     public static void main(final String[] args) {
