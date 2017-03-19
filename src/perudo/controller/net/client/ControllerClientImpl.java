@@ -139,9 +139,9 @@ public final class ControllerClientImpl implements Controller {
         } else {
             // TODO for closing bot (temporary solution)
             this.streams.keySet().stream().limit(1).forEach(s -> s.send(dg));
-
             LoggerSingleton.get().add(LogSeverity.ERROR_REGULAR, this.getClass(),
-                    "The user " + user.getName() + " is not been initializated yet. Datagram: " + dg.getMethodName());
+                    "The user " + (user == null ? "NULL" : user.getName())
+                            + " is not been initializated yet. Datagram: " + dg.getMethodName());
         }
     }
 
